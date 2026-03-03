@@ -1,3 +1,4 @@
+import { Twitter } from "lucide-react";
 import Logo from "../ui/Logo";
 
 export default function Footer() {
@@ -16,6 +17,14 @@ export default function Footer() {
           <p className="text-xs text-text-muted">
             &copy; {new Date().getFullYear()} BlockRock. All rights reserved.
           </p>
+          <a
+            href="https://x.com/blockrockfund"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-accent-cyan transition-colors"
+          >
+            <Twitter className="h-5 w-5" />
+          </a>
         </div>
       </div>
     </footer>

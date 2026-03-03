@@ -27,7 +27,7 @@ const analyses = [
     icon: FileText,
     href: "/research/ai-markets",
     accent: "from-amber-500 to-yellow-600",
-    status: "coming-soon" as const,
+    status: "live" as const,
   },
   {
     title: "Situation Monitor",
@@ -49,7 +49,6 @@ export default function AnalysisPage() {
             Research
           </h1>
           <p className="text-text-secondary text-lg max-w-2xl">
-            Institutional-grade research for managing BlockRock funds.
             Deep-dive into fundamentals, risk, and market dynamics.
           </p>
         </div>

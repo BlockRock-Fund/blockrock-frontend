@@ -1535,16 +1535,21 @@ export default function AnalysisPage() {
         {/* Net Toggle Button */}
         {showNetToggle && (
           <div className="mb-4 flex justify-center">
-            <button
-              onClick={() => setShowNet(!showNet)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all border cursor-pointer ${
-                showNet
-                  ? "bg-accent-cyan text-bg-primary border-accent-cyan"
-                  : "bg-transparent text-text-secondary border-white/10 hover:border-accent-cyan/40 hover:text-text-primary"
-              }`}
-            >
-              Net (After Emissions + Unlocks)
-            </button>
+            <div className="flex flex-col items-center gap-1">
+              <button
+                onClick={() => setShowNet(!showNet)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all border cursor-pointer ${
+                  showNet
+                    ? "bg-accent-cyan text-bg-primary border-accent-cyan"
+                    : "bg-transparent text-text-secondary border-white/10 hover:border-accent-cyan/40 hover:text-text-primary"
+                }`}
+              >
+                Net (After Emissions + Unlocks)
+              </button>
+              <span className="text-sm text-text-secondary italic">
+                Also accounts for sensitivity of revenue to emissions
+              </span>
+            </div>
           </div>
         )}
 
