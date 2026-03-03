@@ -36,7 +36,7 @@ export default function AIMarketsPage() {
 
         {/* ── header / cover ──────────────────────────────────── */}
         <header className="mb-14">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-accent-cyan mb-4">
+          <p className="font-semibold uppercase tracking-[0.25em] text-accent-cyan mb-4">
             BlockRock Research
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary mb-4">
@@ -60,7 +60,7 @@ export default function AIMarketsPage() {
         <div className="flex gap-12 items-start">
           <TableOfContents />
 
-          <article className="min-w-0 max-w-3xl flex-1 space-y-0">
+          <article className="min-w-0 max-w-3xl flex-1 space-y-0 [&>h2:first-child]:mt-0">
             {/* ── Executive Summary ────────────────────────────── */}
             <SectionHeading id="executive-summary">Executive Summary</SectionHeading>
 

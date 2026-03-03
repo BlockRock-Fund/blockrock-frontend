@@ -1,87 +1,42 @@
 import Link from "next/link";
-import {
-  BarChart3,
-  PieChart,
-  TrendingUp,
-  Coins,
-  ShieldCheck,
-  Activity,
-  Layers,
-  FileText,
-} from "lucide-react";
+import { PieChart, Activity, TrendingUp, FileText } from "lucide-react";
 
 const analyses = [
   {
-    title: "Valuation Models",
-    description:
-      "Cashflow analysis for valuing equities and tokens.",
-    icon: TrendingUp,
-    href: "/research/cashflows",
-    accent: "from-accent-cyan to-amber-500",
-    status: "live" as const,
-  },
-  {
-    title: "Portfolio Construction",
+    title: "Portfolio Builder",
     description:
       "Allocation breakdowns, concentration risk, correlation matrices, and rebalancing signals.",
     icon: PieChart,
-    href: "/research/portfolio",
+    href: "/research/portfolio-builder",
     accent: "from-accent-green to-accent-cyan",
+    status: "live" as const,
+  },
+  {
+    title: "Valuations",
+    description:
+      "Cashflow analysis for valuing equities and tokens.",
+    icon: TrendingUp,
+    href: "/research/valuations",
+    accent: "from-accent-cyan to-amber-500",
     status: "live" as const,
   },
   {
     title: "AI & Markets",
     description:
-      "How artificial intelligence will reshape the economy and what it means for portfolios.",
+      "How AI affects the economy and what it means for portfolios.",
     icon: FileText,
     href: "/research/ai-markets",
     accent: "from-amber-500 to-yellow-600",
-    status: "live" as const,
+    status: "coming-soon" as const,
   },
   {
-    title: "Market Structure",
+    title: "Situation Monitor",
     description:
-      "Liquidity depth, order flow, volume profiles, and market microstructure analysis.",
-    icon: BarChart3,
-    href: "/research/market-structure",
-    accent: "from-accent-blue to-accent-purple",
-    status: "soon" as const,
-  },
-  {
-    title: "Token Supply",
-    description:
-      "Emission schedules, unlock timelines, circulating vs. fully diluted supply tracking.",
-    icon: Coins,
-    href: "/research/supply",
-    accent: "from-amber-500 to-accent-cyan",
-    status: "soon" as const,
-  },
-  {
-    title: "Risk Metrics",
-    description:
-      "Smart contract risk scores, audit history, economic attack surface, and insurance coverage.",
-    icon: ShieldCheck,
-    href: "/research/risk",
-    accent: "from-red-400 to-accent-purple",
-    status: "soon" as const,
-  },
-  {
-    title: "On-chain Activity",
-    description:
-      "Active addresses, transaction volumes, developer activity, and usage growth trends.",
+      "Live macro signals and prediction market odds.",
     icon: Activity,
-    href: "/research/onchain",
-    accent: "from-accent-green to-emerald-400",
-    status: "soon" as const,
-  },
-  {
-    title: "Sector Comparison",
-    description:
-      "Cross-sector benchmarking across DeFi, L1/L2, infrastructure, and application layers.",
-    icon: Layers,
-    href: "/research/sectors",
-    accent: "from-accent-cyan to-accent-blue",
-    status: "soon" as const,
+    href: "/research/signals",
+    accent: "from-accent-cyan to-accent-green",
+    status: "coming-soon" as const,
   },
 ];
 
@@ -122,7 +77,7 @@ export default function AnalysisPage() {
                       Live
                     </span>
                   ) : (
-                    <span className="text-[11px] font-medium text-text-muted bg-bg-tertiary/50 border border-glass-border rounded-full px-2.5 py-0.5">
+                    <span className="text-[11px] font-medium text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded-full px-2.5 py-0.5">
                       Coming Soon
                     </span>
                   )}

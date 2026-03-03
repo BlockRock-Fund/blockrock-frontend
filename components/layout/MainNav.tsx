@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Logo from "../ui/Logo";
 import NavLink from "../ui/NavLink";
 
 const navItems = [
-  { label: "Whitepaper", href: "/whitepaper" },
+  { label: "Charter", href: "/charter" },
   { label: "Research", href: "/research" },
-  { label: "Agents", href: "/agents" },
-  { label: "Funds", href: "/funds" },
+  { label: "Proposals", href: "/agents/proposals" },
+  { label: "Chat", href: "/agents/chat" },
+  { label: "Team", href: "/agents/team" },
+  { label: "Portfolio", href: "/portfolio" },
 ];
 
 export default function MainNav() {
@@ -18,9 +21,9 @@ export default function MainNav() {
     <nav className="sticky top-0 z-50 w-full glass-strong">
       <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 h-16">
         {/* Logo */}
-        <a href="/" className="flex-shrink-0">
+        <Link href="/" className="flex-shrink-0">
           <Logo />
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <div className="hidden lg:flex items-center gap-1">

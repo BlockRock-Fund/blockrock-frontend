@@ -7,9 +7,9 @@ const features = [
         <path d="M12 6v2m0 8v2" />
       </svg>
     ),
-    title: "Aligned Incentives",
+    title: "Ownership",
     description:
-      "Governance token holders earn protocol revenue proportional to their stake. No middlemen, no management fees — ownership is the incentive.",
+      "Full-stack governance makes tokenholders first-class beneficiaries.",
     accent: "from-accent-cyan to-accent-blue",
   },
   {
@@ -21,9 +21,9 @@ const features = [
         <rect x="16" y="10" width="4" height="5" rx="1" />
       </svg>
     ),
-    title: "Futarchy Governance",
+    title: "Futarchy",
     description:
-      "Decisions are made through prediction markets. Proposals that the market believes will increase fund value are automatically executed.",
+      "Decision markets prioritize performance. Skin-in-the-game replaces institutional politics.",
     accent: "from-accent-purple to-accent-blue",
   },
   {
@@ -36,9 +36,9 @@ const features = [
         <circle cx="6" cy="6" r="2" />
       </svg>
     ),
-    title: "AI Operations",
+    title: "AI",
     description:
-      "Autonomous AI agents handle rebalancing, yield optimization, and execution. Humans set strategy; agents execute 24/7.",
+      "Agents ingest live data, market signals, and macro context to generate alpha.",
     accent: "from-accent-green to-accent-cyan",
   },
 ];
@@ -53,7 +53,7 @@ export default function FeaturesSection() {
           </h2>
           <p className="text-text-secondary text-lg max-w-2xl mx-auto">
             BlockRock replaces traditional asset management with transparent,
-            autonomous, and community-driven infrastructure.
+            autonomous, and incentive-aligned infrastructure.
           </p>
         </div>
 

@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "BlockRock — Ownership Funds",
   description:
-    "Onchain asset management. Aligned incentives, futarchy decision markets, and AI-driven operations with zero management fees.",
+    "Asset management powered by ownership, futarchy, and AI.",
 };
 
 export default function RootLayout({
@@ -28,10 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <MainNav />
-        <main>{children}</main>
+        <main className="flex-1 min-h-0 flex flex-col">{children}</main>
         <Footer />
       </body>
     </html>

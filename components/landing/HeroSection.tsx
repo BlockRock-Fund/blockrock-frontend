@@ -1,11 +1,11 @@
 import GridBackground from "../ui/GridBackground";
 import GlowButton from "../ui/GlowButton";
 
-const stats = [
-  { label: "Assets Under Management", value: "$0" },
-  { label: "Clients (Holders)", value: "0" },
-  { label: "Proposals Executed", value: "0" },
-];
+// const stats = [
+//   { label: "Assets Under Management", value: "$0" },
+//   { label: "Clients (Holders)", value: "0" },
+//   { label: "Proposals Executed", value: "0" },
+// ];
 
 export default function HeroSection() {
   return (
@@ -34,8 +34,8 @@ export default function HeroSection() {
               className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-2xl mb-8 animate-fade-in-up"
               style={{ animationDelay: "0.2s" }}
             >
-              Asset management powered by fair-launched tokens, futarchy decision
-              markets, and AI agents. Grow your wealth with confidence.
+              Asset management powered by treasury-backed tokens, futarchy governance,
+              and AI alpha. Grow wealth with confidence.
             </p>
 
             {/* CTAs */}
@@ -43,13 +43,13 @@ export default function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 mb-14 animate-fade-in-up"
               style={{ animationDelay: "0.3s" }}
             >
-              <GlowButton href="/whitepaper" size="lg">
-                Whitepaper
+              <GlowButton href="/charter" size="lg">
+                Read Charter
               </GlowButton>
             </div>
 
             {/* Stats row */}
-            <div
+            {/* <div
               className="grid grid-cols-3 gap-6 sm:gap-10 animate-fade-in-up"
               style={{ animationDelay: "0.4s" }}
             >
@@ -63,7 +63,7 @@ export default function HeroSection() {
                   </p>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Glassmorphism card (desktop) */}
@@ -72,21 +72,21 @@ export default function HeroSection() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-text-secondary">Portfolio</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-accent-green/10 text-accent-green font-medium">
-                    Live
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-accent-cyan/10 text-accent-cyan font-medium">
+                    Simulation
                   </span>
                 </div>
                 <div className="h-px bg-white/5" />
                 {[
                   { asset: "BTC", alloc: "24%", color: "bg-orange-500" },
-                  { asset: "SOL", alloc: "20%", color: "bg-accent-purple" },
                   { asset: "Gold", alloc: "15%", color: "bg-yellow-500" },
+                  { asset: "ETH (Short)", alloc: "11%", color: "bg-blue-400" },
                   { asset: "NVDA", alloc: "10%", color: "bg-accent-green" },
                   { asset: "AAPL", alloc: "10%", color: "bg-gray-400" },
+                  { asset: "USD Yield", alloc: "9%", color: "bg-emerald-400" },
+                  { asset: "SOL", alloc: "8%", color: "bg-accent-purple" },
                   { asset: "GOOG", alloc: "8%", color: "bg-red-500" },
                   { asset: "Silver", alloc: "5%", color: "bg-slate-300" },
-                  { asset: "USD Yield", alloc: "5%", color: "bg-emerald-400" },
-                  { asset: "ETH (Short)", alloc: "3%", color: "bg-blue-400" },
                 ].map((item) => (
                   <div key={item.asset} className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -100,8 +100,8 @@ export default function HeroSection() {
                 ))}
               </div>
             </div>
-            <p className="text-xs text-text-secondary mt-2 leading-tight text-center">
-              Actual portfolios are managed by AI agents and decision markets to maximize performance.
+            <p className="text-sm text-text-secondary mt-2 leading-tight text-center">
+              Actual portfolios are governed by decision markets to maximize risk-adjusted returns.
             </p>
           </div>
         </div>
