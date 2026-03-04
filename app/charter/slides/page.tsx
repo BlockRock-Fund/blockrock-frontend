@@ -323,7 +323,7 @@ export default function CharterSlidesPage() {
         <Gap h={6} />
 
         <p style={{ fontSize: 20, lineHeight: "22px" }} className="text-text-secondary">
-          The $120T+ asset management industry runs on a broken model.
+          The $120T+ asset management industry is broken.
         </p>
         <Gap h={12} />
 
@@ -358,8 +358,7 @@ export default function CharterSlidesPage() {
         <p style={body}>
           Sprawling hierarchies create bureaucratic bloat. Decisions pass through
           committees, internal politics shape strategy, and huge operational
-          costs reinforce the pressure to prioritize asset gathering. For
-          example, BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs (noise, not clarity).
+          costs reinforce the pressure to prioritize asset gathering. BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs.
         </p>
         <Gap h={40} />
 
@@ -377,10 +376,7 @@ export default function CharterSlidesPage() {
           }}
         >
           <p style={{ ...body, color: "var(--text-secondary)" }}>
-            Fee models incentivize scale &rarr; Scale demands complexity &rarr;
-            Complexity invites conservative compliance &rarr; Compliance slows
-            decisions &rarr; Slow decisions reduce performance &rarr; Fees come
-            in anyway
+            fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity + compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
           </p>
         </Card>
         <Gap h={40} />

@@ -52,8 +52,7 @@ export default function FeaturesSection() {
             <span className="text-accent-cyan">Internet Capital Management</span>
           </h2>
           <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-            BlockRock replaces traditional asset management with transparent,
-            autonomous, and incentive-aligned infrastructure.
+            BlockRock outperforms traditional asset management with aligned incentives
           </p>
         </div>
 

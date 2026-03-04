@@ -157,7 +157,7 @@ export default function CharterPage() {
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              In 2025, MtnCapital launched an ownership fund on MetaDAO, positioned as an early-stage VC fund. But it struggled to pass proposals and eventually wound down. private VC deals are difficult to price with asymmetric information, long timelines, and binary outcomes.
+              In 2025, MtnCapital launched an ownership fund on MetaDAO, positioned as an early-stage VC fund. But it struggled to pass proposals and eventually wound down.
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -307,7 +307,7 @@ export default function CharterPage() {
                   <span className="text-2xl font-bold text-accent-cyan shrink-0">{p.num}</span>
                   <div>
                     <p className="text-text-primary font-semibold mb-1">{p.title}</p>
-                    <p className="text-text-secondary text-sm leading-relaxed">{p.body}</p>
+                    <p className="text-text-secondary leading-relaxed">{p.body}</p>
                   </div>
                 </div>
               ))}
