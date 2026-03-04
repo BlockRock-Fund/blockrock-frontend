@@ -9,7 +9,7 @@ const features = [
     ),
     title: "Ownership",
     description:
-      "Full-stack governance makes tokenholders first-class beneficiaries.",
+      "Ironclad investor protections.",
     accent: "from-accent-cyan to-accent-blue",
   },
   {
@@ -23,7 +23,7 @@ const features = [
     ),
     title: "Futarchy",
     description:
-      "Decision markets prioritize performance. Skin-in-the-game replaces institutional politics.",
+      "Decision markets prioritize performance.",
     accent: "from-accent-purple to-accent-blue",
   },
   {
@@ -38,7 +38,7 @@ const features = [
     ),
     title: "AI",
     description:
-      "Agents ingest live data, market signals, and macro context to generate alpha.",
+      "Automated alpha generation.",
     accent: "from-accent-green to-accent-cyan",
   },
 ];
@@ -66,7 +66,7 @@ export default function FeaturesSection() {
               <h3 className="text-lg font-semibold text-text-primary mb-3">
                 {feature.title}
               </h3>
-              <p className="text-sm text-text-secondary leading-relaxed">
+              <p className="text-text-secondary leading-relaxed">
                 {feature.description}
               </p>
             </div>
