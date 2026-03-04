@@ -8,8 +8,8 @@ import React from "react";
 /* ── style constants ────────────────────────────────────────── */
 
 const body: React.CSSProperties = {
-  fontSize: 20,
-  lineHeight: "22px",
+  fontSize: 22,
+  lineHeight: "26px",
   color: "#94a3b8",
 };
 
@@ -104,7 +104,7 @@ function Slide({
         className="relative z-10 flex flex-col h-full"
         style={{
           padding,
-          fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
+          fontFamily: "var(--font-rubik), system-ui, sans-serif",
         }}
       >
         {children}
@@ -255,25 +255,22 @@ export default function CharterSlidesPage() {
           {[
             {
               stat: "Ownership",
-              label: "Who Benefits",
               detail:
                 "Full-stack governance makes tokenholders first-class beneficiaries.",
             },
             {
               stat: "Futarchy",
-              label: "How Decisions Get Made",
               detail:
                 "Decision markets prioritize performance. Skin-in-the-game replaces institutional politics.",
             },
             {
               stat: "AI",
-              label: "How Work Gets Done",
               detail:
                 "AI enhances alpha generation. Funds scale with context and compute, not headcount.",
             },
           ].map((d) => (
             <Card
-              key={d.label}
+              key={d.stat}
               className="text-center"
               style={{ padding: "20px 16px" }}
             >
@@ -282,12 +279,6 @@ export default function CharterSlidesPage() {
                 className="font-bold text-[#DDB110] mb-1"
               >
                 {d.stat}
-              </p>
-              <p
-                style={{ fontSize: 18 }}
-                className="font-semibold text-[#e8edf5] mb-1"
-              >
-                {d.label}
               </p>
               <p
                 style={{ fontSize: 18, lineHeight: "22px" }}
@@ -345,7 +336,7 @@ export default function CharterSlidesPage() {
         <Gap h={4} />
         <p style={body}>
           Dense multi-jurisdictional regulation hinders performance. Compliance
-          layers delay action, fiduciary standards push for conservative
+          delays action, fiduciary standards push for conservative
           allocations, and cross-border restrictions fragment strategy. The gap
           between how capital <em>should</em> move and how it <em>can</em> move
           is a compounding drag on returns.
@@ -376,7 +367,7 @@ export default function CharterSlidesPage() {
           }}
         >
           <p style={{ ...body, color: "var(--text-secondary)" }}>
-            fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity + compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
+            fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity +compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
           </p>
         </Card>
         <Gap h={40} />
@@ -634,16 +625,9 @@ export default function CharterSlidesPage() {
             <span style={bold}>
               They scale with compute, not headcount.
             </span>{" "}
-            As AI capabilities grow, the fund&apos;s capability grows too.
+            As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.
           </Bullet>
         </div>
-        <Gap h={4} />
-        <p style={body}>
-          This eliminates the 20,000-employee apparatus and the operational costs
-          that drive fee pressure. It also shrinks the compliance surface, as
-          fewer humans making discretionary calls means fewer points of
-          regulatory exposure.
-        </p>
         <Gap h={20} />
 
         {/* ── Positive Flywheel ── */}
@@ -655,10 +639,7 @@ export default function CharterSlidesPage() {
         <Gap h={6} />
         <Card style={{ padding: "10px 16px", borderLeft: "3px solid #DDB110" }}>
           <p style={{ ...body, color: "var(--text-secondary)" }}>
-            Token ownership &rarr; Better-incentivized market participants &rarr;
-            More accurate futarchy &rarr; Better AI proposal filtering &rarr;
-            Stronger performance &rarr; Higher token value &rarr; More
-            sophisticated participants &rarr; Repeat
+            ownership incentivizes proposals &rarr; proposals create mispricings &rarr; mispricings attract traders &rarr; traders improve decisions &rarr; good decisions improve fund performance &rarr; fund performance pumps token &rarr; pumps invite ownership
           </p>
         </Card>
         <Gap h={20} />
@@ -734,7 +715,7 @@ export default function CharterSlidesPage() {
         </p>
         <Gap h={6} />
         <p style={body}>
-          BlockRock&apos;s Flagship Fund launches first with a mandate for a
+          BlockRock&apos;s flagship fund launches first with a mandate for a
           moderate risk strategy to maximize Sortino ratio (penalizing downside
           volatility) by allocating the treasury into a portfolio of onchain
           positions. 95% of tokens are distributed to ICO participants at the

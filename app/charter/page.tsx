@@ -71,14 +71,13 @@ export default function CharterPage() {
             {/* three pillars */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               {[
-                { stat: "Ownership", label: "Who Benefits", detail: "Full-stack governance makes tokenholders first-class beneficiaries." },
-                { stat: "Futarchy", label: "How Decisions Get Made", detail: "Decision markets prioritize performance. Skin-in-the-game replaces institutional politics." },
-                { stat: "AI", label: "How Work Gets Done", detail: "AI enhances alpha generation. Funds scale with context and compute, not headcount." },
+                { stat: "Ownership", detail: "Ironclad investor protections." },
+                { stat: "Futarchy", detail: "Decision markets prioritize performance." },
+                { stat: "AI", detail: "Automated alpha generation." },
               ].map((d) => (
-                <div key={d.label} className="glass rounded-xl p-5 text-center">
+                <div key={d.stat} className="glass rounded-xl p-5 text-center">
                   <p className="text-2xl font-bold text-accent-cyan mb-1">{d.stat}</p>
-                  <p className="text-sm font-semibold text-text-primary mb-1">{d.label}</p>
-                  <p className="text-sm text-text-secondary leading-relaxed">{d.detail}</p>
+                  <p className="text-text-secondary leading-relaxed">{d.detail}</p>
                 </div>
               ))}
             </div>
@@ -124,7 +123,7 @@ export default function CharterPage() {
             </div>
 
             <p className="text-accent-cyan font-semibold leading-relaxed mb-8">
-              Traditional asset managers remain mediocre at the job investors hire them for. Most actively managed funds underperform their benchmarks, especially after fees.
+              Most actively managed funds underperform their benchmarks, especially after fees.
             </p>
 
             {/* Why Now */}

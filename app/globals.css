@@ -28,7 +28,7 @@
   --color-text-muted: var(--text-muted);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-rubik);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -36,7 +36,7 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-rubik), system-ui, sans-serif;
 }
 
 /* Glassmorphism */
