@@ -86,7 +86,7 @@ export default function CharterPage() {
             {/* ── WHY ────────────────────────────────────────────── */}
             <MajorHeading id="why">Why: The Case for a New Kind of Asset Manager</MajorHeading>
             <p className="text-text-secondary leading-relaxed mb-10">
-              The $120T+ asset management industry runs on a broken model.
+              The $120T+ asset management industry is broken.
             </p>
 
             {/* Fee Misalignment */}
