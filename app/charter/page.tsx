@@ -100,14 +100,14 @@ export default function CharterPage() {
             <SectionHeading id="regulatory-restrictions">Regulatory Restrictions</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Dense multi-jurisdictional regulation hinders performance. Compliance layers delay action, fiduciary standards push for conservative allocations, and cross-border restrictions fragment strategy. The gap between how capital <em>should</em> move and how it <em>can</em> move is a compounding drag on returns.
+              Dense multi-jurisdictional regulation hinders performance. Compliance delays action, fiduciary standards push for conservative allocations, and cross-border restrictions fragment strategy. The gap between how capital <em>should</em> move and how it <em>can</em> move is a compounding drag on returns.
             </p>
 
             {/* Organizational Complexity */}
             <SectionHeading id="organizational-complexity">Organizational Complexity</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Sprawling hierarchies create bureaucratic bloat. Decisions pass through committees, internal politics shape strategy, and huge operational costs reinforce the pressure to prioritize asset gathering. For example, BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs (noise, not clarity).
+              Sprawling hierarchies create bureaucratic bloat. Decisions pass through committees, internal politics shape strategy, and huge operational costs reinforce the pressure to prioritize asset gathering. BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs.
             </p>
 
             {/* The Death Spiral */}
