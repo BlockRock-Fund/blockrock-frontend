@@ -4,30 +4,31 @@
    ────────────────────────────────────────────────────────────── */
 
 import React from "react";
+import { ShieldCheck, TrendingUp, Bot } from "lucide-react";
 
 /* ── style constants ────────────────────────────────────────── */
 
 const body: React.CSSProperties = {
   fontSize: 22,
   lineHeight: "26px",
-  color: "#94a3b8",
+  color: "var(--text-secondary)",
 };
 
 const sectionHead: React.CSSProperties = {
-  fontSize: 20,
-  lineHeight: "22px",
+  fontSize: 22,
+  lineHeight: "26px",
   fontWeight: 700,
-  color: "#e8edf5",
+  color: "var(--text-primary)",
 };
 
 const subHead: React.CSSProperties = {
-  fontSize: 18,
-  lineHeight: "20px",
+  fontSize: 22,
+  lineHeight: "26px",
   fontWeight: 600,
-  color: "#e8edf5",
+  color: "var(--text-primary)",
 };
 
-const bold: React.CSSProperties = { color: "#e8edf5", fontWeight: 700 };
+const bold: React.CSSProperties = { color: "var(--text-primary)", fontWeight: 700 };
 
 /* ── helpers ────────────────────────────────────────────────── */
 
@@ -173,7 +174,6 @@ function Bullet({
           height: 4,
           borderRadius: "50%",
           background: "#DDB110",
-          opacity: 0.5,
           marginTop: 7,
         }}
       />
@@ -209,7 +209,7 @@ export default function CharterSlidesPage() {
 
         <h1
           style={{ fontSize: 52, lineHeight: 1.1 }}
-          className="font-bold tracking-tight text-[#e8edf5]"
+          className="font-bold tracking-tight text-text-primary"
         >
           BlackRock on the Blockchain
         </h1>
@@ -217,7 +217,7 @@ export default function CharterSlidesPage() {
 
         <p
           style={{ fontSize: 22, lineHeight: "32px" }}
-          className="text-[#94a3b8]"
+          className="text-text-secondary"
         >
           The ownership fund helping people grow wealth with confidence
         </p>
@@ -228,7 +228,7 @@ export default function CharterSlidesPage() {
 
         <p
           style={{ fontSize: 20, lineHeight: "26px" }}
-          className="text-[#94a3b8]"
+          className="text-text-secondary"
         >
           Asset managers (e.g. BlackRock, Vanguard, Fidelity) help people grow
           their wealth. But traditional asset managers suffer from
@@ -241,9 +241,9 @@ export default function CharterSlidesPage() {
         >
           <p
             style={{ fontSize: 20, lineHeight: "26px" }}
-            className="text-[#94a3b8]"
+            className="text-text-primary"
           >
-            <span style={bold}>BlockRock</span> is an &ldquo;ownership
+            <span style={{ ...bold, color: "var(--accent-cyan)" }}>BlockRock</span> is an &ldquo;ownership
             fund&rdquo; on Solana with treasury-backed tokens, decision
             markets, and AI agents to help people grow wealth with confidence.
           </p>
@@ -256,17 +256,20 @@ export default function CharterSlidesPage() {
             {
               stat: "Ownership",
               detail:
-                "Full-stack governance makes tokenholders first-class beneficiaries.",
+                "Ironclad investor protections",
+              icon: <ShieldCheck size={36} strokeWidth={1.5} color="#DDB110" />,
             },
             {
               stat: "Futarchy",
               detail:
-                "Decision markets prioritize performance. Skin-in-the-game replaces institutional politics.",
+                "Performance-optimized decisions",
+              icon: <TrendingUp size={36} strokeWidth={1.5} color="#DDB110" />,
             },
             {
               stat: "AI",
               detail:
-                "AI enhances alpha generation. Funds scale with context and compute, not headcount.",
+                "Agentic alpha\ngeneration",
+              icon: <Bot size={36} strokeWidth={1.5} color="#DDB110" />,
             },
           ].map((d) => (
             <Card
@@ -274,15 +277,16 @@ export default function CharterSlidesPage() {
               className="text-center"
               style={{ padding: "20px 16px" }}
             >
+              <div style={{ marginBottom: 8, display: "flex", justifyContent: "center" }}>{d.icon}</div>
               <p
                 style={{ fontSize: 24 }}
-                className="font-bold text-[#DDB110] mb-1"
+                className="font-bold text-text-primary mb-1"
               >
                 {d.stat}
               </p>
               <p
-                style={{ fontSize: 18, lineHeight: "22px" }}
-                className="text-[#94a3b8]"
+                style={{ fontSize: 22, lineHeight: "26px" }}
+                className="text-text-secondary whitespace-pre-line"
               >
                 {d.detail}
               </p>
@@ -298,7 +302,7 @@ export default function CharterSlidesPage() {
       <Slide id="slide-2" padding={48}>
         <div className="flex flex-col justify-center flex-1">
         <p
-          style={{ fontSize: 16, letterSpacing: "0.25em" }}
+          style={{ fontSize: 24, letterSpacing: "0.25em" }}
           className="font-semibold uppercase text-[#DDB110]"
         >
           Why
@@ -307,7 +311,7 @@ export default function CharterSlidesPage() {
 
         <h2
           style={{ fontSize: 28, lineHeight: 1.15 }}
-          className="font-bold tracking-tight text-[#e8edf5]"
+          className="font-bold tracking-tight text-text-primary"
         >
           The Case for a New Kind of Asset Manager
         </h2>
@@ -321,13 +325,16 @@ export default function CharterSlidesPage() {
         <GoldDivider />
         <Gap h={40} />
 
+        <p style={{ fontSize: 22, lineHeight: "26px", fontWeight: 600, color: "var(--accent-cyan)" }}>Most actively managed funds underperform their benchmarks, especially after fees.</p>
+        <Gap h={40} />
+
         {/* ── Fee Misalignment ── */}
         <h3 style={sectionHead}>Fee Misalignment</h3>
         <Gap h={4} />
         <p style={body}>
-          BlackRock earns ~73% of its revenue from management fees tied to AUM.
+          BlackRock earns ~73% of its revenue from management fees.
           These fees are collected regardless of fund performance. Performance
-          fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture.
+          fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture (e.g. BlackRock&apos;s shifting ESG stance chasing institutional clout).
         </p>
         <Gap h={18} />
 
@@ -335,11 +342,11 @@ export default function CharterSlidesPage() {
         <h3 style={sectionHead}>Regulatory Restrictions</h3>
         <Gap h={4} />
         <p style={body}>
-          Dense multi-jurisdictional regulation hinders performance. Compliance
-          delays action, fiduciary standards push for conservative
+          Dense regulation hinders performance. Compliance
+          delays action, fiduciary standards prefer conservative
           allocations, and cross-border restrictions fragment strategy. The gap
           between how capital <em>should</em> move and how it <em>can</em> move
-          is a compounding drag on returns.
+          drags down returns.
         </p>
         <Gap h={18} />
 
@@ -359,19 +366,18 @@ export default function CharterSlidesPage() {
         <p style={{ ...body, marginBottom: 4 }}>
           These problems reinforce each other in a negative cycle:
         </p>
-        <Gap h={4} />
+        <Gap h={10} />
         <Card
           style={{
             padding: "12px 16px",
             borderLeft: "3px solid var(--accent-cyan)",
           }}
         >
-          <p style={{ ...body, color: "var(--text-secondary)" }}>
-            fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity +compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
+          <p style={{ ...body, color: "var(--accent-cyan)", fontWeight: 600 }}>
+            fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity + compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
           </p>
         </Card>
-        <Gap h={40} />
-        <p style={{ fontSize: 20, lineHeight: "22px", fontWeight: 600, color: "var(--accent-cyan)" }}>Traditional asset managers remain mediocre at the job investors hire them for. Most actively managed funds underperform their benchmarks, especially after fees.</p>
+        
         </div>
       </Slide>
 
@@ -381,29 +387,29 @@ export default function CharterSlidesPage() {
       <Slide id="slide-3" padding={48}>
         <div className="flex flex-col justify-center flex-1">
         <p
-          style={{ fontSize: 16, letterSpacing: "0.25em" }}
+          style={{ fontSize: 24, letterSpacing: "0.25em" }}
           className="font-semibold uppercase text-[#DDB110]"
         >
           Why
         </p>
-        <Gap h={8} />
+        <Gap h={0} />
 
         <h2
           style={{ fontSize: 28, lineHeight: 1.15 }}
-          className="font-bold tracking-tight text-[#e8edf5]"
+          className="font-bold tracking-tight text-text-primary"
         >
           Why Now
         </h2>
         <Gap h={6} />
 
-        <p style={{ fontSize: 16, lineHeight: "18px" }} className="text-[#94a3b8]">
+        <p style={{ fontSize: 22, lineHeight: "26px" }} className="text-text-secondary">
           Converging forces are opening a window of opportunity for a new kind of
           asset manager.
         </p>
         <Gap h={12} />
 
         <GoldDivider />
-        <Gap h={12} />
+        <Gap h={40} />
 
         {/* two-column: left = Peak Uncertainty + Onchain Assets | right = Ownership Infrastructure */}
         <div className="flex" style={{ gap: 20 }}>
@@ -425,18 +431,18 @@ export default function CharterSlidesPage() {
             >
               <Bullet>Stocks ranging at all-time highs</Bullet>
               <Bullet>
-                Precious metals swinging more violently than ever
+                Precious metals swinging violently
               </Bullet>
               <Bullet>USD reserve status being questioned</Bullet>
               <Bullet>AI threatening to displace white-collar work</Bullet>
               <Bullet>Crypto underperforming expectations</Bullet>
             </div>
-            <Gap h={4} />
-            <p style={body}>
+            <Gap h={12} />
+            <p style={{ ...body, color: "var(--accent-cyan)", fontWeight: 600 }}>
               Growing (let alone preserving) wealth is more difficult, time-consuming, and
               anxiety-inducing than ever.
             </p>
-            <Gap h={12} />
+            <Gap h={40} />
 
             <h4 style={subHead}>Onchain Assets</h4>
             <Gap h={3} />
@@ -447,10 +453,9 @@ export default function CharterSlidesPage() {
               accessible onchain with deep liquidity and composable
               infrastructure.
             </p>
-            <Gap h={4} />
-            <p style={body}>
-              A fund operating entirely onchain is no longer limited to a handful
-              of tokens. The breadth of positions available now rivals what
+            <Gap h={12} />
+            <p style={{ ...body, color: "var(--accent-cyan)", fontWeight: 600 }}>
+              The breadth of onchain assets available now rivals what
               traditional asset managers can access, without the friction.
             </p>
           </div>
@@ -463,33 +468,33 @@ export default function CharterSlidesPage() {
               MetaDAO&apos;s permissionless launchpad lets anyone launch an
               &ldquo;ownership coin&rdquo; whose value is tied
               to a futarchy-governed treasury. This infrastructure is
-              battle-tested and soon becoming publicly available.
+              battle-tested and now publicly available.
             </p>
-            <Gap h={4} />
+            <Gap h={12} />
             <p style={body}>
               In 2025, MtnCapital launched an ownership fund on MetaDAO,
               positioned as an early-stage VC fund. But it struggled to pass proposals and
               eventually wound down.
             </p>
-            <Gap h={4} />
+            <Gap h={12} />
             <p style={body}>
               Futarchy governance works by letting markets price competing outcomes, but
               private VC deals are difficult to price with asymmetric information, long timelines, and binary outcomes.
             </p>
-            <Gap h={4} />
+            <Gap h={12} />
             <p style={body}>
               Liquid asset allocation for risk-adjusted returns
               gives futarchy the pricing efficiency it
-              requires. Decision markets can evaluate portfolio construction,
-              yield strategies, and value accrual more effectively than illiquid VC bets.
+              requires. <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>Decision markets can evaluate portfolio construction,
+              yield strategies, and value accrual better than illiquid VC bets.</span>
             </p>
-            <Gap h={4} />
+            <Gap h={12} />
             <p style={body}>
               Proof of safety: When MtnCapital wound down, holders received their
               proportional share of the treasury through the protocol&apos;s
               built-in liquidation mechanism. The system&apos;s guarantees worked
-              as intended. Even in failure, no value was lost to extraction or
-              mismanagement.
+              as intended. <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>Even in failure, no value is lost to extraction or
+              mismanagement.</span>
             </p>
           </div>
         </div>
@@ -502,77 +507,69 @@ export default function CharterSlidesPage() {
       <Slide id="slide-4" padding={48}>
         <div className="flex flex-col justify-center flex-1">
         <p
-          style={{ fontSize: 16, letterSpacing: "0.25em" }}
+          style={{ fontSize: 24, letterSpacing: "0.25em" }}
           className="font-semibold uppercase text-[#DDB110]"
         >
           How
         </p>
-        <Gap h={8} />
+        <Gap h={0} />
 
         <h2
           style={{ fontSize: 28, lineHeight: 1.15 }}
-          className="font-bold tracking-tight text-[#e8edf5]"
+          className="font-bold tracking-tight text-text-primary"
         >
           BlockRock&apos;s Principles
         </h2>
         <Gap h={6} />
 
-        <p style={{ fontSize: 16, lineHeight: "18px" }} className="text-[#94a3b8]">
-          BlockRock manages assets with a
-          new system where incentives, governance, and execution are rebuilt
+        <p style={{ fontSize: 22, lineHeight: "26px" }} className="text-text-secondary">
+          BlockRock rebuilds incentives, governance, and execution
           from first principles.
         </p>
         <Gap h={12} />
 
         <GoldDivider />
-        <Gap h={12} />
+        <Gap h={40} />
 
         {/* ── Ownership ── */}
         <h3 style={sectionHead}>Ownership</h3>
-        <Gap h={2} />
-        <p style={{ ...body, fontWeight: 600, color: "var(--accent-cyan)" }}>
-          Who benefits
-        </p>
-        <Gap h={3} />
+        <Gap h={4} />
         <p style={body}>
-          Tokenholders are the primary beneficiaries of fund performance via
-          treasury backing. Minimal management fees are funded transparently from
+          <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>Tokenholders are the primary beneficiaries of fund performance via
+          treasury backing.</span> Minimal management fees are funded transparently from
           the treasury and adjustable via governance. No percentage-based skimming.
+        </p>
+        <Gap h={12} />
+        <p style={body}>
           Tokens also enable borderless access. Anyone with a
           wallet can hold the token, bypassing the geographic and accreditation
           barriers of traditional funds.
         </p>
-        <Gap h={12} />
+        <Gap h={30} />
 
         {/* ── Futarchy ── */}
         <h3 style={sectionHead}>Futarchy</h3>
-        <Gap h={2} />
-        <p style={{ ...body, fontWeight: 600, color: "var(--accent-cyan)" }}>
-          How decisions get made
-        </p>
-        <Gap h={3} />
+        <Gap h={4} />
         <p style={body}>
           Governance uses conditional decision markets. When a proposal enters,
           two markets open: one pricing the token if the proposal is adopted,
           another if rejected. At the end of the period, the condition with the
           highest time-weighted average price wins.
         </p>
-        <Gap h={4} />
-        <p style={body}>This mechanism:</p>
-        <Gap h={4} />
+        <Gap h={6} />
         <div
           style={{
             paddingLeft: 10,
             display: "flex",
             flexDirection: "column",
-            gap: 4,
+            gap: 6,
           }}
         >
           <Bullet>
             <span style={bold}>Replaces committees with markets.</span> No
             boardroom politics, no career risk aversion, no consensus-seeking.
-            Decisions are priced by participants with capital at stake to maximize
-            risk-adjusted returns.
+            <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}> Decisions are priced by participants with capital at stake to maximize
+            risk-adjusted returns.</span>
           </Bullet>
           <Bullet>
             <span style={bold}>Operates continuously.</span> Speed of capital movement
@@ -585,69 +582,69 @@ export default function CharterSlidesPage() {
             incentivizes better decision-making.
           </Bullet>
         </div>
-        <Gap h={12} />
+        <Gap h={30} />
 
         {/* ── AI ── */}
         <h3 style={sectionHead}>AI</h3>
-        <Gap h={2} />
-        <p style={{ ...body, fontWeight: 600, color: "var(--accent-cyan)" }}>
-          How work gets done
-        </p>
-        <Gap h={3} />
-        <p style={body}>
-          AI agents act as always-on analysts, ingesting live data, market
-          signals, and macro context to generate a continuous stream of
-          proposals. Critically:
-        </p>
         <Gap h={4} />
-        <div
-          style={{
-            paddingLeft: 10,
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-          }}
-        >
-          <Bullet>
-            <span style={bold}>They propose, never execute.</span> AI agents
-            have no authority to force decisions &mdash; only to submit ideas to the
-            governance layer. Their proposals compete with human submissions on
-            equal footing.
-          </Bullet>
-          <Bullet>
-            <span style={bold}>
-              They are judged purely by market pricing.
-            </span>{" "}
-            No institutional bias filters their ideas. Good proposals win
-            regardless of source.
-          </Bullet>
-          <Bullet>
-            <span style={bold}>
-              They scale with compute, not headcount.
-            </span>{" "}
-            As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.
-          </Bullet>
+        <p style={body}>
+          Agents act as always-on analysts, ingesting live data, market
+          signals, and macro context to generate a continuous stream of
+          proposals. AI agents have no authority to force decisions, only to submit ideas to the
+          governance layer. Their proposals compete with human submissions on
+          equal footing. Good proposals win regardless of source.
+          <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}> As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.</span>
+        </p>
         </div>
-        <Gap h={20} />
+      </Slide>
 
-        {/* ── Positive Flywheel ── */}
+      {/* ════════════════════════════════════════════════════════
+          SLIDE 5 — Flywheel + User Experience
+          ════════════════════════════════════════════════════════ */}
+      <Slide id="slide-5" padding={48}>
+        <div className="flex flex-col justify-center flex-1">
+        <p
+          style={{ fontSize: 24, letterSpacing: "0.25em" }}
+          className="font-semibold uppercase text-[#DDB110]"
+        >
+          How
+        </p>
+        <Gap h={0} />
+
+        <h2
+          style={{ fontSize: 28, lineHeight: 1.15 }}
+          className="font-bold tracking-tight text-text-primary"
+        >
+          BlockRock&apos;s Principles
+        </h2>
+        <Gap h={6} />
+
+        <p style={{ fontSize: 22, lineHeight: "26px" }} className="text-text-secondary">
+          BlockRock rebuilds incentives, governance, and execution from first principles.
+        </p>
+        <Gap h={12} />
+
+        <GoldDivider />
+        <Gap h={40} />
+
         <h3 style={sectionHead}>The Positive Flywheel</h3>
-        <Gap h={3} />
+        <Gap h={4} />
         <p style={body}>
           BlockRock inverts the traditional cycle of bloat and extraction:
         </p>
-        <Gap h={6} />
-        <Card style={{ padding: "10px 16px", borderLeft: "3px solid #DDB110" }}>
-          <p style={{ ...body, color: "var(--text-secondary)" }}>
+        <Gap h={12} />
+
+        <Card style={{ padding: "16px 20px", borderLeft: "3px solid #DDB110" }}>
+          <p style={{ ...body, color: "var(--accent-cyan)", fontWeight: 600 }}>
             ownership incentivizes proposals &rarr; proposals create mispricings &rarr; mispricings attract traders &rarr; traders improve decisions &rarr; good decisions improve fund performance &rarr; fund performance pumps token &rarr; pumps invite ownership
           </p>
         </Card>
-        <Gap h={20} />
+        <Gap h={40} />
 
         {/* ── User Experience ── */}
         <h3 style={sectionHead}>The Resulting User Experience</h3>
-        <Gap h={8} />
-        <div className="grid grid-cols-2" style={{ gap: 12 }}>
+        <Gap h={12} />
+        <div className="grid grid-cols-2" style={{ gap: 16 }}>
           {[
             {
               label: "Passive Holders",
@@ -660,14 +657,14 @@ export default function CharterSlidesPage() {
                 "Submit proposals, trade decision markets, and profit for accurate judgment.",
             },
           ].map((d) => (
-            <Card key={d.label} style={{ padding: "12px 16px" }}>
+            <Card key={d.label} style={{ padding: "16px 20px" }}>
               <p
-                style={{ fontSize: 16, fontWeight: 600, color: "#DDB110" }}
+                style={{ fontSize: 22, fontWeight: 600, color: "#DDB110" }}
                 className="mb-1"
               >
                 {d.label}
               </p>
-              <p style={{ fontSize: 16, lineHeight: "18px", color: "var(--text-secondary)" }}>
+              <p style={{ fontSize: 22, lineHeight: "26px", color: "var(--text-primary)" }}>
                 {d.detail}
               </p>
             </Card>
@@ -677,33 +674,33 @@ export default function CharterSlidesPage() {
       </Slide>
 
       {/* ════════════════════════════════════════════════════════
-          SLIDE 5 — What
+          SLIDE 6 — What
           ════════════════════════════════════════════════════════ */}
-      <Slide id="slide-5" padding={48}>
+      <Slide id="slide-6" padding={48}>
         <div className="flex flex-col justify-center flex-1">
         <p
-          style={{ fontSize: 16, letterSpacing: "0.25em" }}
+          style={{ fontSize: 24, letterSpacing: "0.25em" }}
           className="font-semibold uppercase text-[#DDB110]"
         >
           What
         </p>
-        <Gap h={8} />
+        <Gap h={0} />
 
         <h2
           style={{ fontSize: 28, lineHeight: 1.15 }}
-          className="font-bold tracking-tight text-[#e8edf5]"
+          className="font-bold tracking-tight text-text-primary"
         >
           BlockRock in Practice
         </h2>
         <Gap h={6} />
 
-        <p style={{ fontSize: 16, lineHeight: "18px" }} className="text-[#94a3b8]">
+        <p style={{ fontSize: 22, lineHeight: "26px" }} className="text-text-secondary">
           The playbook for launching, operating, and scaling BlockRock.
         </p>
         <Gap h={12} />
 
         <GoldDivider />
-        <Gap h={12} />
+        <Gap h={40} />
 
         {/* ── Launch ── */}
         <h3 style={sectionHead}>Launch</h3>
@@ -713,30 +710,34 @@ export default function CharterSlidesPage() {
           launchpad, which provides full-stack futarchy governance with legal
           enforcement, so that token value is tied to treasury value.
         </p>
-        <Gap h={6} />
-        <p style={body}>
+        <Gap h={12} />
+        <p style={{ ...body, color: "var(--accent-cyan)", fontWeight: 600 }}>
           BlockRock&apos;s flagship fund launches first with a mandate for a
           moderate risk strategy to maximize Sortino ratio (penalizing downside
           volatility) by allocating the treasury into a portfolio of onchain
-          positions. 95% of tokens are distributed to ICO participants at the
+          positions.
+        </p>
+        <Gap h={12} />
+        <p style={body}>
+        95% of tokens are distributed to ICO participants at the
           same price. The remaining 5% is allocated to the founding team, which
           unlocks at 30-day TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. An
           $8K allowance per month is allocated to the team for supporting infrastructure.
         </p>
-        <Gap h={6} />
+        <Gap h={12} />
         <p style={body}>
-          BlockRock may launch additional funds in the future, each with a unique
-          mandate and risk profile.
+          BlockRock may launch additional funds in the future with unique
+          mandates and risk profiles.
         </p>
-        <Gap h={20} />
+        <Gap h={40} />
 
         {/* ── Operation ── */}
         <h3 style={sectionHead}>Operations</h3>
-        <Gap h={4} />
+        <Gap h={6} />
         <p style={body}>
           Every fund operation follows the same decision cycle:
         </p>
-        <Gap h={6} />
+        <Gap h={12} />
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {[
             {
@@ -762,7 +763,7 @@ export default function CharterSlidesPage() {
             >
               <span
                 style={{
-                  fontSize: 18,
+                  fontSize: 22,
                   fontFamily: "var(--font-geist-mono), monospace",
                   lineHeight: 1,
                   color: "var(--accent-cyan)",
@@ -775,7 +776,7 @@ export default function CharterSlidesPage() {
               </span>
               <div>
                 <span
-                  style={{ fontSize: 16, fontWeight: 600, color: "var(--text-primary)" }}
+                  style={{ fontSize: 22, fontWeight: 600, color: "var(--text-primary)" }}
                 >
                   {step.title}
                 </span>
@@ -784,13 +785,43 @@ export default function CharterSlidesPage() {
             </Card>
           ))}
         </div>
-        <Gap h={20} />
+        </div>
+      </Slide>
+
+      {/* ════════════════════════════════════════════════════════
+          SLIDE 7 — What (continued)
+          ════════════════════════════════════════════════════════ */}
+      <Slide id="slide-7" padding={48}>
+        <div className="flex flex-col justify-center flex-1">
+        <p
+          style={{ fontSize: 24, letterSpacing: "0.25em" }}
+          className="font-semibold uppercase text-[#DDB110]"
+        >
+          What
+        </p>
+        <Gap h={0} />
+
+        <h2
+          style={{ fontSize: 28, lineHeight: 1.15 }}
+          className="font-bold tracking-tight text-text-primary"
+        >
+          BlockRock in Practice
+        </h2>
+        <Gap h={6} />
+
+        <p style={{ fontSize: 22, lineHeight: "26px" }} className="text-text-secondary">
+          The playbook for launching, operating, and scaling BlockRock.
+        </p>
+        <Gap h={12} />
+
+        <GoldDivider />
+        <Gap h={40} />
 
         {/* ── Distribution ── */}
         <h3 style={sectionHead}>Distributions</h3>
         <Gap h={4} />
         <p style={body}>
-          Any token holder can submit a proposal to distribute value to holders via buybacks, dividends, or liquidation. If the decision market resolves in favor of a distribution, the treasury is automatically distributed according to the proposal.
+          Any token holder can submit a proposal to distribute value to holders via buybacks, dividends, or liquidation.<span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}> If a decision market resolves in favor of a distribution, the treasury is automatically distributed according to the proposal.</span>
         </p>
         <Gap h={20} />
 
@@ -798,7 +829,7 @@ export default function CharterSlidesPage() {
         <h3 style={sectionHead}>Communications</h3>
         <Gap h={4} />
         <p style={body}>
-          BlockRock is a spectator sport. Everyday, anyone interested in financial markets can check BlockRock to see strategists proposing investment theses, traders battling to approve or reject proposals, and the fund&apos;s portfolio growing in lockstep with the token. Every decision market resolution is an official verdict, automatically executed by smart contracts. Updates are shared on X (Twitter) via @blockrockfund.
+          <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>BlockRock is a spectator sport.</span> Everyday, anyone interested in financial markets can check BlockRock to see strategists proposing investment theses, traders battling to approve or reject proposals, and the fund&apos;s portfolio growing in lockstep with the token. Every decision market resolution is an official verdict, automatically executed by smart contracts. Updates are shared on X (Twitter) via @blockrockfund.
         </p>
         <Gap h={20} />
 
@@ -806,23 +837,32 @@ export default function CharterSlidesPage() {
         <h3 style={sectionHead}>Scaling</h3>
         <Gap h={4} />
         <p style={body}>
-          BlockRock is designed to scale to trillions in assets under management. The token&apos;s mint authority is governed by futarchy. So decision markets can approve additional fundraises with new token mints, while avoiding unfair dilution. BlockRock funds expand when governance deems it bullish.
+          BlockRock is designed to scale to trillions in assets under management. The token&apos;s mint authority is governed by futarchy. So decision markets can approve additional fundraises with new token mints, while avoiding unfair dilution.<span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}> BlockRock funds expand when governance deems it bullish.</span>
         </p>
         <Gap h={20} />
 
-        {/* ── Disclaimer ── */}
-        <div
-          style={{
-            borderTop: "1px solid rgba(221,177,16,0.08)",
-            paddingTop: 8,
-          }}
-        >
+        </div>
+      </Slide>
+
+      {/* ════════════════════════════════════════════════════════
+          SLIDE 8 — Fin / Disclaimer
+          ════════════════════════════════════════════════════════ */}
+      <Slide id="slide-8" padding={48}>
+        <div className="flex flex-col items-center justify-center flex-1" style={{ textAlign: "center" }}>
+          <h2
+            style={{ fontSize: 52, lineHeight: 1.1 }}
+            className="font-bold tracking-tight text-[#DDB110]"
+          >
+            Fin.
+          </h2>
+          <Gap h={48} />
           <p
             style={{
-              fontSize: 14,
-              lineHeight: "16px",
-              color: "#94a3b8",
+              fontSize: 18,
+              lineHeight: "22px",
+              color: "var(--text-secondary)",
               fontStyle: "italic",
+              maxWidth: "75%",
             }}
           >
             This charter is for informational purposes only. It
@@ -831,7 +871,6 @@ export default function CharterSlidesPage() {
             highly volatile and carry significant risk. Consult a qualified
             financial advisor before making investment decisions.
           </p>
-        </div>
         </div>
       </Slide>
     </div>

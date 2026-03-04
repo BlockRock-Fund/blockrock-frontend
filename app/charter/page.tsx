@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShieldCheck, TrendingUp, Bot } from "lucide-react";
 import TableOfContents from "./toc";
 
 /* ── tiny helpers ────────────────────────────────────────────── */
@@ -53,7 +53,7 @@ export default function CharterPage() {
         <div className="flex gap-12 items-start">
           <TableOfContents />
 
-          <article className="min-w-0 max-w-3xl flex-1 space-y-0 [&>h2:first-child]:mt-0">
+          <article className="min-w-0 max-w-3xl flex-1 space-y-0 text-lg [&>h2:first-child]:mt-0">
             {/* ── Summary ────────────────────────────────────────── */}
             <MajorHeading id="summary">Summary</MajorHeading>
 
@@ -63,21 +63,22 @@ export default function CharterPage() {
 
             {/* callout */}
             <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
-              <p className="text-text-secondary leading-relaxed">
-              <span className="text-text-primary font-bold mb-2">BlockRock</span> is an &ldquo;ownership fund&rdquo; on Solana with treasury-backed tokens, decision markets, and AI agents to help people grow wealth with confidence.
+              <p className="text-text-primary leading-relaxed">
+              <span className="text-accent-cyan font-bold mb-2">BlockRock</span> is an &ldquo;ownership fund&rdquo; on Solana with treasury-backed tokens, decision markets, and AI agents to help people grow wealth with confidence.
               </p>
             </div>
 
             {/* three pillars */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               {[
-                { stat: "Ownership", detail: "Ironclad investor protections." },
-                { stat: "Futarchy", detail: "Decision markets prioritize performance." },
-                { stat: "AI", detail: "Automated alpha generation." },
+                { stat: "Ownership", detail: "Ironclad investor protections", icon: <ShieldCheck size={28} strokeWidth={1.5} className="text-accent-cyan" /> },
+                { stat: "Futarchy", detail: "Performance-optimized decisions", icon: <TrendingUp size={28} strokeWidth={1.5} className="text-accent-cyan" /> },
+                { stat: "AI", detail: "Agentic alpha\ngeneration", icon: <Bot size={28} strokeWidth={1.5} className="text-accent-cyan" /> },
               ].map((d) => (
-                <div key={d.stat} className="glass rounded-xl p-5 text-center">
-                  <p className="text-2xl font-bold text-accent-cyan mb-1">{d.stat}</p>
-                  <p className="text-text-secondary leading-relaxed">{d.detail}</p>
+                <div key={d.stat} className="glass rounded-xl p-5 text-center flex flex-col items-center">
+                  <div className="mb-2">{d.icon}</div>
+                  <p className="text-2xl font-bold text-text-primary mb-1">{d.stat}</p>
+                  <p className="text-text-secondary leading-relaxed whitespace-pre-line">{d.detail}</p>
                 </div>
               ))}
             </div>
@@ -85,21 +86,21 @@ export default function CharterPage() {
             {/* ── WHY ────────────────────────────────────────────── */}
             <MajorHeading id="why">Why: The Case for a New Kind of Asset Manager</MajorHeading>
             <p className="text-text-secondary leading-relaxed mb-10">
-              The $120T+ asset management industry is broken.
+              The $120T+ asset management industry is broken. <span className="text-accent-cyan font-semibold">Most actively managed funds underperform their benchmarks, especially after fees.</span>
             </p>
 
             {/* Fee Misalignment */}
             <SectionHeading id="fee-misalignment">Fee Misalignment</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-8">
-              BlackRock earns ~73% of its revenue from management fees tied to AUM. These fees are collected regardless of fund performance. Performance fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture (e.g. BlackRock&apos;s shifting ESG stance tracking institutional clout instead of investment merit).
+              BlackRock earns ~73% of its revenue from management fees. These fees are collected regardless of fund performance. Performance fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture (e.g. BlackRock&apos;s shifting ESG stance chasing institutional clout).
             </p>
 
             {/* Regulatory Restrictions */}
             <SectionHeading id="regulatory-restrictions">Regulatory Restrictions</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Dense multi-jurisdictional regulation hinders performance. Compliance delays action, fiduciary standards push for conservative allocations, and cross-border restrictions fragment strategy. The gap between how capital <em>should</em> move and how it <em>can</em> move is a compounding drag on returns.
+              Dense regulation hinders performance. Compliance delays action, fiduciary standards prefer conservative allocations, and cross-border restrictions fragment strategy. The gap between how capital <em>should</em> move and how it <em>can</em> move drags down returns.
             </p>
 
             {/* Organizational Complexity */}
@@ -117,14 +118,10 @@ export default function CharterPage() {
             </p>
 
             <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
-              <p className="text-text-secondary leading-relaxed">
+              <p className="text-accent-cyan font-semibold leading-relaxed">
                 fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity + compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
               </p>
             </div>
-
-            <p className="text-accent-cyan font-semibold leading-relaxed mb-8">
-              Most actively managed funds underperform their benchmarks, especially after fees.
-            </p>
 
             {/* Why Now */}
             <SectionHeading id="why-now">Why Now</SectionHeading>
@@ -137,12 +134,16 @@ export default function CharterPage() {
             <SubHeading>Peak Uncertainty</SubHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Investment conviction is at an all-time low. Growing (let alone preserving) wealth is more difficult, time-consuming, and anxiety-inducing than ever.
+              Investment conviction is at an all-time low.
+            </p>
+
+            <p className="text-accent-cyan font-semibold leading-relaxed mb-6">
+              Growing (let alone preserving) wealth is more difficult, time-consuming, and anxiety-inducing than ever.
             </p>
 
             <ul className="list-disc pl-5 space-y-2 text-text-secondary leading-relaxed mb-10">
               <li>Stocks ranging at all-time highs</li>
-              <li>Precious metals swinging more violently than ever</li>
+              <li>Precious metals swinging violently</li>
               <li>USD reserve status being questioned</li>
               <li>AI threatening to displace white-collar work</li>
               <li>Crypto underperforming expectations</li>
@@ -152,7 +153,7 @@ export default function CharterPage() {
             <SubHeading>Ownership Infrastructure</SubHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              MetaDAO&apos;s permissionless launchpad lets anyone launch an &quot;ownership coin&quot; whose value is tied to a futarchy-governed treasury. This infrastructure is battle-tested and soon becoming publicly available.
+              MetaDAO&apos;s permissionless launchpad lets anyone launch an &quot;ownership coin&quot; whose value is tied to a futarchy-governed treasury. This infrastructure is battle-tested and now publicly available.
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -164,14 +165,14 @@ export default function CharterPage() {
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Liquid asset allocation for risk-adjusted returns gives futarchy the pricing efficiency it requires. Decision markets can evaluate portfolio construction, yield strategies, and value accrual more effectively than illiquid VC bets.
+              Liquid asset allocation for risk-adjusted returns gives futarchy the pricing efficiency it requires. <span className="text-accent-cyan font-semibold">Decision markets can evaluate portfolio construction, yield strategies, and value accrual better than illiquid VC bets.</span>
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
               Proof of safety: When MtnCapital wound down, holders received their proportional share of
               the treasury through the protocol&apos;s built-in liquidation mechanism. The
-              system&apos;s guarantees worked as intended. Even in
-              failure, no value was lost to extraction or mismanagement.
+              system&apos;s guarantees worked as intended. <span className="text-accent-cyan font-semibold">Even in
+              failure, no value is lost to extraction or mismanagement.</span>
             </p>
 
             {/* Onchain Assets */}
@@ -181,8 +182,8 @@ export default function CharterPage() {
               The universe of investable assets on Solana is expanding rapidly. Spot markets, perpetual futures, lending markets, structured yield products, and RWAs (tokenized stocks, bonds, commodities, etc.) are accessible onchain with deep liquidity and composable infrastructure.
             </p>
 
-            <p className="text-text-secondary leading-relaxed mb-10">
-              A fund operating entirely onchain is no longer limited to a handful of tokens. The breadth of positions available now rivals what traditional asset managers can access, without the friction.
+            <p className="text-accent-cyan font-semibold leading-relaxed mb-10">
+              The breadth of onchain assets available now rivals what traditional asset managers can access, without the friction.
             </p>
 
             {/* ── HOW ────────────────────────────────────────────── */}
@@ -194,12 +195,8 @@ export default function CharterPage() {
             {/* Layer 1: Ownership */}
             <SectionHeading id="ownership">Ownership</SectionHeading>
 
-            <p className="text-text-secondary leading-relaxed mb-2">
-              <strong className="text-accent-cyan">Who benefits</strong>
-            </p>
-
             <p className="text-text-secondary leading-relaxed mb-6">
-              Tokenholders are the primary beneficiaries of fund performance via treasury backing. Minimal management fees are funded transparently from the treasury and adjustable via governance. No percentage-based skimming.
+              <span className="text-accent-cyan">Tokenholders are the primary beneficiaries of fund performance via treasury backing.</span> Minimal management fees are funded transparently from the treasury and adjustable via governance. No percentage-based skimming.
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -209,26 +206,18 @@ export default function CharterPage() {
             {/* Layer 2: Futarchy Governance */}
             <SectionHeading id="futarchy">Futarchy</SectionHeading>
 
-            <p className="text-text-secondary leading-relaxed mb-2">
-              <strong className="text-accent-cyan">How decisions get made</strong>
-            </p>
-
             <p className="text-text-secondary leading-relaxed mb-6">
               Governance uses conditional decision markets. When a proposal enters, two markets open: one pricing the token if the proposal is adopted, another if rejected. At the end of the period, the condition with the highest time-weighted average price wins.
             </p>
 
             <ul className="list-disc pl-5 space-y-3 text-text-secondary leading-relaxed mb-8">
-              <li><strong className="text-text-primary">Replaces committees with markets.</strong> No boardroom politics, no career risk aversion, no consensus-seeking. Decisions are priced by participants with capital at stake to maximize risk-adjusted returns.</li>
+              <li><strong className="text-text-primary">Replaces committees with markets.</strong> No boardroom politics, no career risk aversion, no consensus-seeking. <span className="text-accent-cyan font-semibold">Decisions are priced by participants with capital at stake to maximize risk-adjusted returns.</span></li>
               <li><strong className="text-text-primary">Operates continuously.</strong> Speed of capital movement matches speed of opportunity.</li>
               <li><strong className="text-text-primary">Reinforces incentive alignment.</strong> Because participants are token-holders pricing outcomes, the governance layer inherits the ownership layer&apos;s alignment. Self-interested pricing incentivizes better decision-making.</li>
             </ul>
 
             {/* Layer 3: AI Agents */}
             <SectionHeading id="ai">AI</SectionHeading>
-
-            <p className="text-text-secondary leading-relaxed mb-2">
-              <strong className="text-accent-cyan">How work gets done</strong>
-            </p>
 
             <p className="text-text-secondary leading-relaxed mb-4">
               AI agents act as always-on analysts, ingesting live data, market signals, and macro context to generate a continuous stream of proposals. Critically:
@@ -237,7 +226,7 @@ export default function CharterPage() {
             <ul className="list-disc pl-5 space-y-3 text-text-secondary leading-relaxed mb-6">
               <li><strong className="text-text-primary">They propose, never execute.</strong> AI agents have no authority to force decisions &mdash; only to submit ideas to the governance layer. Their proposals compete with human submissions on equal footing.</li>
               <li><strong className="text-text-primary">They are judged purely by market pricing.</strong> No institutional bias filters their ideas. Good proposals win regardless of source.</li>
-              <li><strong className="text-text-primary">They scale with compute, not headcount.</strong> As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.</li>
+              <li><strong className="text-text-primary">They scale with compute, not headcount.</strong> <span className="text-accent-cyan font-semibold">As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.</span></li>
             </ul>
 
             {/* Positive Flywheel */}
@@ -248,7 +237,7 @@ export default function CharterPage() {
             </p>
 
             <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
-              <p className="text-text-secondary leading-relaxed">
+              <p className="text-accent-cyan font-semibold leading-relaxed">
                 ownership incentivizes proposals &rarr; proposals create mispricings &rarr; mispricings attract traders &rarr; traders improve decisions &rarr; good decisions improve fund performance &rarr; fund performance pumps token &rarr; pumps invite ownership
               </p>
             </div>
@@ -262,8 +251,8 @@ export default function CharterPage() {
                 { label: "Active Investors", detail: "Submit proposals, trade decision markets, and profit for accurate judgment." },
               ].map((d) => (
                 <div key={d.label} className="glass rounded-xl p-5">
-                  <p className="text-base font-semibold text-accent-cyan mb-2">{d.label}</p>
-                  <p className="text-text-secondary leading-relaxed">{d.detail}</p>
+                  <p className="font-semibold text-accent-cyan mb-2">{d.label}</p>
+                  <p className="text-text-primary leading-relaxed">{d.detail}</p>
                 </div>
               ))}
             </div>
@@ -282,11 +271,15 @@ export default function CharterPage() {
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              BlockRock&apos;s flagship fund launches first with a mandate for a moderate risk strategy to maximize Sortino ratio (penalizing downside volatility) by allocating the treasury into a portfolio of onchain positions. 95% of tokens are distributed to ICO participants at the same price. The remaining 5% is allocated to the founding team, which unlocks at 30-day TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. An $8K allowance per month is allocated to the team for supporting infrastructure.
+              BlockRock&apos;s flagship fund launches first with a mandate for a moderate risk strategy to maximize Sortino ratio (penalizing downside volatility) by allocating the treasury into a portfolio of onchain positions.
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              BlockRock may launch additional funds in the future, each with a unique mandate and risk profile.
+              95% of tokens are distributed to ICO participants at the same price. The remaining 5% is allocated to the founding team, which unlocks at 30-day TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. An $8K allowance per month is allocated to the team for supporting infrastructure.
+            </p>
+
+            <p className="text-text-secondary leading-relaxed mb-6">
+              BlockRock may launch additional funds in the future with unique mandates and risk profiles.
             </p>
 
             {/* Operations */}
@@ -316,21 +309,21 @@ export default function CharterPage() {
             <SectionHeading id="distribution">Distributions</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Any token holder can submit a proposal to distribute value to holders via buybacks, dividends, or liquidation. If the decision market resolves in favor of a distribution, the treasury is automatically distributed according to the proposal.
+              Any token holder can submit a proposal to distribute value to holders via buybacks, dividends, or liquidation. <span className="text-accent-cyan font-semibold">If a decision market resolves in favor of a distribution, the treasury is automatically distributed according to the proposal.</span>
             </p>
 
             {/* Communications */}
             <SectionHeading id="communications">Communications</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              BlockRock is a spectator sport. Everyday, anyone interested in financial markets can check BlockRock to see strategists proposing investment theses, traders battling to approve or reject proposals, and the fund&apos;s portfolio growing in lockstep with the token. Every decision market resolution is an official verdict, automatically executed by smart contracts. Updates are shared on X (Twitter) via @blockrockfund.
+              <span className="text-accent-cyan font-semibold">BlockRock is a spectator sport.</span> Everyday, anyone interested in financial markets can check BlockRock to see strategists proposing investment theses, traders battling to approve or reject proposals, and the fund&apos;s portfolio growing in lockstep with the token. Every decision market resolution is an official verdict, automatically executed by smart contracts. Updates are shared on X (Twitter) via @blockrockfund.
             </p>
 
             {/* Scaling */}
             <SectionHeading id="scaling">Scaling</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              BlockRock is designed to scale to trillions in assets under management. The token&apos;s mint authority is governed by futarchy. So decision markets can approve additional fundraises with new token mints, while avoiding unfair dilution. BlockRock funds expand when governance deems it bullish.
+              BlockRock is designed to scale to trillions in assets under management. The token&apos;s mint authority is governed by futarchy. So decision markets can approve additional fundraises with new token mints, while avoiding unfair dilution. <span className="text-accent-cyan font-semibold">BlockRock funds expand when governance deems it bullish.</span>
             </p>
 
             {/* ── Disclaimer ──────────────────────────────────── */}
