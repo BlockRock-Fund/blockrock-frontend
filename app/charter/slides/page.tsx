@@ -219,8 +219,7 @@ export default function CharterSlidesPage() {
           style={{ fontSize: 22, lineHeight: "32px" }}
           className="text-[#94a3b8]"
         >
-          Ownership funds on Solana using treasury-backed tokens, decision
-          markets, and AI agents
+          The ownership fund helping people grow wealth with confidence
         </p>
         <Gap h={24} />
 
@@ -233,8 +232,7 @@ export default function CharterSlidesPage() {
         >
           Asset managers (e.g. BlackRock, Vanguard, Fidelity) help people grow
           their wealth. But traditional asset managers suffer from
-          structural problems &mdash; fee misalignment, regulatory restrictions,
-          and organizational complexity &mdash; causing underperformance.
+          structural problems that cause underperformance.
         </p>
         <Gap h={20} />
 

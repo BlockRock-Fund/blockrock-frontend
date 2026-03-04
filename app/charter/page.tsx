@@ -58,7 +58,7 @@ export default function CharterPage() {
             <MajorHeading id="summary">Summary</MajorHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Asset managers (e.g. BlackRock, Vanguard, Fidelity) help people grow their wealth. But traditional asset managers suffer from structural problems &mdash; fee misalignment, regulatory restrictions, and organizational complexity &mdash; causing underperformance.
+              Asset managers (e.g. BlackRock, Vanguard, Fidelity) help people grow their wealth. But traditional asset managers suffer from structural problems that cause underperformance.
             </p>
 
             {/* callout */}
@@ -119,7 +119,7 @@ export default function CharterPage() {
 
             <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
               <p className="text-text-secondary leading-relaxed">
-                Fee models incentivize scale &rarr; Scale demands complexity &rarr; Complexity invites conservative compliance &rarr; Compliance slows decisions &rarr; Slow decisions reduce performance &rarr; Fees come in anyway.
+                fee model incentivizes scale &rarr; scale demands complexity &rarr; complexity invites compliance &rarr; fee model + complexity + compliance = worse decisions &rarr; bad decisions reduce performance &rarr; fees come in anyway
               </p>
             </div>
 
@@ -218,10 +218,6 @@ export default function CharterPage() {
               Governance uses conditional decision markets. When a proposal enters, two markets open: one pricing the token if the proposal is adopted, another if rejected. At the end of the period, the condition with the highest time-weighted average price wins.
             </p>
 
-            <p className="text-text-secondary leading-relaxed mb-4">
-              This mechanism:
-            </p>
-
             <ul className="list-disc pl-5 space-y-3 text-text-secondary leading-relaxed mb-8">
               <li><strong className="text-text-primary">Replaces committees with markets.</strong> No boardroom politics, no career risk aversion, no consensus-seeking. Decisions are priced by participants with capital at stake to maximize risk-adjusted returns.</li>
               <li><strong className="text-text-primary">Operates continuously.</strong> Speed of capital movement matches speed of opportunity.</li>
@@ -242,12 +238,8 @@ export default function CharterPage() {
             <ul className="list-disc pl-5 space-y-3 text-text-secondary leading-relaxed mb-6">
               <li><strong className="text-text-primary">They propose, never execute.</strong> AI agents have no authority to force decisions &mdash; only to submit ideas to the governance layer. Their proposals compete with human submissions on equal footing.</li>
               <li><strong className="text-text-primary">They are judged purely by market pricing.</strong> No institutional bias filters their ideas. Good proposals win regardless of source.</li>
-              <li><strong className="text-text-primary">They scale with compute, not headcount.</strong> As AI capabilities grow, the fund&apos;s capability grows too.</li>
+              <li><strong className="text-text-primary">They scale with compute, not headcount.</strong> As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.</li>
             </ul>
-
-            <p className="text-text-secondary leading-relaxed mb-6">
-              This eliminates the 20,000-employee apparatus and the operational costs that drive fee pressure. It also shrinks the compliance surface, as fewer humans making discretionary calls means fewer points of regulatory exposure.
-            </p>
 
             {/* Positive Flywheel */}
             <SectionHeading id="positive-flywheel">The Positive Flywheel</SectionHeading>
@@ -256,9 +248,11 @@ export default function CharterPage() {
               BlockRock inverts the traditional cycle of bloat and extraction:
             </p>
 
-            <p className="text-text-secondary leading-relaxed">
-              Token ownership &rarr; Better-incentivized market participants &rarr; More accurate futarchy &rarr; Better AI proposal filtering &rarr; Stronger performance &rarr; Higher token value &rarr; More sophisticated participants &rarr; Repeat
-            </p>
+            <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
+              <p className="text-text-secondary leading-relaxed">
+                token ownership &rarr; better-incentivized market participants &rarr; more accurate futarchy &rarr; better proposal filtering &rarr; stronger performance &rarr; higher token value &rarr; more token ownership
+              </p>
+            </div>
 
             {/* The Resulting User Experience */}
             <SectionHeading id="user-experience">The Resulting User Experience</SectionHeading>
