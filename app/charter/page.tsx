@@ -93,7 +93,7 @@ export default function CharterPage() {
             <SectionHeading id="fee-misalignment">Fee Misalignment</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-8">
-              BlackRock earns ~73% of its revenue from management fees tied to AUM. These fees are collected regardless of fund performance. Performance fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture (e.g. BlackRock&apos;s shifting ESG stance tracking institutional demand instead of investment merit).
+              BlackRock earns ~73% of its revenue from management fees tied to AUM. These fees are collected regardless of fund performance. Performance fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture (e.g. BlackRock&apos;s shifting ESG stance tracking institutional clout instead of investment merit).
             </p>
 
             {/* Regulatory Restrictions */}

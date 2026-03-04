@@ -36,7 +36,7 @@ const agents = [
     image: "/agents/truckenmiller1.png",
     color: "bg-blue-500/20 text-blue-400 border-blue-500/30",
     description:
-      "Macro-driven strategist.",
+      "Head of alpha.",
     capabilities: [
       "Macro analysis",
       "Asset valuation",
