@@ -196,7 +196,7 @@ export default function CharterPage() {
             <SectionHeading id="ownership">Ownership</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-2">
-              <strong className="text-text-primary">Who benefits</strong>
+              <strong className="text-accent-cyan">Who benefits</strong>
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -211,7 +211,7 @@ export default function CharterPage() {
             <SectionHeading id="futarchy">Futarchy</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-2">
-              <strong className="text-text-primary">How decisions get made</strong>
+              <strong className="text-accent-cyan">How decisions get made</strong>
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -228,7 +228,7 @@ export default function CharterPage() {
             <SectionHeading id="ai">AI</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-2">
-              <strong className="text-text-primary">How work gets done</strong>
+              <strong className="text-accent-cyan">How work gets done</strong>
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-4">
@@ -250,7 +250,7 @@ export default function CharterPage() {
 
             <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
               <p className="text-text-secondary leading-relaxed">
-                token ownership &rarr; better-incentivized market participants &rarr; more accurate futarchy &rarr; better proposal filtering &rarr; stronger performance &rarr; higher token value &rarr; more token ownership
+                ownership incentivizes proposals &rarr; proposals create mispricings &rarr; mispricings attract traders &rarr; traders improve decisions &rarr; good decisions improve fund performance &rarr; fund performance pumps token &rarr; pumps invite ownership
               </p>
             </div>
 
@@ -283,7 +283,7 @@ export default function CharterPage() {
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              BlockRock&apos;s Flagship Fund launches first with a mandate for a moderate risk strategy to maximize Sortino ratio (penalizing downside volatility) by allocating the treasury into a portfolio of onchain positions. 95% of tokens are distributed to ICO participants at the same price. The remaining 5% is allocated to the founding team, which unlocks at 30-day TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. An $8K allowance per month is allocated to the team for supporting infrastructure.
+              BlockRock&apos;s flagship fund launches first with a mandate for a moderate risk strategy to maximize Sortino ratio (penalizing downside volatility) by allocating the treasury into a portfolio of onchain positions. 95% of tokens are distributed to ICO participants at the same price. The remaining 5% is allocated to the founding team, which unlocks at 30-day TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. An $8K allowance per month is allocated to the team for supporting infrastructure.
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
