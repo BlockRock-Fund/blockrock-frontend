@@ -10,7 +10,7 @@ Ownership funds on Solana using treasury-backed tokens, decision markets, and AI
 
 Asset managers (e.g. BlackRock, Vanguard, Fidelity) help people grow their wealth. But traditional asset managers suffer from structural problems — fee misalignment, regulatory restrictions, and organizational complexity — causing underperformance.
 
-> **BlockRock** is an "ownership fund" on Solana, which uses treasury-backed tokens, decision markets, and AI agents to help people grow wealth with confidence.
+> **BlockRock** is an "ownership fund" on Solana with treasury-backed tokens, decision markets, and AI agents to help people grow wealth with confidence.
 
 | Ownership | Futarchy | AI |
 |---|---|---|

@@ -246,7 +246,7 @@ export default function CharterSlidesPage() {
             className="text-[#94a3b8]"
           >
             <span style={bold}>BlockRock</span> is an &ldquo;ownership
-            fund&rdquo; on Solana, which uses treasury-backed tokens, decision
+            fund&rdquo; on Solana with treasury-backed tokens, decision
             markets, and AI agents to help people grow wealth with confidence.
           </p>
         </Card>

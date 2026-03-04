@@ -44,7 +44,7 @@ export default function CharterPage() {
             BlackRock on the Blockchain
           </h1>
           <p className="text-lg sm:text-xl text-text-secondary max-w-2xl mb-5">
-            Ownership Fund on Solana with treasury-backed token, decision markets, and AI agents.
+            The ownership fund helping people grow wealth with confidence
           </p>
           <div className="mt-6 h-px w-full bg-gradient-to-r from-accent-cyan/60 via-accent-cyan/20 to-transparent" />
         </header>
@@ -64,7 +64,7 @@ export default function CharterPage() {
             {/* callout */}
             <div className="glass rounded-xl p-6 border-l-4 border-accent-cyan mb-8">
               <p className="text-text-secondary leading-relaxed">
-              <span className="text-text-primary font-bold mb-2">BlockRock</span> is an &ldquo;ownership fund&rdquo; on Solana, which uses treasury-backed tokens, decision markets, and AI agents to help people grow wealth with confidence.
+              <span className="text-text-primary font-bold mb-2">BlockRock</span> is an &ldquo;ownership fund&rdquo; on Solana with treasury-backed tokens, decision markets, and AI agents to help people grow wealth with confidence.
               </p>
             </div>
 
