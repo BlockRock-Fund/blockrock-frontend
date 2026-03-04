@@ -8,21 +8,21 @@ import React from "react";
 /* ── style constants ────────────────────────────────────────── */
 
 const body: React.CSSProperties = {
-  fontSize: 16,
-  lineHeight: "18px",
+  fontSize: 20,
+  lineHeight: "22px",
   color: "#94a3b8",
 };
 
 const sectionHead: React.CSSProperties = {
-  fontSize: 18,
+  fontSize: 20,
   lineHeight: "22px",
   fontWeight: 700,
   color: "#e8edf5",
 };
 
 const subHead: React.CSSProperties = {
-  fontSize: 16,
-  lineHeight: "18px",
+  fontSize: 18,
+  lineHeight: "20px",
   fontWeight: 600,
   color: "#e8edf5",
 };
@@ -324,13 +324,13 @@ export default function CharterSlidesPage() {
         </h2>
         <Gap h={6} />
 
-        <p style={{ fontSize: 16, lineHeight: "18px" }} className="text-[#94a3b8]">
+        <p style={{ fontSize: 20, lineHeight: "22px" }} className="text-text-secondary">
           The $120T+ asset management industry runs on a broken model.
         </p>
         <Gap h={12} />
 
         <GoldDivider />
-        <Gap h={12} />
+        <Gap h={40} />
 
         {/* ── Fee Misalignment ── */}
         <h3 style={sectionHead}>Fee Misalignment</h3>
@@ -338,9 +338,9 @@ export default function CharterSlidesPage() {
         <p style={body}>
           BlackRock earns ~73% of its revenue from management fees tied to AUM.
           These fees are collected regardless of fund performance. Performance
-          fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture (e.g. BlackRock&apos;s shifting ESG stance tracking institutional demand instead of investment merit).
+          fees account for just ~5% of revenue. This incentivizes asset accumulation over performance, consensus-driven investing, and narrative capture.
         </p>
-        <Gap h={10} />
+        <Gap h={18} />
 
         {/* ── Regulatory Restrictions ── */}
         <h3 style={sectionHead}>Regulatory Restrictions</h3>
@@ -352,7 +352,7 @@ export default function CharterSlidesPage() {
           between how capital <em>should</em> move and how it <em>can</em> move
           is a compounding drag on returns.
         </p>
-        <Gap h={10} />
+        <Gap h={18} />
 
         {/* ── Organizational Complexity ── */}
         <h3 style={sectionHead}>Organizational Complexity</h3>
@@ -363,7 +363,7 @@ export default function CharterSlidesPage() {
           costs reinforce the pressure to prioritize asset gathering. For
           example, BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs (noise, not clarity).
         </p>
-        <Gap h={20} />
+        <Gap h={40} />
 
         {/* ── The Death Spiral ── */}
         <h3 style={sectionHead}>The Death Spiral</h3>
@@ -382,20 +382,42 @@ export default function CharterSlidesPage() {
             Fee models incentivize scale &rarr; Scale demands complexity &rarr;
             Complexity invites conservative compliance &rarr; Compliance slows
             decisions &rarr; Slow decisions reduce performance &rarr; Fees come
-            in anyway.
+            in anyway
           </p>
         </Card>
-        <Gap h={10} />
-        <p style={{ fontSize: 16, lineHeight: "18px", fontWeight: 600, color: "var(--accent-cyan)" }}>Traditional asset managers remain mediocre at the job investors hire them for. Most actively managed funds underperform their benchmarks, especially after fees.</p>
-        <Gap h={20} />
+        <Gap h={40} />
+        <p style={{ fontSize: 20, lineHeight: "22px", fontWeight: 600, color: "var(--accent-cyan)" }}>Traditional asset managers remain mediocre at the job investors hire them for. Most actively managed funds underperform their benchmarks, especially after fees.</p>
+        </div>
+      </Slide>
 
-        {/* ── Why Now ── */}
-        <h3 style={sectionHead}>Why Now</h3>
-        <Gap h={3} />
-        <p style={body}>
+      {/* ════════════════════════════════════════════════════════
+          SLIDE 3 — Why Now
+          ════════════════════════════════════════════════════════ */}
+      <Slide id="slide-3" padding={48}>
+        <div className="flex flex-col justify-center flex-1">
+        <p
+          style={{ fontSize: 16, letterSpacing: "0.25em" }}
+          className="font-semibold uppercase text-[#DDB110]"
+        >
+          Why
+        </p>
+        <Gap h={8} />
+
+        <h2
+          style={{ fontSize: 28, lineHeight: 1.15 }}
+          className="font-bold tracking-tight text-[#e8edf5]"
+        >
+          Why Now
+        </h2>
+        <Gap h={6} />
+
+        <p style={{ fontSize: 16, lineHeight: "18px" }} className="text-[#94a3b8]">
           Converging forces are opening a window of opportunity for a new kind of
           asset manager.
         </p>
+        <Gap h={12} />
+
+        <GoldDivider />
         <Gap h={12} />
 
         {/* two-column: left = Peak Uncertainty + Onchain Assets | right = Ownership Infrastructure */}
@@ -490,9 +512,9 @@ export default function CharterSlidesPage() {
       </Slide>
 
       {/* ════════════════════════════════════════════════════════
-          SLIDE 3 — How
+          SLIDE 4 — How
           ════════════════════════════════════════════════════════ */}
-      <Slide id="slide-3" padding={48}>
+      <Slide id="slide-4" padding={48}>
         <div className="flex flex-col justify-center flex-1">
         <p
           style={{ fontSize: 16, letterSpacing: "0.25em" }}
@@ -680,9 +702,9 @@ export default function CharterSlidesPage() {
       </Slide>
 
       {/* ════════════════════════════════════════════════════════
-          SLIDE 4 — What
+          SLIDE 5 — What
           ════════════════════════════════════════════════════════ */}
-      <Slide id="slide-4" padding={48}>
+      <Slide id="slide-5" padding={48}>
         <div className="flex flex-col justify-center flex-1">
         <p
           style={{ fontSize: 16, letterSpacing: "0.25em" }}

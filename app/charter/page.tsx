@@ -44,7 +44,7 @@ export default function CharterPage() {
             BlackRock on the Blockchain
           </h1>
           <p className="text-lg sm:text-xl text-text-secondary max-w-2xl mb-5">
-            Ownership funds on Solana using treasury-backed tokens, decision markets, and AI agents.
+            Ownership Fund on Solana with treasury-backed token, decision markets, and AI agents.
           </p>
           <div className="mt-6 h-px w-full bg-gradient-to-r from-accent-cyan/60 via-accent-cyan/20 to-transparent" />
         </header>
