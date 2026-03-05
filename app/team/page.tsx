@@ -143,20 +143,20 @@ function AgentCard({
           size={featured ? "lg" : "md"}
         />
 
-        <h3 className="mt-4 text-base font-semibold text-text-primary text-center">
+        <h3 className="mt-4 text-2xl font-semibold text-text-primary text-center">
           {agent.name}
         </h3>
-        <p className="text-sm text-accent-cyan text-center">{agent.title}</p>
+        <p className="text-lg text-accent-cyan text-center">{agent.title}</p>
 
-        <p className="mt-4 text-base text-text-primary leading-relaxed text-center">
+        {/* <p className="mt-4 text-lg text-text-primary leading-relaxed text-center">
           {agent.description}
-        </p>
+        </p> */}
 
         <ul className="mt-4 space-y-1.5">
           {agent.capabilities.map((cap) => (
             <li
               key={cap}
-              className="text-sm text-text-secondary flex items-center justify-center gap-2"
+              className="text-text-secondary flex items-center justify-center gap-2"
             >
               <span className="w-1 h-1 rounded-full bg-accent-cyan/60 shrink-0" />
               {cap}
