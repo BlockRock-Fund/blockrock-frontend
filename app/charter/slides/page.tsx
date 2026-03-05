@@ -853,7 +853,7 @@ export default function CharterSlidesPage() {
             style={{ fontSize: 52, lineHeight: 1.1 }}
             className="font-bold tracking-tight text-[#DDB110]"
           >
-            Fin.
+            Disclaimer
           </h2>
           <Gap h={48} />
           <p

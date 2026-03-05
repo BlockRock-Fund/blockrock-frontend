@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Twitter } from "lucide-react";
 import Logo from "../ui/Logo";
 
@@ -14,9 +15,14 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} BlockRock. All rights reserved.
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-text-muted">
+              &copy; {new Date().getFullYear()} BlockRock. All rights reserved.
+            </p>
+            <Link href="/terms" className="text-xs text-text-muted hover:text-accent-cyan transition-colors">
+              Terms
+            </Link>
+          </div>
           <a
             href="https://x.com/blockrockfund"
             target="_blank"
