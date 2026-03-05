@@ -5,66 +5,73 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-bun install          # Install dependencies
-bun dev              # Dev server on port 3000
-bun run build        # Production build
-bun run lint         # ESLint
+# Install (uses bun)
+bun install
+
+# Dev server (port 3000)
+bun dev
+
+# Build
+bun run build
+
+# Lint
+bun run lint
 ```
-
-## Tech Stack
-
-Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS v4, Bun.
 
 ## Architecture
 
-### Backend API Integration
+Next.js 16 App Router with TypeScript, Tailwind CSS v4, and React 19. Dark theme with gold accent.
 
-The frontend fetches live data from a FastAPI backend. The base URL comes from `NEXT_PUBLIC_API_URL` env var, falling back to the production Railway deployment.
+### Path Alias
 
-Two endpoints are consumed:
-- `GET /main-table` — All assets with snapshots and valuations (used in valuations page)
-- `GET /allocation/signals` — CAPE ratio, yield curve, HY spread with interpreted levels (used in portfolio page)
+`@/*` maps to the project root (configured in `tsconfig.json`).
 
-Data fetching uses `useEffect` + `fetch` in client components. There are no API route handlers (`app/api/` does not exist) and no server-side data fetching.
+### Pages (App Router)
 
-### Page Structure
-
-Live pages with backend data: `/research/valuations` (AG-Grid table), `/research/portfolio-builder` (Recharts visualizations), `/research/ai-markets` (long-form analysis with TOC).
-
-Long-form content pages: `/charter` (with sidebar TOC).
-
-Placeholder pages (center text only): `/markets`, `/treasury`, `/governance`, `/ecosystem`, `/agents`.
-
-Research subpages co-locate their data and components alongside `page.tsx` (e.g., `research/portfolio-builder/data.ts`, `research/portfolio-builder/charts.tsx`).
+- `/` — Landing page (HeroSection, FeaturesSection, StatsSection, CTASection)
+- `/charter`, `/charter/slides` — Charter/pitch deck content
+- `/research` — Research hub with sub-pages:
+  - `/research/valuations` — AG Grid table fetching `/main-table` endpoint
+  - `/research/signals` — Market signals fetching `/allocation/signals` endpoint
+  - `/research/portfolio-builder` — Portfolio construction tool
+  - `/research/ai-markets` — AI markets analysis
+- `/agents` — AI agent system with sub-pages: `/agents/chat`, `/agents/team`, `/agents/proposals`
+- `/portfolio`, `/markets`, `/treasury`, `/governance`, `/ecosystem` — Additional pages
+- `/terms` — Terms page
 
 ### Component Organization
 
-- `components/layout/` — MainNav (sticky nav + mobile hamburger), Footer, TopBar
-- `components/landing/` — HeroSection, FeaturesSection, CTASection, StatsSection
-- `components/ui/` — GlowButton (primary/secondary variants, renders as Link or button), NavLink (active state via `usePathname`), Logo, GridBackground
+- `components/landing/` — Landing page sections (HeroSection, FeaturesSection, StatsSection, CTASection)
+- `components/layout/` — MainNav, Footer, TopBar
+- `components/ui/` — Reusable primitives (GlowButton, GridBackground, Logo, NavLink, InfoTooltip)
+- `app/agents/components/` — Agent-specific components (ChatContainer, ChatMessage, ProposalsPanel, etc.)
+- Research sub-pages co-locate their chart/data modules (e.g., `app/research/signals/charts.tsx`, `data.ts`)
 
-### Client vs Server Components
+### Backend API Connection
 
-Interactive pages (`"use client"`): MainNav, NavLink, portfolio page, valuations page. Static/content-heavy pages are Server Components by default.
+Pages fetch from the backend using a consistent pattern:
 
-## Design System
+```typescript
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "https://blockrock-backend-production.up.railway.app";
+```
 
-Defined in `app/globals.css` using CSS custom properties mapped to Tailwind via `@theme inline`.
+Key endpoints consumed: `/main-table`, `/allocation/signals`, `/agents/proposals`, `/agents/chat`.
 
-**Colors**: Dark navy background (`--bg-primary: #050C22`), gold accent (`--accent-cyan: #DDB110` — named "cyan" but visually gold). Glass surfaces use `rgba(9, 22, 62, 0.6)` with gold-tinted borders.
+All data-fetching pages are `"use client"` components using `useEffect` + `useState`.
 
-**Custom utility classes** (defined in globals.css, not Tailwind config):
-- `.glass` / `.glass-strong` — Glassmorphism with backdrop-blur
-- `.gradient-border` — Animated gold-to-blue gradient border using CSS mask
-- `.glow-cyan` / `.glow-cyan-hover` — Gold glow box-shadow effects
-- `.glow-text` — Text shadow glow
-- `.grid-pattern` — Subtle repeating grid background
-- `.spotlight` — Radial gradient light effects for page backgrounds
+### Design System
 
-**Typography**: Geist Sans (body) and Geist Mono (code), loaded via `next/font/google` in root layout.
+Defined in `app/globals.css` with CSS custom properties mapped to Tailwind via `@theme inline`:
 
-**AG-Grid theming**: Custom dark theme styles for headers, tooltips, and scrollbars are in globals.css under `.ag-theme-alpine` overrides.
+- **Colors**: `bg-primary` (#050C22), `bg-secondary`, `bg-tertiary`, `accent-cyan` (#DDB110 — gold, despite the name), `text-primary`, `text-secondary`, `text-muted`
+- **Fonts**: Rubik (sans, `--font-rubik`) + Geist Mono (`--font-geist-mono`)
+- **Utility classes**: `.glass`, `.glass-strong` (glassmorphism), `.gradient-border`, `.glow-cyan`, `.glow-text`, `.spotlight`, `.grid-pattern`
+- **Animations**: `.animate-fade-in-up`, `.animate-pulse-glow`
 
-## Path Alias
+### Key Dependencies
 
-`@/*` maps to the project root (e.g., `import { Logo } from "@/components/ui/Logo"`).
+- **ag-grid-react** — Data tables (used in valuations page with custom headers/tooltips)
+- **recharts** — Charts (used in signals, portfolio-builder)
+- **lucide-react** — Icons
