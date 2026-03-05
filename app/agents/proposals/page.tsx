@@ -40,9 +40,7 @@ export default function ProposalsPage() {
     fetchProposals();
   }, []);
 
-  const sorted = [...proposals].sort(
-    (a, b) => new Date(b.proposal_date).getTime() - new Date(a.proposal_date).getTime(),
-  );
+  const sorted = [...proposals].sort((a, b) => b.confidence - a.confidence);
 
   return (
     <section className="py-8 sm:py-12">

@@ -34,7 +34,7 @@ export default function TableOfContents() {
 
   return (
     <nav className="hidden lg:block sticky top-28 self-start w-56 shrink-0">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-accent-cyan mb-4">
+      <p className="font-semibold uppercase tracking-widest text-accent-cyan mb-4">
         Contents
       </p>
       <ul className="space-y-1 border-l border-glass-border">
@@ -42,7 +42,7 @@ export default function TableOfContents() {
           <li key={s.id}>
             <a
               href={`#${s.id}`}
-              className={`block pl-4 py-1.5 text-[13px] transition-colors border-l-2 -ml-px ${
+              className={`block pl-4 py-1.5 text-sm transition-colors border-l-2 -ml-px ${
                 activeId === s.id
                   ? "border-accent-cyan text-accent-cyan font-medium"
                   : "border-transparent text-text-muted hover:text-text-secondary"

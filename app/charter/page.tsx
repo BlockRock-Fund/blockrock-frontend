@@ -134,12 +134,10 @@ export default function CharterPage() {
             <SubHeading>Peak Uncertainty</SubHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Investment conviction is at an all-time low.
+              Investment conviction is at an all-time low.<span className="text-accent-cyan font-semibold"> Growing (let alone preserving) wealth is more difficult, time-consuming, and anxiety-inducing than ever.</span>
             </p>
 
-            <p className="text-accent-cyan font-semibold leading-relaxed mb-6">
-              Growing (let alone preserving) wealth is more difficult, time-consuming, and anxiety-inducing than ever.
-            </p>
+            
 
             <ul className="list-disc pl-5 space-y-2 text-text-secondary leading-relaxed mb-10">
               <li>Stocks ranging at all-time highs</li>

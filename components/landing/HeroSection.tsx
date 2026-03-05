@@ -16,7 +16,7 @@ export default function HeroSection() {
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent-cyan/20 bg-accent-cyan/5 mb-6 animate-fade-in-up">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan animate-pulse-glow" />
-              <span className="text-sm font-normal text-accent-cyan tracking-wide">
+              <span className="font-normal text-accent-cyan tracking-wide">
                 Black<span className="font-extrabold">Rock</span> on the <span className="font-extrabold">Block</span>chain
               </span>
             </div>
@@ -26,7 +26,7 @@ export default function HeroSection() {
               className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6 animate-fade-in-up"
               style={{ animationDelay: "0.1s" }}
             >
-              Ownership Funds
+              Ownership Fund
             </h1>
 
             {/* Description */}
@@ -101,7 +101,7 @@ export default function HeroSection() {
               </div>
             </div>
             <p className="text-sm text-text-secondary mt-2 leading-tight text-center">
-              Actual portfolios are governed by decision markets to maximize risk-adjusted returns.
+              Actual portfolios is governed by decision markets to maximize risk-adjusted returns.
             </p>
           </div>
         </div>

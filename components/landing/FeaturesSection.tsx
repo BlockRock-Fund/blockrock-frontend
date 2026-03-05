@@ -2,21 +2,21 @@ import { ShieldCheck, TrendingUp, Bot } from "lucide-react";
 
 const features = [
   {
-    icon: <ShieldCheck size={28} strokeWidth={1.5} className="text-accent-cyan" />,
+    icon: <ShieldCheck size={36} strokeWidth={1.5} className="text-accent-cyan" />,
     title: "Ownership",
     description:
       "Ironclad investor protections",
     accent: "from-accent-cyan to-accent-blue",
   },
   {
-    icon: <TrendingUp size={28} strokeWidth={1.5} className="text-accent-cyan" />,
+    icon: <TrendingUp size={36} strokeWidth={1.5} className="text-accent-cyan" />,
     title: "Futarchy",
     description:
       "Performance-optimized decisions",
     accent: "from-accent-purple to-accent-blue",
   },
   {
-    icon: <Bot size={28} strokeWidth={1.5} className="text-accent-cyan" />,
+    icon: <Bot size={36} strokeWidth={1.5} className="text-accent-cyan" />,
     title: "AI",
     description:
       "Agentic alpha generation",
@@ -41,13 +41,13 @@ export default function FeaturesSection() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="gradient-border rounded-2xl p-6 sm:p-8 hover:scale-[1.02] transition-transform duration-300"
+              className="gradient-border rounded-2xl p-6 sm:p-8 hover:scale-[1.02] transition-transform duration-300 flex flex-col text-center items-center justify-center"
             >
               <div className="mb-5">{feature.icon}</div>
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
+              <h3 className="text-3xl font-semibold text-text-primary mb-3">
                 {feature.title}
               </h3>
-              <p className="text-text-secondary leading-relaxed">
+              <p className="text-xl text-text-secondary leading-relaxed">
                 {feature.description}
               </p>
             </div>
