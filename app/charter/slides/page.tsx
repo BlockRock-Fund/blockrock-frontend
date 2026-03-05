@@ -721,8 +721,8 @@ export default function CharterSlidesPage() {
         <p style={body}>
         95% of tokens are distributed to ICO participants at the
           same price. The remaining 5% is allocated to the founding team, which
-          unlocks at 30-day TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. An
-          $8K allowance per month is allocated to the team for supporting infrastructure.
+          unlocks at 3-month TWAPs of 2X, 4X, 8X, 16X, and 32X the ICO price. A
+          $5K allowance per month is allocated to the team for infrastructure.
         </p>
         <Gap h={12} />
         <p style={body}>

@@ -42,13 +42,13 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
         </span>
       )}
 
-      <p className="text-xs text-text-secondary leading-relaxed">
+      <p className="text-sm text-text-secondary leading-relaxed">
         {proposal.reasoning}
       </p>
 
       {proposal.position_expression && (
         <div className="rounded border border-accent-cyan/20 bg-accent-cyan/5 px-3 py-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-1">
+          <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1">
             Suggested Position
           </p>
           <p className="text-xs font-mono text-accent-cyan leading-relaxed">

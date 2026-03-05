@@ -101,7 +101,7 @@ export default function HeroSection() {
               </div>
             </div>
             <p className="text-sm text-text-secondary mt-2 leading-tight text-center">
-              Actual portfolios is governed by decision markets to maximize risk-adjusted returns.
+              Actual portfolio is governed by decision markets to maximize risk-adjusted returns.
             </p>
           </div>
         </div>
