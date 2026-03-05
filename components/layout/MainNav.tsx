@@ -8,9 +8,9 @@ import NavLink from "../ui/NavLink";
 const navItems = [
   { label: "Charter", href: "/charter" },
   { label: "Research", href: "/research" },
-  { label: "Proposals", href: "/agents/proposals" },
-  { label: "Chat", href: "/agents/chat" },
-  { label: "Team", href: "/agents/team" },
+  { label: "Proposals", href: "/proposals" },
+  { label: "Chat", href: "/chat" },
+  { label: "Team", href: "/team" },
   { label: "Portfolio", href: "/portfolio" },
 ];
 
