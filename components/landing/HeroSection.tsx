@@ -43,7 +43,10 @@ export default function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 mb-14 animate-fade-in-up"
               style={{ animationDelay: "0.3s" }}
             >
-              <GlowButton href="/charter" size="lg">
+              <GlowButton href="https://www.futard.io/launch/J7CmLqfMLVq67swRQa6xCWn7VcyfpyhFSiQdJYNwkP8k" size="lg" target="_blank">
+                ICO
+              </GlowButton>
+              <GlowButton href="/charter" size="lg" variant="secondary">
                 Read Charter
               </GlowButton>
             </div>

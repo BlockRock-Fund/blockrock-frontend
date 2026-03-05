@@ -3,6 +3,7 @@ import Link from "next/link";
 type GlowButtonProps = {
   children: React.ReactNode;
   href?: string;
+  target?: string;
   variant?: "primary" | "secondary";
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -12,6 +13,7 @@ type GlowButtonProps = {
 export default function GlowButton({
   children,
   href,
+  target,
   variant = "primary",
   size = "md",
   className = "",
@@ -36,7 +38,7 @@ export default function GlowButton({
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined}>
         {children}
       </Link>
     );
