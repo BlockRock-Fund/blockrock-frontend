@@ -229,10 +229,17 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
           <h3 className="text-sm font-semibold text-text-primary line-clamp-2 leading-snug">
             {event.title}
           </h3>
-          {event.is_economy && (
-            <span className="inline-block mt-1 text-[10px] font-medium text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded-full px-2 py-0.5">
-              Economy
-            </span>
+          {event.categories?.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {event.categories.map((cat) => (
+                <span
+                  key={cat}
+                  className="text-[10px] font-medium text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded-full px-2 py-0.5 capitalize"
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
           )}
         </div>
       </div>

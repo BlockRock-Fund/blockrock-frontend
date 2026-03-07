@@ -12,7 +12,7 @@ export interface PolymarketEventData {
   title: string;
   description: string | null;
   image_url: string | null;
-  is_economy: boolean;
+  categories: string[];
   active: boolean;
   end_date: string | null;
   volume: number;

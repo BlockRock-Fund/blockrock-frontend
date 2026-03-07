@@ -28,7 +28,7 @@ interface SignalsResponse {
   fetched_at: string | null;
 }
 
-type Category = "all" | "economy";
+type Category = "all" | "politics" | "finance" | "geopolitics" | "tech" | "economy";
 
 export default function SituationMonitorPage() {
   const [signals, setSignals] = useState<SignalsResponse | null>(null);
@@ -80,6 +80,10 @@ export default function SituationMonitorPage() {
 
   const categories: { key: Category; label: string }[] = [
     { key: "all", label: "All" },
+    { key: "politics", label: "Politics" },
+    { key: "finance", label: "Finance" },
+    { key: "geopolitics", label: "Geopolitics" },
+    { key: "tech", label: "Tech" },
     { key: "economy", label: "Economy" },
   ];
 
