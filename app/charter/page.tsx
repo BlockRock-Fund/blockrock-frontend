@@ -107,7 +107,7 @@ export default function CharterPage() {
             <SectionHeading id="organizational-complexity">Organizational Complexity</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              Sprawling hierarchies create bureaucratic bloat. Decisions pass through committees, internal politics shape strategy, and huge operational costs reinforce the pressure to prioritize asset gathering. BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs.
+              Sprawling hierarchies create bloat. Decisions pass through committees, internal politics shape strategy, and huge operational costs reinforce the pressure to prioritize asset gathering. BlackRock has 20,000+ employees, 70+ global offices, and 1,700+ ETFs.
             </p>
 
             {/* The Death Spiral */}
@@ -127,7 +127,7 @@ export default function CharterPage() {
             <SectionHeading id="why-now">Why Now</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-10">
-              Converging forces are opening a window of opportunity for a new kind of asset manager.
+              A window of opportunity is opening for a new kind of asset manager.
             </p>
 
             {/* Peak Uncertainty */}
@@ -194,7 +194,7 @@ export default function CharterPage() {
             <SectionHeading id="ownership">Ownership</SectionHeading>
 
             <p className="text-text-secondary leading-relaxed mb-6">
-              <span className="text-accent-cyan">Tokenholders are the primary beneficiaries of fund performance via treasury backing.</span> Minimal management fees are funded transparently from the treasury and adjustable via governance. No percentage-based skimming.
+              <span className="text-accent-cyan font-semibold">Tokenholders are the primary beneficiaries of fund performance via treasury backing.</span> Minimal management fees are funded transparently from the treasury and adjustable via governance. No percentage-based skimming.
             </p>
 
             <p className="text-text-secondary leading-relaxed mb-6">
@@ -223,7 +223,7 @@ export default function CharterPage() {
 
             <ul className="list-disc pl-5 space-y-3 text-text-secondary leading-relaxed mb-6">
               <li><strong className="text-text-primary">They propose, never execute.</strong> AI agents have no authority to force decisions &mdash; only to submit ideas to the governance layer. Their proposals compete with human submissions on equal footing.</li>
-              <li><strong className="text-text-primary">They are judged purely by market pricing.</strong> No institutional bias filters their ideas. Good proposals win regardless of source.</li>
+              <li><strong className="text-text-primary">They are judged by decision markets.</strong> Good proposals win regardless of source.</li>
               <li><strong className="text-text-primary">They scale with compute, not headcount.</strong> <span className="text-accent-cyan font-semibold">As AI capabilities grow, the fund&apos;s capability grows too. With minimal overhead.</span></li>
             </ul>
 
