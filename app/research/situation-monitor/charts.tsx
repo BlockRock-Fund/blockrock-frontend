@@ -1,6 +1,9 @@
 "use client";
 
-import { SIGNAL_TOOLTIPS } from "./data";
+import { useState } from "react";
+import { BarChart3, Globe } from "lucide-react";
+import { SIGNAL_TOOLTIPS, formatVolume } from "./data";
+import type { PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 // ---------- Signal Gauges ----------
@@ -181,6 +184,136 @@ export function SignalGauges({ valuation, loading }: SignalGaugesProps) {
         ]}
         tooltip={SIGNAL_TOOLTIPS.hySpread}
       />
+    </div>
+  );
+}
+
+// ---------- Probability Bar ----------
+
+function ProbabilityBar({ probability }: { probability: number }) {
+  const pct = Math.max(0, Math.min(100, probability * 100));
+  return (
+    <div className="h-1.5 w-full rounded-full bg-bg-tertiary">
+      <div
+        className="h-full rounded-full bg-accent-cyan transition-all"
+        style={{ width: `${pct}%`, opacity: 0.5 + probability * 0.5 }}
+      />
+    </div>
+  );
+}
+
+// ---------- Market Card ----------
+
+const MAX_VISIBLE_OUTCOMES = 4;
+
+export function MarketCard({ event }: { event: PolymarketEventData }) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div className="glass rounded-2xl p-4 hover:border-accent-cyan/20 transition-all flex flex-col gap-3">
+      {/* Header */}
+      <div className="flex items-start gap-3">
+        {event.image_url && !imgError ? (
+          <img
+            src={event.image_url}
+            alt=""
+            className="w-10 h-10 rounded-lg object-cover shrink-0"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-lg bg-bg-tertiary/50 flex items-center justify-center shrink-0">
+            <Globe className="w-5 h-5 text-text-secondary" />
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold text-text-primary line-clamp-2 leading-snug">
+            {event.title}
+          </h3>
+          {event.is_economy && (
+            <span className="inline-block mt-1 text-[10px] font-medium text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded-full px-2 py-0.5">
+              Economy
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Outcomes */}
+      <div className="flex flex-col gap-2 flex-1">
+        {event.is_binary ? (
+          // Binary layout
+          <div className="flex flex-col gap-1.5">
+            {event.outcomes.map((o) => (
+              <div key={o.label} className="flex items-center gap-2">
+                <span className="text-xs text-text-secondary w-8 shrink-0">
+                  {o.label}
+                </span>
+                <div className="flex-1">
+                  <ProbabilityBar probability={o.probability} />
+                </div>
+                <span className="text-xs font-bold text-text-primary w-11 text-right">
+                  {(o.probability * 100).toFixed(0)}%
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // Multi-outcome layout
+          <div className="flex flex-col gap-1.5">
+            {event.outcomes.slice(0, MAX_VISIBLE_OUTCOMES).map((o, i) => (
+              <div key={i} className="flex flex-col gap-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-text-secondary truncate pr-2">
+                    {o.label}
+                  </span>
+                  <span className="text-xs font-bold text-text-primary shrink-0">
+                    {(o.probability * 100).toFixed(0)}%
+                  </span>
+                </div>
+                <ProbabilityBar probability={o.probability} />
+              </div>
+            ))}
+            {event.num_outcomes > MAX_VISIBLE_OUTCOMES && (
+              <span className="text-[10px] text-text-muted">
+                +{event.num_outcomes - MAX_VISIBLE_OUTCOMES} more
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center gap-4 pt-2 border-t border-glass-border">
+        <div className="flex items-center gap-1">
+          <BarChart3 className="w-3 h-3 text-text-muted" />
+          <span className="text-[10px] text-text-secondary">
+            24h Vol: {formatVolume(event.volume_24hr)}
+          </span>
+        </div>
+        <span className="text-[10px] text-text-secondary">
+          Liq: {formatVolume(event.liquidity)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Market Card Skeleton ----------
+
+export function MarketCardSkeleton() {
+  return (
+    <div className="glass rounded-2xl p-4 animate-pulse flex flex-col gap-3">
+      <div className="flex items-start gap-3">
+        <div className="w-10 h-10 rounded-lg bg-bg-tertiary/50" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-bg-tertiary/50 rounded w-3/4" />
+          <div className="h-3 bg-bg-tertiary/50 rounded w-1/2" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-1.5 bg-bg-tertiary/50 rounded-full w-full" />
+        <div className="h-1.5 bg-bg-tertiary/50 rounded-full w-3/4" />
+      </div>
+      <div className="h-3 bg-bg-tertiary/50 rounded w-1/3 mt-auto" />
     </div>
   );
 }

@@ -34,9 +34,9 @@ const analyses = [
     description:
       "Live macro signals and prediction market odds.",
     icon: Activity,
-    href: "/research/signals",
+    href: "/research/situation-monitor",
     accent: "from-accent-cyan to-accent-green",
-    status: "coming-soon" as const,
+    status: "live" as const,
   },
 ];
 
