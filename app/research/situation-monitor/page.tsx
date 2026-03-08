@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { SignalGauges, MarketCard, MarketCardSkeleton } from "./charts";
 import type { PolymarketEventsResponse } from "./data";
 
@@ -37,6 +37,7 @@ export default function SituationMonitorPage() {
   const [loadingMarkets, setLoadingMarkets] = useState(true);
   const [category, setCategory] = useState<Category>("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [cardIndex, setCardIndex] = useState(0);
 
   useEffect(() => {
     async function fetchSignals() {
@@ -77,6 +78,11 @@ export default function SituationMonitorPage() {
     const interval = setInterval(() => fetchMarkets(category), 60_000);
     return () => clearInterval(interval);
   }, [autoRefresh, category, fetchMarkets]);
+
+  // Reset card index when category changes or new data loads
+  useEffect(() => {
+    setCardIndex(0);
+  }, [category, markets]);
 
   const categories: { key: Category; label: string }[] = [
     { key: "all", label: "All" },
@@ -146,15 +152,35 @@ export default function SituationMonitorPage() {
 
           {loadingMarkets ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
+              {[...Array(3)].map((_, i) => (
                 <MarketCardSkeleton key={i} />
               ))}
             </div>
           ) : markets && markets.events.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {markets.events.map((ev) => (
-                <MarketCard key={ev.gamma_event_id} event={ev} />
-              ))}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCardIndex((i) => Math.max(0, i - 3))}
+                disabled={cardIndex === 0}
+                className="shrink-0 p-2 rounded-full border border-glass-border hover:border-accent-cyan/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {markets.events.slice(cardIndex, cardIndex + 3).map((ev) => (
+                  <MarketCard key={ev.gamma_event_id} event={ev} />
+                ))}
+              </div>
+              <button
+                onClick={() =>
+                  setCardIndex((i) =>
+                    Math.min(i + 3, markets.events.length - 3)
+                  )
+                }
+                disabled={cardIndex + 3 >= markets.events.length}
+                className="shrink-0 p-2 rounded-full border border-glass-border hover:border-accent-cyan/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
           ) : (
             <div className="glass rounded-2xl p-8 text-center">

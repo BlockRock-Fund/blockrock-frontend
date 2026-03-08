@@ -210,7 +210,7 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="glass rounded-2xl p-4 hover:border-accent-cyan/20 transition-all flex flex-col gap-3">
+    <div className="glass rounded-2xl p-4 hover:border-accent-cyan/20 transition-all flex flex-col gap-3 h-80 overflow-hidden">
       {/* Header */}
       <div className="flex items-start gap-3">
         {event.image_url && !imgError ? (
@@ -234,7 +234,7 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
               {event.categories.map((cat) => (
                 <span
                   key={cat}
-                  className="text-[10px] font-medium text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded-full px-2 py-0.5 capitalize"
+                  className="text-xs font-medium text-accent-cyan bg-accent-cyan/10 border border-accent-cyan/20 rounded-full px-2 py-0.5 capitalize"
                 >
                   {cat}
                 </span>
@@ -251,13 +251,13 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
           <div className="flex flex-col gap-1.5">
             {event.outcomes.map((o) => (
               <div key={o.label} className="flex items-center gap-2">
-                <span className="text-xs text-text-secondary w-8 shrink-0">
+                <span className="text-sm text-text-secondary w-10 shrink-0">
                   {o.label}
                 </span>
                 <div className="flex-1">
                   <ProbabilityBar probability={o.probability} />
                 </div>
-                <span className="text-xs font-bold text-text-primary w-11 text-right">
+                <span className="text-sm font-bold text-text-primary w-12 text-right">
                   {(o.probability * 100).toFixed(0)}%
                 </span>
               </div>
@@ -269,15 +269,15 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
             {event.outcomes.slice(0, MAX_VISIBLE_OUTCOMES).map((o, i) => (
               <div key={i} className={`flex flex-col gap-0.5${o.resolved ? " opacity-40" : ""}`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-text-secondary truncate pr-2">
+                  <span className="text-sm text-text-secondary truncate pr-2">
                     {o.label}
                     {o.resolved && (
-                      <span className="ml-1 text-[9px] text-text-muted font-medium uppercase">
+                      <span className="ml-1 text-[10px] text-text-muted font-medium uppercase">
                         Resolved
                       </span>
                     )}
                   </span>
-                  <span className="text-xs font-bold text-text-primary shrink-0">
+                  <span className="text-sm font-bold text-text-primary shrink-0">
                     {(o.probability * 100).toFixed(0)}%
                   </span>
                 </div>
@@ -285,7 +285,7 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
               </div>
             ))}
             {event.num_outcomes > MAX_VISIBLE_OUTCOMES && (
-              <span className="text-[10px] text-text-muted">
+              <span className="text-xs text-text-muted">
                 +{event.num_outcomes - MAX_VISIBLE_OUTCOMES} more
               </span>
             )}
@@ -296,12 +296,12 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
       {/* Footer */}
       <div className="flex items-center gap-4 pt-2 border-t border-glass-border">
         <div className="flex items-center gap-1">
-          <BarChart3 className="w-3 h-3 text-text-muted" />
-          <span className="text-[10px] text-text-secondary">
+          <BarChart3 className="w-4 h-4 text-text-muted" />
+          <span className="text-sm text-text-secondary">
             24h Vol: {formatVolume(event.volume_24hr)}
           </span>
         </div>
-        <span className="text-[10px] text-text-secondary">
+        <span className="text-sm text-text-secondary">
           Liq: {formatVolume(event.liquidity)}
         </span>
       </div>
@@ -313,7 +313,7 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
 
 export function MarketCardSkeleton() {
   return (
-    <div className="glass rounded-2xl p-4 animate-pulse flex flex-col gap-3">
+    <div className="glass rounded-2xl p-4 animate-pulse flex flex-col gap-3 h-80">
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-lg bg-bg-tertiary/50" />
         <div className="flex-1 space-y-2">
