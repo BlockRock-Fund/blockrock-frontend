@@ -267,10 +267,15 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
           // Multi-outcome layout
           <div className="flex flex-col gap-1.5">
             {event.outcomes.slice(0, MAX_VISIBLE_OUTCOMES).map((o, i) => (
-              <div key={i} className="flex flex-col gap-0.5">
+              <div key={i} className={`flex flex-col gap-0.5${o.resolved ? " opacity-40" : ""}`}>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-text-secondary truncate pr-2">
                     {o.label}
+                    {o.resolved && (
+                      <span className="ml-1 text-[9px] text-text-muted font-medium uppercase">
+                        Resolved
+                      </span>
+                    )}
                   </span>
                   <span className="text-xs font-bold text-text-primary shrink-0">
                     {(o.probability * 100).toFixed(0)}%
