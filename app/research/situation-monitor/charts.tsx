@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, Globe } from "lucide-react";
+import { BarChart3, ExternalLink, Globe } from "lucide-react";
 import { SIGNAL_TOOLTIPS, formatVolume } from "./data";
 import type { PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
@@ -304,6 +304,16 @@ export function MarketCard({ event }: { event: PolymarketEventData }) {
         <span className="text-sm text-text-secondary">
           Liq: {formatVolume(event.liquidity)}
         </span>
+        {event.polymarket_url && (
+          <a
+            href={event.polymarket_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto flex items-center gap-1 text-xs text-text-muted hover:text-accent-cyan transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        )}
       </div>
     </div>
   );

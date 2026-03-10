@@ -213,21 +213,29 @@ export default function SituationMonitorPage() {
             </div>
           ) : signals ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-              {signals.signals.map((s) => (
-                <div
-                  key={s.series_id}
-                  className="glass rounded-lg p-3 text-center"
-                >
-                  <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1 truncate">
-                    {s.label}
-                  </p>
-                  <p className="text-sm font-bold">
-                    {s.value != null
-                      ? `${s.value.toFixed(2)}${s.unit}`
-                      : "—"}
-                  </p>
-                </div>
-              ))}
+              {signals.signals.map((s) => {
+                let display = "—";
+                if (s.value != null) {
+                  if (s.unit === "prob") {
+                    display = `${(s.value * 100).toFixed(0)}%`;
+                  } else {
+                    display = `${s.value.toFixed(2)}${s.unit}`;
+                  }
+                }
+                return (
+                  <div
+                    key={s.series_id}
+                    className="glass rounded-lg p-4 text-center"
+                  >
+                    <p className="text-xs text-text-secondary uppercase tracking-wider mb-1.5 leading-tight">
+                      {s.label}
+                    </p>
+                    <p className="text-lg font-bold">
+                      {display}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <p className="text-text-secondary text-sm">

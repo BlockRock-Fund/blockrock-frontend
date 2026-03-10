@@ -24,6 +24,7 @@ export interface PolymarketEventData {
   outcomes: PolymarketOutcome[];
   is_binary: boolean;
   num_outcomes: number;
+  polymarket_url: string;
   recorded_date: string;
   updated_at: string;
 }
