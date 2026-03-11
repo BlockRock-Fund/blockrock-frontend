@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { BarChart3, ExternalLink, Globe } from "lucide-react";
-import { SIGNAL_TOOLTIPS, formatVolume } from "./data";
-import type { PolymarketEventData } from "./data";
+import { SIGNAL_TOOLTIPS, formatPercentChange, formatPrice, formatVolume } from "./data";
+import type { HyperliquidPriceData, PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 // ---------- Signal Gauges ----------
@@ -336,6 +336,119 @@ export function MarketCardSkeleton() {
         <div className="h-1.5 bg-bg-tertiary/50 rounded-full w-3/4" />
       </div>
       <div className="h-3 bg-bg-tertiary/50 rounded w-1/3 mt-auto" />
+    </div>
+  );
+}
+
+// ---------- Hyperliquid Prices ----------
+
+function PriceChangeCell({ value }: { value: number | null }) {
+  const className =
+    value == null
+      ? "text-text-muted"
+      : value > 0
+        ? "text-accent-green"
+        : value < 0
+          ? "text-red-400"
+          : "text-text-primary";
+
+  return (
+    <td className={`px-3 py-3 text-right text-sm font-medium whitespace-nowrap ${className}`}>
+      {formatPercentChange(value)}
+    </td>
+  );
+}
+
+export function HyperliquidPricesTable({ assets }: { assets: HyperliquidPriceData[] }) {
+  return (
+    <div className="glass rounded-2xl overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-bg-secondary/40">
+            <tr className="text-text-secondary uppercase tracking-[0.18em] text-[11px]">
+              <th className="px-4 py-3 text-left font-medium">Asset</th>
+              <th className="px-3 py-3 text-right font-medium">Price</th>
+              <th className="px-3 py-3 text-right font-medium">4H</th>
+              <th className="px-3 py-3 text-right font-medium">8H</th>
+              <th className="px-3 py-3 text-right font-medium">1D</th>
+              <th className="px-3 py-3 text-right font-medium">3D</th>
+              <th className="px-3 py-3 text-right font-medium">7D</th>
+              <th className="px-3 py-3 text-right font-medium">Funding</th>
+              <th className="px-4 py-3 text-right font-medium">24H Vol</th>
+            </tr>
+          </thead>
+          <tbody>
+            {assets.map((asset) => (
+              <tr
+                key={asset.coin}
+                className="border-t border-glass-border/80 hover:bg-white/2 transition-colors"
+              >
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="flex flex-col">
+                    <span className="font-semibold">{asset.display_name}</span>
+                    {asset.coin !== asset.display_name && (
+                      <span className="text-xs text-text-muted">{asset.coin}</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-3 py-3 text-right whitespace-nowrap font-medium">
+                  {formatPrice(asset.mark_price)}
+                </td>
+                <PriceChangeCell value={asset.change_4h_pct} />
+                <PriceChangeCell value={asset.change_8h_pct} />
+                <PriceChangeCell value={asset.change_1d_pct} />
+                <PriceChangeCell value={asset.change_3d_pct} />
+                <PriceChangeCell value={asset.change_7d_pct} />
+                <PriceChangeCell value={asset.funding_rate} />
+                <td className="px-4 py-3 text-right whitespace-nowrap text-text-secondary">
+                  {formatVolume(asset.day_ntl_volume)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export function HyperliquidPricesSkeleton() {
+  return (
+    <div className="glass rounded-2xl overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-bg-secondary/40">
+            <tr className="text-text-secondary uppercase tracking-[0.18em] text-[11px]">
+              <th className="px-4 py-3 text-left font-medium">Asset</th>
+              <th className="px-3 py-3 text-right font-medium">Price</th>
+              <th className="px-3 py-3 text-right font-medium">4H</th>
+              <th className="px-3 py-3 text-right font-medium">8H</th>
+              <th className="px-3 py-3 text-right font-medium">1D</th>
+              <th className="px-3 py-3 text-right font-medium">3D</th>
+              <th className="px-3 py-3 text-right font-medium">7D</th>
+              <th className="px-3 py-3 text-right font-medium">Funding</th>
+              <th className="px-4 py-3 text-right font-medium">24H Vol</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...Array(6)].map((_, i) => (
+              <tr key={i} className="border-t border-glass-border/80">
+                <td className="px-4 py-3">
+                  <div className="space-y-2">
+                    <div className="h-4 w-20 rounded bg-bg-tertiary/50 animate-pulse" />
+                    <div className="h-3 w-10 rounded bg-bg-tertiary/40 animate-pulse" />
+                  </div>
+                </td>
+                {[...Array(8)].map((_, j) => (
+                  <td key={j} className="px-3 py-3">
+                    <div className="ml-auto h-4 w-14 rounded bg-bg-tertiary/50 animate-pulse" />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

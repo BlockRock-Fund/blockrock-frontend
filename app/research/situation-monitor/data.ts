@@ -34,11 +34,46 @@ export interface PolymarketEventsResponse {
   fetched_at: string | null;
 }
 
+// ---------- Hyperliquid types ----------
+
+export interface HyperliquidPriceData {
+  coin: string;
+  display_name: string;
+  mark_price: number;
+  day_ntl_volume: number;
+  open_interest: number | null;
+  funding_rate: number | null;
+  change_4h_pct: number | null;
+  change_8h_pct: number | null;
+  change_1d_pct: number | null;
+  change_3d_pct: number | null;
+  change_7d_pct: number | null;
+  fetched_at: string;
+}
+
+export interface HyperliquidPricesResponse {
+  assets: HyperliquidPriceData[];
+  fetched_at: string | null;
+}
+
 export function formatVolume(v: number): string {
   if (v >= 1_000_000_000) return `$${(v / 1_000_000_000).toFixed(1)}B`;
   if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
   if (v >= 1_000) return `$${(v / 1_000).toFixed(0)}K`;
   return `$${v.toFixed(0)}`;
+}
+
+export function formatPrice(v: number): string {
+  if (v >= 1000) return `$${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  if (v >= 1) return `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `$${v.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}`;
+}
+
+export function formatPercentChange(v: number | null): string {
+  if (v == null) return "—";
+  const pct = v * 100;
+  const sign = pct > 0 ? "+" : "";
+  return `${sign}${pct.toFixed(2)}%`;
 }
 
 // ---------- Signal tooltips ----------

@@ -3,8 +3,14 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import { SignalGauges, MarketCard, MarketCardSkeleton } from "./charts";
-import type { PolymarketEventsResponse } from "./data";
+import {
+  SignalGauges,
+  MarketCard,
+  MarketCardSkeleton,
+  HyperliquidPricesTable,
+  HyperliquidPricesSkeleton,
+} from "./charts";
+import type { HyperliquidPricesResponse, PolymarketEventsResponse } from "./data";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -35,6 +41,8 @@ export default function SituationMonitorPage() {
   const [loadingSignals, setLoadingSignals] = useState(true);
   const [markets, setMarkets] = useState<PolymarketEventsResponse | null>(null);
   const [loadingMarkets, setLoadingMarkets] = useState(true);
+  const [prices, setPrices] = useState<HyperliquidPricesResponse | null>(null);
+  const [loadingPrices, setLoadingPrices] = useState(true);
   const [category, setCategory] = useState<Category>("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [cardIndex, setCardIndex] = useState(0);
@@ -67,17 +75,36 @@ export default function SituationMonitorPage() {
     }
   }, []);
 
+  const fetchPrices = useCallback(async () => {
+    setLoadingPrices(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/hyperliquid/prices?limit=50`);
+      if (res.ok) setPrices(await res.json());
+    } catch (err) {
+      console.error("Failed to fetch Hyperliquid prices:", err);
+    } finally {
+      setLoadingPrices(false);
+    }
+  }, []);
+
   // Fetch on mount and category change
   useEffect(() => {
     fetchMarkets(category);
   }, [category, fetchMarkets]);
 
+  useEffect(() => {
+    fetchPrices();
+  }, [fetchPrices]);
+
   // Auto-refresh
   useEffect(() => {
     if (!autoRefresh) return;
-    const interval = setInterval(() => fetchMarkets(category), 60_000);
+    const interval = setInterval(() => {
+      fetchMarkets(category);
+      fetchPrices();
+    }, 60_000);
     return () => clearInterval(interval);
-  }, [autoRefresh, category, fetchMarkets]);
+  }, [autoRefresh, category, fetchMarkets, fetchPrices]);
 
   // Reset card index when category changes or new data loads
   useEffect(() => {
@@ -191,6 +218,30 @@ export default function SituationMonitorPage() {
           )}
         </div>
 
+        {/* Prices */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <div>
+              <h2 className="text-lg font-semibold">Prices</h2>
+              <p className="text-sm text-text-secondary">
+                Top Hyperliquid perpetuals by 24h notional volume.
+              </p>
+            </div>
+          </div>
+
+          {loadingPrices ? (
+            <HyperliquidPricesSkeleton />
+          ) : prices && prices.assets.length > 0 ? (
+            <HyperliquidPricesTable assets={prices.assets} />
+          ) : (
+            <div className="glass rounded-2xl p-8 text-center">
+              <p className="text-text-secondary text-sm">
+                No Hyperliquid price data available.
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Macro Signals */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4">Valuation Gauges</h2>
@@ -256,6 +307,12 @@ export default function SituationMonitorPage() {
             <p>
               Markets as of{" "}
               {new Date(markets.fetched_at).toLocaleString()}
+            </p>
+          )}
+          {prices?.fetched_at && (
+            <p>
+              Hyperliquid as of{" "}
+              {new Date(prices.fetched_at).toLocaleString()}
             </p>
           )}
         </div>
