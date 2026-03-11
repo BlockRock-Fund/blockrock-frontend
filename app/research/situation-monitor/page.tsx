@@ -60,7 +60,7 @@ export default function SituationMonitorPage() {
   const fetchTweets = useCallback(async () => {
     setLoadingTweets(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/bangit/tweets?limit=50`);
+      const res = await fetch(`${API_BASE_URL}/bangit/tweets?limit=100`);
       if (res.ok) setTweets(await res.json());
     } catch (err) {
       console.error("Failed to fetch Bangit tweets:", err);

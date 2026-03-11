@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BarChart3, ExternalLink, Globe } from "lucide-react";
-import { SIGNAL_TOOLTIPS, formatPercentChange, formatPrice, formatVolume } from "./data";
+import { SIGNAL_TOOLTIPS, formatImpact, formatPercentChange, formatPrice, formatVolume, hyperliquidTradeUrl } from "./data";
 import type { BangitTweet, HyperliquidPriceData, PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
@@ -545,7 +545,8 @@ export function TerminalPricesTable({
         {assets.map((asset) => (
           <tr
             key={asset.coin}
-            className="border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors"
+            className="border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer"
+            onClick={() => window.open(hyperliquidTradeUrl(asset.coin), "_blank", "noopener,noreferrer")}
           >
             <td className="px-3 py-2 whitespace-nowrap">
               <span className="font-semibold text-text-primary">
@@ -615,7 +616,7 @@ export function TerminalTweetList({
               <div className="flex items-center gap-1.5">
                 {tweet.impact != null && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent-cyan/10 text-accent-cyan font-mono">
-                    {tweet.impact > 0 ? "+" : ""}{tweet.impact}
+                    {tweet.impact > 0 ? "+" : ""}{formatImpact(tweet.impact)}
                   </span>
                 )}
                 {tweet.url && (

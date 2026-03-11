@@ -76,6 +76,19 @@ export function formatPercentChange(v: number | null): string {
   return `${sign}${pct.toFixed(2)}%`;
 }
 
+export function hyperliquidTradeUrl(coin: string): string {
+  // HIP-3 coins like "xyz:TSLA" → use the full coin identifier
+  // Regular perps like "BTC" → just the coin name
+  return `https://app.hyperliquid.xyz/trade/${coin}`;
+}
+
+export function formatImpact(v: number): string {
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${(v / 1_000_000).toFixed(2)}M`;
+  if (abs >= 1_000) return `${(v / 1_000).toFixed(2)}K`;
+  return v.toString();
+}
+
 // ---------- Bangit types ----------
 
 export interface BangitTweet {
