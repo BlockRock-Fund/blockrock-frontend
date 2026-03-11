@@ -409,6 +409,17 @@ export function TerminalMarketList({
           ? (topOutcome.probability * 100).toFixed(0)
           : "—";
         const label = ev.is_binary ? "YES" : topOutcome?.label ?? "";
+        const probChange = topOutcome?.probability_change ?? null;
+        const changeStr =
+          probChange != null
+            ? `${probChange > 0 ? "+" : ""}${(probChange * 100).toFixed(1)}%`
+            : null;
+        const changeCls =
+          probChange != null && probChange > 0
+            ? "text-accent-green"
+            : probChange != null && probChange < 0
+              ? "text-red-400"
+              : "text-text-muted";
 
         const row = (
           <div
@@ -433,9 +444,16 @@ export function TerminalMarketList({
               <span className="text-xs text-text-primary line-clamp-2 leading-snug flex-1">
                 {ev.title}
               </span>
-              <span className="text-xs font-bold text-accent-cyan shrink-0 ml-1">
-                {pct}%
-              </span>
+              <div className="flex items-center gap-1.5 shrink-0 ml-1">
+                <span className="text-xs font-bold text-accent-cyan">
+                  {pct}%
+                </span>
+                {changeStr && (
+                  <span className={`text-[10px] font-mono ${changeCls}`}>
+                    {changeStr}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="pl-6">
               <div className="flex items-center justify-between mb-1">
