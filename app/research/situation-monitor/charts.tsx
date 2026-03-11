@@ -342,7 +342,7 @@ export function MarketCardSkeleton() {
 
 // ---------- Hyperliquid Prices ----------
 
-function PriceChangeCell({ value }: { value: number | null }) {
+function PriceChangeCell({ value, decimals = 2 }: { value: number | null; decimals?: number }) {
   const className =
     value == null
       ? "text-text-muted"
@@ -352,9 +352,14 @@ function PriceChangeCell({ value }: { value: number | null }) {
           ? "text-red-400"
           : "text-text-primary";
 
+  const formatted =
+    value == null
+      ? "—"
+      : `${value > 0 ? "+" : ""}${(value * 100).toFixed(decimals)}%`;
+
   return (
     <td className={`px-3 py-3 text-right text-sm font-medium whitespace-nowrap ${className}`}>
-      {formatPercentChange(value)}
+      {formatted}
     </td>
   );
 }
@@ -399,7 +404,7 @@ export function HyperliquidPricesTable({ assets }: { assets: HyperliquidPriceDat
                 <PriceChangeCell value={asset.change_1d_pct} />
                 <PriceChangeCell value={asset.change_3d_pct} />
                 <PriceChangeCell value={asset.change_7d_pct} />
-                <PriceChangeCell value={asset.funding_rate} />
+                <PriceChangeCell value={asset.funding_rate} decimals={4} />
                 <td className="px-4 py-3 text-right whitespace-nowrap text-text-secondary">
                   {formatVolume(asset.day_ntl_volume)}
                 </td>
