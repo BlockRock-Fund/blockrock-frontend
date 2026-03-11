@@ -295,27 +295,6 @@ export default function SituationMonitorPage() {
           )}
         </div>
 
-        {/* Timestamps */}
-        <div className="flex gap-4 text-xs text-text-secondary">
-          {signals?.fetched_at && (
-            <p>
-              Signals as of{" "}
-              {new Date(signals.fetched_at).toLocaleString()}
-            </p>
-          )}
-          {markets?.fetched_at && (
-            <p>
-              Markets as of{" "}
-              {new Date(markets.fetched_at).toLocaleString()}
-            </p>
-          )}
-          {prices?.fetched_at && (
-            <p>
-              Hyperliquid as of{" "}
-              {new Date(prices.fetched_at).toLocaleString()}
-            </p>
-          )}
-        </div>
       </div>
     </section>
   );
