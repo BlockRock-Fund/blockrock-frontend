@@ -445,14 +445,14 @@ export function TerminalMarketList({
                 {ev.title}
               </span>
               <div className="flex items-center gap-1.5 shrink-0 ml-1">
-                <span className="text-xs font-bold text-accent-cyan">
-                  {pct}%
-                </span>
                 {changeStr && (
                   <span className={`text-[10px] font-mono ${changeCls}`}>
                     {changeStr}
                   </span>
                 )}
+                <span className="text-xs font-bold text-accent-cyan">
+                  {pct}%
+                </span>
               </div>
             </div>
             <div className="pl-6">
