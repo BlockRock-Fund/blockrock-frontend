@@ -11,6 +11,7 @@ const API_BASE_URL =
   "https://blockrock-backend-production.up.railway.app";
 
 type Category = "all" | "politics" | "finance" | "geopolitics" | "tech" | "economy";
+type FeedType = "HOT" | "TOP_7D" | "BUMP";
 
 const CATEGORIES: { key: Category; label: string }[] = [
   { key: "all", label: "ALL" },
@@ -21,6 +22,12 @@ const CATEGORIES: { key: Category; label: string }[] = [
   { key: "economy", label: "ECO" },
 ];
 
+const FEED_TYPES: { key: FeedType; label: string }[] = [
+  { key: "HOT", label: "HOT" },
+  { key: "TOP_7D", label: "TOP 7D" },
+  { key: "BUMP", label: "BUMP" },
+];
+
 export default function SituationMonitorPage() {
   const [markets, setMarkets] = useState<PolymarketEventsResponse | null>(null);
   const [loadingMarkets, setLoadingMarkets] = useState(true);
@@ -29,6 +36,7 @@ export default function SituationMonitorPage() {
   const [tweets, setTweets] = useState<BangitFeedsResponse | null>(null);
   const [loadingTweets, setLoadingTweets] = useState(true);
   const [category, setCategory] = useState<Category>("all");
+  const [feedType, setFeedType] = useState<FeedType>("HOT");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   const fetchMarkets = useCallback(async (cat: Category) => {
@@ -57,10 +65,10 @@ export default function SituationMonitorPage() {
     }
   }, []);
 
-  const fetchTweets = useCallback(async () => {
+  const fetchTweets = useCallback(async (ft: FeedType) => {
     setLoadingTweets(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/bangit/tweets?limit=100`);
+      const res = await fetch(`${API_BASE_URL}/bangit/tweets?limit=100&feed_type=${ft}`);
       if (res.ok) setTweets(await res.json());
     } catch (err) {
       console.error("Failed to fetch Bangit tweets:", err);
@@ -78,18 +86,18 @@ export default function SituationMonitorPage() {
   }, [fetchPrices]);
 
   useEffect(() => {
-    fetchTweets();
-  }, [fetchTweets]);
+    fetchTweets(feedType);
+  }, [feedType, fetchTweets]);
 
   useEffect(() => {
     if (!autoRefresh) return;
     const interval = setInterval(() => {
       fetchMarkets(category);
       fetchPrices();
-      fetchTweets();
+      fetchTweets(feedType);
     }, 60_000);
     return () => clearInterval(interval);
-  }, [autoRefresh, category, fetchMarkets, fetchPrices, fetchTweets]);
+  }, [autoRefresh, category, feedType, fetchMarkets, fetchPrices, fetchTweets]);
 
   return (
     <div className="fixed inset-x-0 top-16 bottom-0 flex flex-col font-mono border-t border-accent-cyan/20 bg-bg-primary overflow-hidden z-10">
@@ -126,9 +134,12 @@ export default function SituationMonitorPage() {
         <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
-            <span className="text-xs text-accent-cyan tracking-widest uppercase">
-              Prediction Markets
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-accent-cyan tracking-widest uppercase">
+                Predictions
+              </span>
+              <span className="text-[10px] text-text-muted">polymarket</span>
+            </div>
             <div className="flex items-center gap-0.5">
               {CATEGORIES.map((cat, i) => (
                 <span key={cat.key} className="flex items-center">
@@ -166,7 +177,7 @@ export default function SituationMonitorPage() {
               Prices
             </span>
             <span className="text-[10px] text-text-muted ml-2">
-              hyperliquid perps · 24h vol
+              hyperliquid
             </span>
           </div>
           {/* Scrollable content */}
@@ -181,11 +192,32 @@ export default function SituationMonitorPage() {
         {/* RIGHT — Tweets */}
         <div className="flex flex-col overflow-hidden min-h-0">
           {/* Column header */}
-          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center">
-            <span className="text-xs text-accent-cyan tracking-widest uppercase">
-              Tweets
-            </span>
-            <span className="text-[10px] text-text-muted ml-2">bangit · hot feed</span>
+          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-accent-cyan tracking-widest uppercase">
+                Tweets
+              </span>
+              <span className="text-[10px] text-text-muted">bangit</span>
+            </div>
+            <div className="flex items-center gap-0.5">
+              {FEED_TYPES.map((ft, i) => (
+                <span key={ft.key} className="flex items-center">
+                  <button
+                    onClick={() => setFeedType(ft.key)}
+                    className={`text-[10px] px-1.5 py-0.5 transition-colors ${
+                      feedType === ft.key
+                        ? "text-accent-cyan"
+                        : "text-text-muted hover:text-text-secondary"
+                    }`}
+                  >
+                    {ft.label}
+                  </button>
+                  {i < FEED_TYPES.length - 1 && (
+                    <span className="text-text-muted/40 text-[10px]">|</span>
+                  )}
+                </span>
+              ))}
+            </div>
           </div>
           {/* Scrollable content */}
           <div className="overflow-y-auto flex-1 min-h-0">

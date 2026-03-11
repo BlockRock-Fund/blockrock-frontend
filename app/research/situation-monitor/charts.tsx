@@ -390,7 +390,21 @@ export function TerminalMarketList({
   return (
     <div className="flex flex-col">
       {events.map((ev) => {
-        const topOutcome = ev.outcomes[0];
+        // Binary markets: always show the "Yes" outcome.
+        // Multi-outcome: prefer highest-probability unresolved outcome (>=1%);
+        // fall back to highest-probability overall (e.g. resolved winner).
+        let topOutcome: (typeof ev.outcomes)[number] | undefined;
+        if (ev.is_binary) {
+          topOutcome = ev.outcomes.find((o) => o.label === "Yes") ?? ev.outcomes[0];
+        } else {
+          const liveUnresolved = ev.outcomes.filter((o) => !o.resolved && o.probability >= 0.01);
+          const pool = liveUnresolved.length ? liveUnresolved : ev.outcomes;
+          topOutcome = pool.length
+            ? pool.reduce((best, o) =>
+                o.probability > best.probability ? o : best
+              )
+            : undefined;
+        }
         const pct = topOutcome
           ? (topOutcome.probability * 100).toFixed(0)
           : "—";
@@ -506,7 +520,7 @@ export function TerminalPricesTable({
             <th className="px-2 py-2 text-right font-medium">4H</th>
             <th className="px-2 py-2 text-right font-medium">1D</th>
             <th className="px-2 py-2 text-right font-medium">7D</th>
-            <th className="px-2 py-2 text-right font-medium">Fund</th>
+            <th className="px-2 py-2 text-right font-medium">Funding</th>
             <th className="px-3 py-2 text-right font-medium">Vol</th>
           </tr>
         </thead>
@@ -537,7 +551,7 @@ export function TerminalPricesTable({
           <th className="px-2 py-2 text-right font-medium">4H</th>
           <th className="px-2 py-2 text-right font-medium">1D</th>
           <th className="px-2 py-2 text-right font-medium">7D</th>
-          <th className="px-2 py-2 text-right font-medium">Fund</th>
+          <th className="px-2 py-2 text-right font-medium">Funding</th>
           <th className="px-3 py-2 text-right font-medium">Vol</th>
         </tr>
       </thead>
