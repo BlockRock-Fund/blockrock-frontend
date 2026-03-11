@@ -371,7 +371,7 @@ export function HyperliquidPricesTable({ assets }: { assets: HyperliquidPriceDat
         <table className="min-w-full text-sm">
           <thead className="bg-bg-secondary/40">
             <tr className="text-text-secondary uppercase tracking-[0.18em] text-[11px]">
-              <th className="px-4 py-3 text-left font-medium">Asset</th>
+              <th className="px-4 py-3 text-left font-medium w-24">Asset</th>
               <th className="px-3 py-3 text-right font-medium">Price</th>
               <th className="px-3 py-3 text-right font-medium">4H</th>
               <th className="px-3 py-3 text-right font-medium">8H</th>
@@ -388,7 +388,7 @@ export function HyperliquidPricesTable({ assets }: { assets: HyperliquidPriceDat
                 key={asset.coin}
                 className="border-t border-glass-border/80 hover:bg-white/2 transition-colors"
               >
-                <td className="px-4 py-3 whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap w-24">
                   <div className="flex flex-col">
                     <span className="font-semibold">{asset.display_name}</span>
                     {asset.coin !== asset.display_name && (
@@ -424,7 +424,7 @@ export function HyperliquidPricesSkeleton() {
         <table className="min-w-full text-sm">
           <thead className="bg-bg-secondary/40">
             <tr className="text-text-secondary uppercase tracking-[0.18em] text-[11px]">
-              <th className="px-4 py-3 text-left font-medium">Asset</th>
+              <th className="px-4 py-3 text-left font-medium w-24">Asset</th>
               <th className="px-3 py-3 text-right font-medium">Price</th>
               <th className="px-3 py-3 text-right font-medium">4H</th>
               <th className="px-3 py-3 text-right font-medium">8H</th>
