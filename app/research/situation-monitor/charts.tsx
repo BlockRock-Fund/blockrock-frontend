@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BarChart3, ExternalLink, Globe } from "lucide-react";
 import { SIGNAL_TOOLTIPS, formatPercentChange, formatPrice, formatVolume } from "./data";
-import type { HyperliquidPriceData, PolymarketEventData } from "./data";
+import type { BangitTweet, HyperliquidPriceData, PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 // ---------- Signal Gauges ----------
@@ -336,6 +336,313 @@ export function MarketCardSkeleton() {
         <div className="h-1.5 bg-bg-tertiary/50 rounded-full w-3/4" />
       </div>
       <div className="h-3 bg-bg-tertiary/50 rounded w-1/3 mt-auto" />
+    </div>
+  );
+}
+
+// ---------- Terminal Market List ----------
+
+function TerminalProbBar({ probability }: { probability: number }) {
+  const pct = Math.max(0, Math.min(100, probability * 100));
+  return (
+    <div className="h-1 w-full bg-bg-tertiary/60">
+      <div
+        className="h-full bg-accent-cyan transition-all"
+        style={{ width: `${pct}%`, opacity: 0.4 + probability * 0.6 }}
+      />
+    </div>
+  );
+}
+
+export function TerminalMarketList({
+  events,
+  loading,
+}: {
+  events: PolymarketEventData[];
+  loading: boolean;
+}) {
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+
+  if (loading) {
+    return (
+      <div className="flex flex-col">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="px-3 py-2.5 border-b border-accent-cyan/10 animate-pulse"
+          >
+            <div className="h-3 bg-bg-tertiary/50 rounded w-3/4 mb-2" />
+            <div className="h-1 bg-bg-tertiary/40 rounded w-full" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!events.length) {
+    return (
+      <div className="px-3 py-6 text-center text-text-muted text-xs font-mono">
+        // no data
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      {events.map((ev) => {
+        const topOutcome = ev.outcomes[0];
+        const pct = topOutcome
+          ? (topOutcome.probability * 100).toFixed(0)
+          : "—";
+        const label = ev.is_binary ? "YES" : topOutcome?.label ?? "";
+
+        const row = (
+          <div
+            className="px-3 py-2.5 border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer"
+          >
+            <div className="flex items-start gap-2 mb-1.5">
+              {ev.image_url && !imgErrors[ev.gamma_event_id] ? (
+                <img
+                  src={ev.image_url}
+                  alt=""
+                  className="w-5 h-5 rounded object-cover shrink-0 mt-0.5 opacity-80"
+                  onError={() =>
+                    setImgErrors((prev) => ({
+                      ...prev,
+                      [ev.gamma_event_id]: true,
+                    }))
+                  }
+                />
+              ) : (
+                <Globe className="w-4 h-4 text-text-muted shrink-0 mt-0.5" />
+              )}
+              <span className="text-xs text-text-primary line-clamp-2 leading-snug flex-1">
+                {ev.title}
+              </span>
+              <span className="text-xs font-bold text-accent-cyan shrink-0 ml-1">
+                {pct}%
+              </span>
+            </div>
+            <div className="pl-6">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-text-muted truncate pr-2">
+                  {label}
+                </span>
+                <span className="text-[10px] text-text-muted shrink-0">
+                  vol {formatVolume(ev.volume_24hr)}
+                </span>
+              </div>
+              {topOutcome && (
+                <TerminalProbBar probability={topOutcome.probability} />
+              )}
+            </div>
+          </div>
+        );
+
+        return ev.polymarket_url ? (
+          <a
+            key={ev.gamma_event_id}
+            href={ev.polymarket_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            {row}
+          </a>
+        ) : (
+          <div key={ev.gamma_event_id}>{row}</div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------- Terminal Prices Table ----------
+
+function TerminalPriceChangeCell({
+  value,
+  decimals = 2,
+}: {
+  value: number | null;
+  decimals?: number;
+}) {
+  const cls =
+    value == null
+      ? "text-text-muted"
+      : value > 0
+        ? "text-accent-green"
+        : value < 0
+          ? "text-red-400"
+          : "text-text-primary";
+
+  const formatted =
+    value == null
+      ? "—"
+      : `${value > 0 ? "+" : ""}${(value * 100).toFixed(decimals)}%`;
+
+  return (
+    <td
+      className={`px-2 py-2 text-right text-[11px] font-mono whitespace-nowrap ${cls}`}
+    >
+      {formatted}
+    </td>
+  );
+}
+
+export function TerminalPricesTable({
+  assets,
+  loading,
+}: {
+  assets: HyperliquidPriceData[];
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <table className="min-w-full text-[11px] font-mono">
+        <thead>
+          <tr className="text-text-muted uppercase tracking-widest text-[10px] border-b border-accent-cyan/20">
+            <th className="px-3 py-2 text-left font-medium">Asset</th>
+            <th className="px-2 py-2 text-right font-medium">Price</th>
+            <th className="px-2 py-2 text-right font-medium">4H</th>
+            <th className="px-2 py-2 text-right font-medium">1D</th>
+            <th className="px-2 py-2 text-right font-medium">7D</th>
+            <th className="px-2 py-2 text-right font-medium">Fund</th>
+            <th className="px-3 py-2 text-right font-medium">Vol</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[...Array(10)].map((_, i) => (
+            <tr key={i} className="border-b border-accent-cyan/10">
+              <td className="px-3 py-2">
+                <div className="h-3 w-14 rounded bg-bg-tertiary/50 animate-pulse" />
+              </td>
+              {[...Array(6)].map((_, j) => (
+                <td key={j} className="px-2 py-2">
+                  <div className="ml-auto h-3 w-10 rounded bg-bg-tertiary/40 animate-pulse" />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  return (
+    <table className="min-w-full text-[11px] font-mono">
+      <thead>
+        <tr className="text-text-muted uppercase tracking-widest text-[10px] border-b border-accent-cyan/20 sticky top-0 bg-bg-primary z-10">
+          <th className="px-3 py-2 text-left font-medium">Asset</th>
+          <th className="px-2 py-2 text-right font-medium">Price</th>
+          <th className="px-2 py-2 text-right font-medium">4H</th>
+          <th className="px-2 py-2 text-right font-medium">1D</th>
+          <th className="px-2 py-2 text-right font-medium">7D</th>
+          <th className="px-2 py-2 text-right font-medium">Fund</th>
+          <th className="px-3 py-2 text-right font-medium">Vol</th>
+        </tr>
+      </thead>
+      <tbody>
+        {assets.map((asset) => (
+          <tr
+            key={asset.coin}
+            className="border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors"
+          >
+            <td className="px-3 py-2 whitespace-nowrap">
+              <span className="font-semibold text-text-primary">
+                {asset.display_name}
+              </span>
+            </td>
+            <td className="px-2 py-2 text-right whitespace-nowrap text-text-primary">
+              {formatPrice(asset.mark_price)}
+            </td>
+            <TerminalPriceChangeCell value={asset.change_4h_pct} />
+            <TerminalPriceChangeCell value={asset.change_1d_pct} />
+            <TerminalPriceChangeCell value={asset.change_7d_pct} />
+            <TerminalPriceChangeCell value={asset.funding_rate} decimals={4} />
+            <td className="px-3 py-2 text-right whitespace-nowrap text-text-muted">
+              {formatVolume(asset.day_ntl_volume)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+// ---------- Terminal Tweet List ----------
+
+export function TerminalTweetList({
+  tweets,
+  loading,
+}: {
+  tweets: BangitTweet[];
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <div className="flex flex-col">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="px-3 py-2.5 border-b border-accent-cyan/10 animate-pulse"
+          >
+            <div className="h-2.5 bg-bg-tertiary/50 rounded w-1/3 mb-2" />
+            <div className="h-3 bg-bg-tertiary/40 rounded w-full mb-1" />
+            <div className="h-3 bg-bg-tertiary/30 rounded w-4/5" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!tweets.length) {
+    return (
+      <div className="px-3 py-6 text-center text-text-muted text-xs font-mono">
+        // no data
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      {tweets.map((tweet) => {
+        const inner = (
+          <div className="px-3 py-2.5 border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[11px] font-semibold text-accent-cyan">
+                @{tweet.username}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {tweet.impact != null && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent-cyan/10 text-accent-cyan font-mono">
+                    {tweet.impact > 0 ? "+" : ""}{tweet.impact}
+                  </span>
+                )}
+                {tweet.url && (
+                  <ExternalLink className="w-3 h-3 text-text-muted shrink-0" />
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-text-secondary leading-snug line-clamp-2">
+              {tweet.text}
+            </p>
+          </div>
+        );
+
+        return tweet.url ? (
+          <a
+            key={tweet.id}
+            href={tweet.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            {inner}
+          </a>
+        ) : (
+          <div key={tweet.id}>{inner}</div>
+        );
+      })}
     </div>
   );
 }

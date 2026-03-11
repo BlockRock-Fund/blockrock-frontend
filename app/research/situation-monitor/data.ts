@@ -76,6 +76,21 @@ export function formatPercentChange(v: number | null): string {
   return `${sign}${pct.toFixed(2)}%`;
 }
 
+// ---------- Bangit types ----------
+
+export interface BangitTweet {
+  id: string;
+  username: string;
+  text: string;
+  impact?: number | null;
+  url?: string | null;
+}
+
+export interface BangitFeedsResponse {
+  tweets: BangitTweet[];
+  fetched_at?: string | null;
+}
+
 // ---------- Signal tooltips ----------
 
 export const SIGNAL_TOOLTIPS = {
