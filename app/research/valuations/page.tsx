@@ -252,6 +252,7 @@ type SimpleTableRow = {
   symbol: string;
   name: string;
   as_of_date: string;
+  asset_type?: string | null;
 
   volume_24h?: string | number | null;
   volume_7d?: string | number | null;
@@ -626,7 +627,11 @@ export default function AnalysisPage() {
 
         const data: SimpleTableRow[] = await res.json();
         console.log("Backend response:", data);
-        setRowData(data);
+        // Filter out ownership coins (disabled for now)
+        const filtered = data.filter(
+          (row) => row.asset_type !== "ownership_coin"
+        );
+        setRowData(filtered);
       } catch (err) {
         console.error(err);
         setError("Failed to load data from backend.");
