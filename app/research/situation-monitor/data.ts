@@ -105,6 +105,12 @@ export interface BangitFeedsResponse {
   fetched_at?: string | null;
 }
 
+// ---------- Asset icons ----------
+
+export function hyperliquidIconUrl(coin: string): string {
+  return `https://app.hyperliquid.xyz/coins/${coin}.svg`;
+}
+
 // ---------- Signal tooltips ----------
 
 export const SIGNAL_TOOLTIPS = {

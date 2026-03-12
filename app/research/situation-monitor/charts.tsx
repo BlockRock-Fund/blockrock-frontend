@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BarChart3, ExternalLink, Globe } from "lucide-react";
-import { SIGNAL_TOOLTIPS, formatImpact, formatPercentChange, formatPrice, formatVolume, hyperliquidTradeUrl } from "./data";
+import { SIGNAL_TOOLTIPS, formatImpact, formatPercentChange, formatPrice, formatVolume, hyperliquidIconUrl, hyperliquidTradeUrl } from "./data";
 import type { BangitTweet, HyperliquidPriceData, PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
@@ -581,9 +581,16 @@ export function TerminalPricesTable({
             onClick={() => window.open(hyperliquidTradeUrl(asset.coin), "_blank", "noopener,noreferrer")}
           >
             <td className="px-3 py-2 whitespace-nowrap">
-              <span className="font-semibold text-text-primary">
-                {asset.display_name}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <img
+                  src={hyperliquidIconUrl(asset.coin)}
+                  alt=""
+                  className="w-4 h-4 rounded-full shrink-0"
+                />
+                <span className="font-semibold text-text-primary">
+                  {asset.display_name}
+                </span>
+              </div>
             </td>
             <td className="px-2 py-2 text-right whitespace-nowrap text-text-primary">
               {formatPrice(asset.mark_price)}
