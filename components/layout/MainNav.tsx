@@ -6,13 +6,13 @@ import Logo from "../ui/Logo";
 import NavLink from "../ui/NavLink";
 
 const navItems = [
-  { label: "Charter", href: "/charter" },
+  //{ label: "Charter", href: "/charter" },
   { label: "Research", href: "/research" },
-  { label: "Proposals", href: "/proposals" },
-  { label: "Chat", href: "/chat" },
-  { label: "Team", href: "/team" },
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Vault", href: "/vault" },
+  //{ label: "Proposals", href: "/proposals" },
+  //{ label: "Chat", href: "/chat" },
+  //{ label: "Team", href: "/team" },
+  //{ label: "Portfolio", href: "/portfolio" },
+  { label: "Vaults", href: "/vaults" },
 ];
 
 export default function MainNav() {

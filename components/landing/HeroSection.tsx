@@ -23,10 +23,10 @@ export default function HeroSection() {
 
             {/* Headline */}
             <h1
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6 animate-fade-in-up"
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6 whitespace-nowrap animate-fade-in-up"
               style={{ animationDelay: "0.1s" }}
             >
-              Ownership Fund
+              Onchain Asset Management
             </h1>
 
             {/* Description */}
@@ -34,8 +34,7 @@ export default function HeroSection() {
               className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-2xl mb-8 animate-fade-in-up"
               style={{ animationDelay: "0.2s" }}
             >
-              Asset management powered by treasury-backed tokens, futarchy governance,
-              and AI alpha. Grow wealth with confidence.
+              Grow wealth with confidence.
             </p>
 
             {/* CTAs */}
@@ -49,8 +48,8 @@ export default function HeroSection() {
               <GlowButton href="/charter" size="lg" variant="secondary">
                 Read Charter
               </GlowButton> */}
-              <GlowButton href="/charter" size="lg">
-                Read Charter
+              <GlowButton href="/research" size="lg">
+                Research
               </GlowButton>
             </div>
 
@@ -73,7 +72,7 @@ export default function HeroSection() {
           </div>
 
           {/* Glassmorphism card (desktop) */}
-          <div className="hidden xl:block absolute top-1/2 -translate-y-1/2 right-[10%] w-[340px]">
+          {/* <div className="hidden xl:block absolute top-1/2 -translate-y-1/2 right-[10%] w-[340px]">
             <div className="gradient-border rounded-2xl p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -109,7 +108,7 @@ export default function HeroSection() {
             <p className="text-sm text-text-secondary mt-2 leading-tight text-center">
               Actual portfolio is governed by decision markets to maximize risk-adjusted returns.
             </p>
-          </div>
+          </div> */}
         </div>
       </section>
     </GridBackground>

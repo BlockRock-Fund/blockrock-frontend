@@ -319,9 +319,8 @@ type SimpleTableRow = {
   net_revenue_expected_1y?: string | number | null;
 
   holder_share_method?: string | null;
-  revenue_ownership_pct?: string | number | null;
+  revenue_earnings_pct?: string | number | null;
   revenue_distributions_pct?: string | number | null;
-  profit_distributions_pct?: string | number | null;
   earnings_distributions_pct?: string | number | null;
 
   earnings_24h?: string | number | null;
@@ -557,7 +556,6 @@ export default function AnalysisPage() {
         "distributions_long_ann",
         "distributions_expected_1y",
         "revenue_distributions_pct",
-        "profit_distributions_pct",
         "earnings_distributions_pct",
       ],
       earnings: [
@@ -576,7 +574,7 @@ export default function AnalysisPage() {
         "earnings_short_ann",
         "earnings_long_ann",
         "earnings_expected_1y",
-        "revenue_ownership_pct",
+        "revenue_earnings_pct",
         "holder_share_method",
       ],
       revenue: [
@@ -910,13 +908,6 @@ export default function AnalysisPage() {
         width: 160,
       },
       {
-        field: "profit_distributions_pct",
-        headerName: "Profit\nDistributions %",
-        valueFormatter: (params: any) => formatPercent(params.value),
-        comparator: numericComparator,
-        width: 150,
-      },
-      {
         field: "earnings_distributions_pct",
         headerName: "Earnings\nDistributions %",
         valueFormatter: (params: any) => formatPercent(params.value),
@@ -1084,11 +1075,11 @@ export default function AnalysisPage() {
         width: 160,
       },
       {
-        field: "revenue_ownership_pct",
-        headerName: "Revenue Ownership %",
+        field: "revenue_earnings_pct",
+        headerName: "Revenue → Earnings %",
         headerComponent: CustomHeader,
         headerComponentParams: {
-          tooltip: "% of protocol revenue going to holders",
+          tooltip: "Fraction of revenue that becomes earnings (net margin for equities)",
         },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
