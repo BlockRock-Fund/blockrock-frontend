@@ -108,7 +108,8 @@ export interface BangitFeedsResponse {
 // ---------- Asset icons ----------
 
 export function hyperliquidIconUrl(coin: string): string {
-  return `https://app.hyperliquid.xyz/coins/${coin}.svg`;
+  const iconCoin = coin === "xyz:COPPER" ? "flx:COPPER" : coin;
+  return `https://app.hyperliquid.xyz/coins/${iconCoin}.svg`;
 }
 
 // ---------- Signal tooltips ----------

@@ -3,12 +3,12 @@ import { PieChart, Activity, TrendingUp, FileText } from "lucide-react";
 
 const analyses = [
   {
-    title: "Portfolio Builder",
+    title: "Situation Monitor",
     description:
-      "Allocation modeling, correlation matrices, and risk/return profiles.",
-    icon: PieChart,
-    href: "/research/portfolio-builder",
-    accent: "from-accent-green to-accent-cyan",
+      "Bloomberg Terminal with prediction market odds + asset prices + tweets",
+    icon: Activity,
+    href: "/research/situation-monitor",
+    accent: "from-accent-cyan to-accent-green",
     status: "live" as const,
   },
   {
@@ -30,12 +30,12 @@ const analyses = [
     status: "live" as const,
   },
   {
-    title: "Situation Monitor",
+    title: "Portfolio Builder",
     description:
-      "Live macro signals and prediction market odds.",
-    icon: Activity,
-    href: "/research/situation-monitor",
-    accent: "from-accent-cyan to-accent-green",
+      "Allocation modeling, correlation matrices, and risk/return profiles.",
+    icon: PieChart,
+    href: "/research/portfolio-builder",
+    accent: "from-accent-green to-accent-cyan",
     status: "live" as const,
   },
 ];
