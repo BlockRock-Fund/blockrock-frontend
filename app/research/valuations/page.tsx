@@ -749,42 +749,6 @@ export default function AnalysisPage() {
         },
         width: 180,
       },
-      {
-        headerName: showNet
-          ? "Net Distributions\nShort-Term Ann"
-          : "Distributions\nShort-Term Ann",
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          tooltip: showNet
-            ? "Net Distributions 90d Annualized if >1 year old, else Net Distributions 30d Annualized if >90 days old, else Net Distributions 7d Annualized"
-            : "Distributions 90d Annualized if >1 year old, else Distributions 30d Annualized if >90 days old, else Distributions 7d Annualized",
-        },
-        valueFormatter: (params: any) =>
-          formatCurrency(
-          ),
-        comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          return numericComparator(valA, valB, nodeA, nodeB, isDesc);
-        },
-        width: 200,
-      },
-      {
-        headerName: showNet
-          ? "Net Distributions\nLong-Term Ann"
-          : "Distributions\nLong-Term Ann",
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          tooltip: showNet
-            ? "Longest available period (up to 1y) Net Distributions annualized"
-            : "Longest available period (up to 1y) Distributions annualized",
-        },
-        valueFormatter: (params: any) =>
-          formatCurrency(
-          ),
-        comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          return numericComparator(valA, valB, nodeA, nodeB, isDesc);
-        },
-        width: 200,
-      },
       ...[
         { period: "24h", periodField: "24h", annField: "24h_ann", changeField: "24h_o_24h" },
         { period: "7d", periodField: "7d", annField: "7d_ann", changeField: "7d_o_7d" },
@@ -911,42 +875,6 @@ export default function AnalysisPage() {
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
           const valA = showNet ? nodeA.data?.net_earnings_expected_1y : a;
           const valB = showNet ? nodeB.data?.net_earnings_expected_1y : b;
-          return numericComparator(valA, valB, nodeA, nodeB, isDesc);
-        },
-        width: 170,
-      },
-      {
-        headerName: showNet
-          ? "Net Earnings\nShort-Term Ann"
-          : "Earnings\nShort-Term Ann",
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          tooltip: showNet
-            ? "Net Earnings 90d Annualized if >1 year old, else Net Earnings 30d Annualized if >90 days old, else Net Earnings 7d Annualized"
-            : "Earnings 90d Annualized if >1 year old, else Earnings 30d Annualized if >90 days old, else Earnings 7d Annualized",
-        },
-        valueFormatter: (params: any) =>
-          formatCurrency(
-          ),
-        comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          return numericComparator(valA, valB, nodeA, nodeB, isDesc);
-        },
-        width: 170,
-      },
-      {
-        headerName: showNet
-          ? "Net Earnings\nLong-Term Ann"
-          : "Earnings\nLong-Term Ann",
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          tooltip: showNet
-            ? "Longest available period (up to 1y) Net Earnings annualized"
-            : "Longest available period (up to 1y) Earnings annualized",
-        },
-        valueFormatter: (params: any) =>
-          formatCurrency(
-          ),
-        comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 170,
@@ -1087,42 +1015,6 @@ export default function AnalysisPage() {
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 160,
-      },
-      {
-        headerName: showNet
-          ? "Net Revenue\nShort-Term Ann"
-          : "Revenue\nShort-Term Ann",
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          tooltip: showNet
-            ? "Net Revenue 90d Annualized if >1 year old, else Net Revenue 30d Annualized if >90 days old, else Net Revenue 7d Annualized"
-            : "Revenue 90d Annualized if >1 year old, else Revenue 30d Annualized if >90 days old, else Revenue 7d Annualized",
-        },
-        valueFormatter: (params: any) =>
-          formatCurrency(
-          ),
-        comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          return numericComparator(valA, valB, nodeA, nodeB, isDesc);
-        },
-        width: 170,
-      },
-      {
-        headerName: showNet
-          ? "Net Revenue\nLong-Term Ann"
-          : "Revenue\nLong-Term Ann",
-        headerComponent: CustomHeader,
-        headerComponentParams: {
-          tooltip: showNet
-            ? "Longest available period (up to 1y) Net Revenue annualized"
-            : "Longest available period (up to 1y) Revenue annualized",
-        },
-        valueFormatter: (params: any) =>
-          formatCurrency(
-          ),
-        comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          return numericComparator(valA, valB, nodeA, nodeB, isDesc);
-        },
-        width: 170,
       },
       ...[
         { period: "24h", periodField: "24h", annField: "24h_ann", changeField: "24h_o_24h", w: 160, cw: 150 },
@@ -1357,7 +1249,7 @@ export default function AnalysisPage() {
     ];
 
     return cols.map(col => {
-      const group = fieldToGroup[col.field];
+      const group = col.field ? fieldToGroup[col.field] : undefined;
       if (!group) return col;
       return { ...col, hide: currentGroup !== group };
     });
