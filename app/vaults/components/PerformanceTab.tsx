@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -25,6 +25,16 @@ const TOOLTIP_STYLE = {
 function fmtPct(v: number): string {
   return `${v >= 0 ? "+" : ""}${v}%`;
 }
+
+type Timeframe = "7D" | "30D" | "90D" | "180D" | "1Y";
+const TIMEFRAME_DAYS: Record<Timeframe, number> = {
+  "7D": 7,
+  "30D": 30,
+  "90D": 90,
+  "180D": 180,
+  "1Y": 365,
+};
+const TIMEFRAMES: Timeframe[] = ["7D", "30D", "90D", "180D", "1Y"];
 
 function MetricCard({
   label,
@@ -87,14 +97,20 @@ function SkeletonChart({ height = 350 }: { height?: number }) {
   );
 }
 
+function formatDateLabel(dateStr: unknown): string {
+  const d = new Date(String(dateStr) + "T00:00:00");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 interface BacktestData {
-  nav_history: { month: string; vault: number; eqWeight: number; benchmark: number }[];
-  drawdown: { month: string; vault: number; eqWeight: number; benchmark: number }[];
+  nav_history: { date: string; vault: number; eqWeight: number; sol: number; btc: number | null }[];
+  drawdown: { date: string; vault: number; eqWeight: number; sol: number; btc: number | null }[];
   monthly_returns: { month: string; vault: number; eqWeight: number; benchmark: number }[];
   risk_metrics: {
     totalReturn: number;
     benchmarkReturn: number;
     solReturn: number;
+    btcReturn: number | null;
     alpha: number;
     sharpe: number;
     sortino: number;
@@ -102,6 +118,7 @@ interface BacktestData {
     maxDrawdown: number;
     eqWeightMaxDrawdown: number;
     solMaxDrawdown: number;
+    btcMaxDrawdown: number | null;
     beta: number;
     informationRatio: number;
     winRate: number;
@@ -110,6 +127,7 @@ interface BacktestData {
   benchmark_symbol: string;
   backtest_start: string;
   backtest_end: string;
+  measurement_start: string | null;
   num_assets: number;
   warnings: string[];
 }
@@ -118,6 +136,7 @@ export default function PerformanceTab() {
   const [data, setData] = useState<BacktestData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [timeframe, setTimeframe] = useState<Timeframe>("1Y");
 
   useEffect(() => {
     async function fetchBacktest() {
@@ -134,6 +153,22 @@ export default function PerformanceTab() {
     }
     fetchBacktest();
   }, []);
+
+  const filteredData = useMemo(() => {
+    if (!data) return { nav: [], dd: [] };
+    const days = TIMEFRAME_DAYS[timeframe];
+    const navLen = data.nav_history.length;
+    const sliceStart = Math.max(0, navLen - days);
+    return {
+      nav: data.nav_history.slice(sliceStart),
+      dd: data.drawdown.slice(sliceStart),
+    };
+  }, [data, timeframe]);
+
+  const hasBtc = useMemo(() => {
+    if (!data) return false;
+    return data.nav_history.some((d) => d.btc !== null);
+  }, [data]);
 
   if (loading) {
     return (
@@ -159,7 +194,6 @@ export default function PerformanceTab() {
   }
 
   const m = data.risk_metrics;
-  const bmSymbol = data.benchmark_symbol || "SOL";
 
   return (
     <div className="space-y-10">
@@ -193,14 +227,51 @@ export default function PerformanceTab() {
         />
       </div>
 
+      {/* Warnings Banner */}
+      {data.warnings && data.warnings.length > 0 && (
+        <div
+          className="rounded-xl px-5 py-3 text-sm"
+          style={{
+            background: "rgba(221, 177, 16, 0.08)",
+            border: "1px solid rgba(221, 177, 16, 0.25)",
+            color: "rgba(221, 177, 16, 0.9)",
+          }}
+        >
+          <p className="font-medium mb-1">Backtest Notes</p>
+          <ul className="list-disc list-inside space-y-0.5 text-xs opacity-90">
+            {data.warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* NAV Chart */}
       <div className="glass rounded-2xl p-6">
-        <h3 className="text-xl font-semibold mb-1">Simulated NAV</h3>
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-xl font-semibold">Simulated NAV</h3>
+          <div className="flex gap-1">
+            {TIMEFRAMES.map((tf) => (
+              <button
+                key={tf}
+                onClick={() => setTimeframe(tf)}
+                className="px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+                style={{
+                  background: timeframe === tf ? "rgba(221, 177, 16, 0.2)" : "rgba(255,255,255,0.05)",
+                  color: timeframe === tf ? "#DDB110" : "var(--text-secondary)",
+                  border: timeframe === tf ? "1px solid rgba(221, 177, 16, 0.3)" : "1px solid transparent",
+                }}
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+        </div>
         <p className="text-xs text-text-muted mb-4">
-          Vault (gold) vs Equal-Weight Benchmark (white dashed) vs {bmSymbol} (blue dotted) — base 100
+          Vault (gold) vs Equal-Weight (white) vs SOL (blue){hasBtc ? " vs BTC (orange)" : ""} — base 100
         </p>
         <ResponsiveContainer width="100%" height={350}>
-          <AreaChart data={data.nav_history}>
+          <AreaChart data={filteredData.nav}>
             <defs>
               <linearGradient id="navGold" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#DDB110" stopOpacity={0.3} />
@@ -212,7 +283,9 @@ export default function PerformanceTab() {
               stroke="rgba(255,255,255,0.05)"
             />
             <XAxis
-              dataKey="month"
+              dataKey="date"
+              tickFormatter={formatDateLabel}
+              minTickGap={40}
               tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
             />
             <YAxis
@@ -220,7 +293,10 @@ export default function PerformanceTab() {
               domain={["auto", "auto"]}
               width={50}
             />
-            <RechartsTooltip contentStyle={TOOLTIP_STYLE} />
+            <RechartsTooltip
+              contentStyle={TOOLTIP_STYLE}
+              labelFormatter={formatDateLabel}
+            />
             <Area
               type="monotone"
               dataKey="vault"
@@ -240,13 +316,25 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="benchmark"
-              name={bmSymbol}
+              dataKey="sol"
+              name="SOL"
               stroke="#60A5FA"
               strokeWidth={1}
               strokeDasharray="2 2"
               fill="transparent"
             />
+            {hasBtc && (
+              <Area
+                type="monotone"
+                dataKey="btc"
+                name="BTC"
+                stroke="#F7931A"
+                strokeWidth={1}
+                strokeDasharray="2 2"
+                fill="transparent"
+                connectNulls
+              />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -255,10 +343,11 @@ export default function PerformanceTab() {
       <div className="glass rounded-2xl p-6">
         <h3 className="text-xl font-semibold mb-1">Drawdown from Peak</h3>
         <p className="text-xs text-text-muted mb-4">
-          Vault max drawdown {m.maxDrawdown}% vs EW benchmark {m.eqWeightMaxDrawdown}% vs {bmSymbol} {m.solMaxDrawdown}%
+          Vault max drawdown {m.maxDrawdown}% vs EW {m.eqWeightMaxDrawdown}% vs SOL {m.solMaxDrawdown}%
+          {m.btcMaxDrawdown != null ? ` vs BTC ${m.btcMaxDrawdown}%` : ""}
         </p>
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={data.drawdown}>
+          <AreaChart data={filteredData.dd}>
             <defs>
               <linearGradient id="ddRed" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="transparent" stopOpacity={0} />
@@ -274,7 +363,9 @@ export default function PerformanceTab() {
               stroke="rgba(255,255,255,0.05)"
             />
             <XAxis
-              dataKey="month"
+              dataKey="date"
+              tickFormatter={formatDateLabel}
+              minTickGap={40}
               tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
             />
             <YAxis
@@ -285,6 +376,7 @@ export default function PerformanceTab() {
             />
             <RechartsTooltip
               contentStyle={TOOLTIP_STYLE}
+              labelFormatter={formatDateLabel}
               formatter={(value) => [`${Number(value).toFixed(1)}%`]}
             />
             <Area
@@ -306,13 +398,25 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="benchmark"
-              name={bmSymbol}
+              dataKey="sol"
+              name="SOL"
               stroke="#60A5FA"
               strokeWidth={1}
               strokeDasharray="2 2"
               fill="transparent"
             />
+            {hasBtc && (
+              <Area
+                type="monotone"
+                dataKey="btc"
+                name="BTC"
+                stroke="#F7931A"
+                strokeWidth={1}
+                strokeDasharray="2 2"
+                fill="transparent"
+                connectNulls
+              />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -327,7 +431,7 @@ export default function PerformanceTab() {
                 <th className="text-left py-3 px-3 font-medium">Month</th>
                 <th className="text-right py-3 px-3 font-medium">Vault</th>
                 <th className="text-right py-3 px-3 font-medium">EW Bench</th>
-                <th className="text-right py-3 px-3 font-medium">{bmSymbol}</th>
+                <th className="text-right py-3 px-3 font-medium">SOL</th>
                 <th className="text-right py-3 px-3 font-medium">Alpha</th>
               </tr>
             </thead>
@@ -395,13 +499,14 @@ export default function PerformanceTab() {
               Return Metrics
             </p>
             <div className="space-y-3">
-              {[
+              {([
                 ["Total Return", fmtPct(m.totalReturn)],
                 ["EW Benchmark", fmtPct(m.benchmarkReturn)],
-                [`${bmSymbol} Return`, fmtPct(m.solReturn)],
+                ["SOL Return", fmtPct(m.solReturn)],
+                ["BTC Return", m.btcReturn != null ? fmtPct(m.btcReturn) : "N/A"],
                 ["Alpha", fmtPct(m.alpha)],
                 ["Win Rate", `${m.winRate}%`],
-              ].map(([label, val]) => (
+              ] as const).map(([label, val]) => (
                 <div
                   key={label}
                   className="flex justify-between py-1.5 border-b border-white/5"
@@ -417,7 +522,7 @@ export default function PerformanceTab() {
               Risk Metrics
             </p>
             <div className="space-y-3">
-              {[
+              {([
                 ["Volatility", `${m.volatility}%`],
                 ["Beta", m.beta.toFixed(2)],
                 ["Sharpe Ratio", m.sharpe.toFixed(2)],
@@ -425,7 +530,7 @@ export default function PerformanceTab() {
                 ["Calmar Ratio", m.calmar.toFixed(2)],
                 ["Information Ratio", m.informationRatio.toFixed(2)],
                 ["Max Drawdown", `${m.maxDrawdown}%`],
-              ].map(([label, val]) => (
+              ] as const).map(([label, val]) => (
                 <div
                   key={label}
                   className="flex justify-between py-1.5 border-b border-white/5"
@@ -443,7 +548,10 @@ export default function PerformanceTab() {
       <div className="text-center py-4">
         <p className="text-xs text-text-muted italic">
           Simulated results using historical on-chain data ({data.backtest_start} to {data.backtest_end}, {data.num_assets} assets).
-          Past performance does not guarantee future results. Not financial advice.
+          {data.measurement_start && (
+            <> Measurement period begins {data.measurement_start} (prior data used for warm-up).</>
+          )}
+          {" "}Past performance does not guarantee future results. Not financial advice.
         </p>
       </div>
     </div>
