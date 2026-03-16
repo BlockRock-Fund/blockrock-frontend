@@ -10,10 +10,7 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  "https://blockrock-backend-production.up.railway.app";
+import { API_BASE_URL, type BacktestData } from "./types";
 
 const TOOLTIP_STYLE = {
   backgroundColor: "var(--bg-secondary)",
@@ -102,36 +99,6 @@ function formatDateLabel(dateStr: unknown): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-interface BacktestData {
-  nav_history: { date: string; vault: number; eqWeight: number; sol: number; btc: number | null }[];
-  drawdown: { date: string; vault: number; eqWeight: number; sol: number; btc: number | null }[];
-  monthly_returns: { month: string; vault: number; eqWeight: number; benchmark: number }[];
-  risk_metrics: {
-    totalReturn: number;
-    benchmarkReturn: number;
-    solReturn: number;
-    btcReturn: number | null;
-    alpha: number;
-    sharpe: number;
-    sortino: number;
-    calmar: number;
-    maxDrawdown: number;
-    eqWeightMaxDrawdown: number;
-    solMaxDrawdown: number;
-    btcMaxDrawdown: number | null;
-    beta: number;
-    informationRatio: number;
-    winRate: number;
-    volatility: number;
-  };
-  benchmark_symbol: string;
-  backtest_start: string;
-  backtest_end: string;
-  measurement_start: string | null;
-  num_assets: number;
-  warnings: string[];
-}
-
 export default function PerformanceTab() {
   const [data, setData] = useState<BacktestData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -142,6 +109,10 @@ export default function PerformanceTab() {
     async function fetchBacktest() {
       try {
         const res = await fetch(`${API_BASE_URL}/vault/backtest`);
+        if (res.status === 503) {
+          setError("Backtest data not yet available. Please try again later.");
+          return;
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         setData(json);
@@ -154,20 +125,17 @@ export default function PerformanceTab() {
     fetchBacktest();
   }, []);
 
-  const filteredData = useMemo(() => {
-    if (!data) return { nav: [], dd: [] };
+  const filteredDaily = useMemo(() => {
+    if (!data) return [];
     const days = TIMEFRAME_DAYS[timeframe];
-    const navLen = data.nav_history.length;
-    const sliceStart = Math.max(0, navLen - days);
-    return {
-      nav: data.nav_history.slice(sliceStart),
-      dd: data.drawdown.slice(sliceStart),
-    };
+    const len = data.daily.length;
+    const sliceStart = Math.max(0, len - days);
+    return data.daily.slice(sliceStart);
   }, [data, timeframe]);
 
   const hasBtc = useMemo(() => {
     if (!data) return false;
-    return data.nav_history.some((d) => d.btc !== null);
+    return data.daily.some((d) => d.btc_nav !== null);
   }, [data]);
 
   if (loading) {
@@ -184,7 +152,7 @@ export default function PerformanceTab() {
     );
   }
 
-  if (error || !data || !data.risk_metrics) {
+  if (error || !data || !data.summary) {
     return (
       <div className="glass rounded-2xl p-8 text-center">
         <p className="text-text-muted text-lg mb-2">Unable to load backtest data</p>
@@ -193,7 +161,7 @@ export default function PerformanceTab() {
     );
   }
 
-  const m = data.risk_metrics;
+  const m = data.summary;
 
   return (
     <div className="space-y-10">
@@ -201,19 +169,19 @@ export default function PerformanceTab() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <MetricCard
           label="Total Return"
-          value={fmtPct(m.totalReturn)}
-          positive={m.totalReturn >= 0}
+          value={fmtPct(m.total_return)}
+          positive={m.total_return >= 0}
         />
         <MetricCard label="Sharpe" value={m.sharpe.toFixed(2)} positive={m.sharpe > 0} />
         <MetricCard
           label="Max Drawdown"
-          value={`${m.maxDrawdown}%`}
+          value={`${m.max_drawdown}%`}
           positive={false}
         />
         <MetricCard
           label="Win Rate"
-          value={`${m.winRate}%`}
-          positive={m.winRate >= 50}
+          value={`${m.win_rate}%`}
+          positive={m.win_rate >= 50}
         />
         <MetricCard
           label="Alpha"
@@ -228,7 +196,7 @@ export default function PerformanceTab() {
       </div>
 
       {/* Warnings Banner */}
-      {data.warnings && data.warnings.length > 0 && (
+      {m.warnings && m.warnings.length > 0 && (
         <div
           className="rounded-xl px-5 py-3 text-sm"
           style={{
@@ -239,7 +207,7 @@ export default function PerformanceTab() {
         >
           <p className="font-medium mb-1">Backtest Notes</p>
           <ul className="list-disc list-inside space-y-0.5 text-xs opacity-90">
-            {data.warnings.map((w, i) => (
+            {m.warnings.map((w, i) => (
               <li key={i}>{w}</li>
             ))}
           </ul>
@@ -271,7 +239,7 @@ export default function PerformanceTab() {
           Vault (gold) vs Equal-Weight (white) vs SOL (blue){hasBtc ? " vs BTC (orange)" : ""} — base 100
         </p>
         <ResponsiveContainer width="100%" height={350}>
-          <AreaChart data={filteredData.nav}>
+          <AreaChart data={filteredDaily}>
             <defs>
               <linearGradient id="navGold" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#DDB110" stopOpacity={0.3} />
@@ -299,7 +267,7 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="vault"
+              dataKey="vault_nav"
               name="Vault"
               stroke="#DDB110"
               strokeWidth={2}
@@ -307,7 +275,7 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="eqWeight"
+              dataKey="eq_weight_nav"
               name="EW Benchmark"
               stroke="rgba(255,255,255,0.5)"
               strokeWidth={1.5}
@@ -316,7 +284,7 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="sol"
+              dataKey="sol_nav"
               name="SOL"
               stroke="#60A5FA"
               strokeWidth={1}
@@ -326,7 +294,7 @@ export default function PerformanceTab() {
             {hasBtc && (
               <Area
                 type="monotone"
-                dataKey="btc"
+                dataKey="btc_nav"
                 name="BTC"
                 stroke="#F7931A"
                 strokeWidth={1}
@@ -343,11 +311,11 @@ export default function PerformanceTab() {
       <div className="glass rounded-2xl p-6">
         <h3 className="text-xl font-semibold mb-1">Drawdown from Peak</h3>
         <p className="text-xs text-text-muted mb-4">
-          Vault max drawdown {m.maxDrawdown}% vs EW {m.eqWeightMaxDrawdown}% vs SOL {m.solMaxDrawdown}%
-          {m.btcMaxDrawdown != null ? ` vs BTC ${m.btcMaxDrawdown}%` : ""}
+          Vault max drawdown {m.max_drawdown}% vs EW {m.eq_weight_max_drawdown}% vs SOL {m.sol_max_drawdown}%
+          {m.btc_max_drawdown != null ? ` vs BTC ${m.btc_max_drawdown}%` : ""}
         </p>
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={filteredData.dd}>
+          <AreaChart data={filteredDaily}>
             <defs>
               <linearGradient id="ddRed" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="transparent" stopOpacity={0} />
@@ -381,7 +349,7 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="eqWeight"
+              dataKey="eq_weight_dd"
               name="EW Benchmark"
               stroke="#EF4444"
               strokeWidth={1.5}
@@ -390,7 +358,7 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="vault"
+              dataKey="vault_dd"
               name="Vault"
               stroke="#DDB110"
               strokeWidth={2}
@@ -398,7 +366,7 @@ export default function PerformanceTab() {
             />
             <Area
               type="monotone"
-              dataKey="sol"
+              dataKey="sol_dd"
               name="SOL"
               stroke="#60A5FA"
               strokeWidth={1}
@@ -408,7 +376,7 @@ export default function PerformanceTab() {
             {hasBtc && (
               <Area
                 type="monotone"
-                dataKey="btc"
+                dataKey="btc_dd"
                 name="BTC"
                 stroke="#F7931A"
                 strokeWidth={1}
@@ -500,12 +468,12 @@ export default function PerformanceTab() {
             </p>
             <div className="space-y-3">
               {([
-                ["Total Return", fmtPct(m.totalReturn)],
-                ["EW Benchmark", fmtPct(m.benchmarkReturn)],
-                ["SOL Return", fmtPct(m.solReturn)],
-                ["BTC Return", m.btcReturn != null ? fmtPct(m.btcReturn) : "N/A"],
+                ["Total Return", fmtPct(m.total_return)],
+                ["EW Benchmark", fmtPct(m.eq_weight_return)],
+                ["SOL Return", fmtPct(m.sol_return)],
+                ["BTC Return", m.btc_return != null ? fmtPct(m.btc_return) : "N/A"],
                 ["Alpha", fmtPct(m.alpha)],
-                ["Win Rate", `${m.winRate}%`],
+                ["Win Rate", `${m.win_rate}%`],
               ] as const).map(([label, val]) => (
                 <div
                   key={label}
@@ -528,8 +496,8 @@ export default function PerformanceTab() {
                 ["Sharpe Ratio", m.sharpe.toFixed(2)],
                 ["Sortino Ratio", m.sortino.toFixed(2)],
                 ["Calmar Ratio", m.calmar.toFixed(2)],
-                ["Information Ratio", m.informationRatio.toFixed(2)],
-                ["Max Drawdown", `${m.maxDrawdown}%`],
+                ["Information Ratio", m.information_ratio.toFixed(2)],
+                ["Max Drawdown", `${m.max_drawdown}%`],
               ] as const).map(([label, val]) => (
                 <div
                   key={label}
@@ -547,9 +515,9 @@ export default function PerformanceTab() {
       {/* Disclaimer */}
       <div className="text-center py-4">
         <p className="text-xs text-text-muted italic">
-          Simulated results using historical on-chain data ({data.backtest_start} to {data.backtest_end}, {data.num_assets} assets).
-          {data.measurement_start && (
-            <> Measurement period begins {data.measurement_start} (prior data used for warm-up).</>
+          Simulated results using historical on-chain data ({m.backtest_start} to {m.backtest_end}, {m.num_assets} assets).
+          {m.measurement_start && (
+            <> Measurement period begins {m.measurement_start} (prior data used for warm-up).</>
           )}
           {" "}Past performance does not guarantee future results. Not financial advice.
         </p>

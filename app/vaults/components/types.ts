@@ -77,6 +77,48 @@ export const CHART_COLORS = [
 
 export const SHORT_COLORS = ["#F87171", "#FB923C", "#F472B6", "#FBBF24", "#E879F9"];
 
+export interface BacktestSummary {
+  backtest_start: string;
+  backtest_end: string;
+  measurement_start: string | null;
+  num_assets: number;
+  warnings: string[];
+  total_return: number;
+  sharpe: number;
+  sortino: number;
+  calmar: number;
+  alpha: number;
+  beta: number;
+  max_drawdown: number;
+  eq_weight_return: number;
+  eq_weight_max_drawdown: number;
+  sol_return: number;
+  sol_max_drawdown: number;
+  btc_return: number | null;
+  btc_max_drawdown: number | null;
+  information_ratio: number;
+  win_rate: number;
+  volatility: number;
+}
+
+export interface BacktestDaily {
+  date: string;
+  vault_nav: number;
+  eq_weight_nav: number;
+  sol_nav: number;
+  btc_nav: number | null;
+  vault_dd: number;
+  eq_weight_dd: number;
+  sol_dd: number;
+  btc_dd: number | null;
+}
+
+export interface BacktestData {
+  summary: BacktestSummary;
+  daily: BacktestDaily[];
+  monthly_returns: { month: string; vault: number; eqWeight: number; benchmark: number }[];
+}
+
 export function pct(val: string | null | undefined): string {
   if (!val) return "\u2014";
   const n = parseFloat(val);
