@@ -271,8 +271,6 @@ type SimpleTableRow = {
   volume_90d_o_90d?: string | number | null;
   volume_180d_o_180d?: string | number | null;
   volume_1y_o_1y?: string | number | null;
-  volume_short_ann?: string | number | null;
-  volume_long_ann?: string | number | null;
   volume_expected_1y?: string | number | null;
 
   take_rate_pct?: string | number | null;
@@ -294,8 +292,6 @@ type SimpleTableRow = {
   revenue_90d_o_90d?: string | number | null;
   revenue_180d_o_180d?: string | number | null;
   revenue_1y_o_1y?: string | number | null;
-  revenue_short_ann?: string | number | null;
-  revenue_long_ann?: string | number | null;
   revenue_expected_1y?: string | number | null;
 
   net_revenue_24h?: string | number | null;
@@ -315,8 +311,6 @@ type SimpleTableRow = {
   net_revenue_90d_o_90d?: string | number | null;
   net_revenue_180d_o_180d?: string | number | null;
   net_revenue_1y_o_1y?: string | number | null;
-  net_revenue_short_ann?: string | number | null;
-  net_revenue_long_ann?: string | number | null;
   net_revenue_expected_1y?: string | number | null;
 
   holder_share_method?: string | null;
@@ -341,8 +335,6 @@ type SimpleTableRow = {
   earnings_90d_o_90d?: string | number | null;
   earnings_180d_o_180d?: string | number | null;
   earnings_1y_o_1y?: string | number | null;
-  earnings_short_ann?: string | number | null;
-  earnings_long_ann?: string | number | null;
   earnings_expected_1y?: string | number | null;
 
   net_earnings_24h?: string | number | null;
@@ -362,8 +354,6 @@ type SimpleTableRow = {
   net_earnings_90d_o_90d?: string | number | null;
   net_earnings_180d_o_180d?: string | number | null;
   net_earnings_1y_o_1y?: string | number | null;
-  net_earnings_short_ann?: string | number | null;
-  net_earnings_long_ann?: string | number | null;
   net_earnings_expected_1y?: string | number | null;
 
   distributions_24h?: string | number | null;
@@ -383,8 +373,6 @@ type SimpleTableRow = {
   distributions_90d_o_90d?: string | number | null;
   distributions_180d_o_180d?: string | number | null;
   distributions_1y_o_1y?: string | number | null;
-  distributions_short_ann?: string | number | null;
-  distributions_long_ann?: string | number | null;
   distributions_expected_1y?: string | number | null;
 
   net_distributions_24h?: string | number | null;
@@ -404,8 +392,6 @@ type SimpleTableRow = {
   net_distributions_90d_o_90d?: string | number | null;
   net_distributions_180d_o_180d?: string | number | null;
   net_distributions_1y_o_1y?: string | number | null;
-  net_distributions_short_ann?: string | number | null;
-  net_distributions_long_ann?: string | number | null;
   net_distributions_expected_1y?: string | number | null;
 
   treasury_assets?: string | number | null;
@@ -553,8 +539,6 @@ export default function AnalysisPage() {
         "distributions_180d_o_180d",
         "distributions_1y",
         "distributions_1y_o_1y",
-        "distributions_short_ann",
-        "distributions_long_ann",
         "distributions_expected_1y",
         "revenue_distributions_pct",
         "earnings_distributions_pct",
@@ -572,8 +556,6 @@ export default function AnalysisPage() {
         "earnings_180d_o_180d",
         "earnings_1y",
         "earnings_1y_o_1y",
-        "earnings_short_ann",
-        "earnings_long_ann",
         "earnings_expected_1y",
         "revenue_earnings_pct",
         "holder_share_method",
@@ -591,8 +573,6 @@ export default function AnalysisPage() {
         "revenue_180d_o_180d",
         "revenue_1y",
         "revenue_1y_o_1y",
-        "revenue_short_ann",
-        "revenue_long_ann",
         "revenue_expected_1y",
         "take_rate_pct",
       ],
@@ -770,7 +750,6 @@ export default function AnalysisPage() {
         width: 180,
       },
       {
-        field: "distributions_short_ann",
         headerName: showNet
           ? "Net Distributions\nShort-Term Ann"
           : "Distributions\nShort-Term Ann",
@@ -782,17 +761,13 @@ export default function AnalysisPage() {
         },
         valueFormatter: (params: any) =>
           formatCurrency(
-            showNet ? params.data?.net_distributions_short_ann : params.value
           ),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          const valA = showNet ? nodeA.data?.net_distributions_short_ann : a;
-          const valB = showNet ? nodeB.data?.net_distributions_short_ann : b;
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 200,
       },
       {
-        field: "distributions_long_ann",
         headerName: showNet
           ? "Net Distributions\nLong-Term Ann"
           : "Distributions\nLong-Term Ann",
@@ -804,11 +779,8 @@ export default function AnalysisPage() {
         },
         valueFormatter: (params: any) =>
           formatCurrency(
-            showNet ? params.data?.net_distributions_long_ann : params.value
           ),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          const valA = showNet ? nodeA.data?.net_distributions_long_ann : a;
-          const valB = showNet ? nodeB.data?.net_distributions_long_ann : b;
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 200,
@@ -944,7 +916,6 @@ export default function AnalysisPage() {
         width: 170,
       },
       {
-        field: "earnings_short_ann",
         headerName: showNet
           ? "Net Earnings\nShort-Term Ann"
           : "Earnings\nShort-Term Ann",
@@ -956,17 +927,13 @@ export default function AnalysisPage() {
         },
         valueFormatter: (params: any) =>
           formatCurrency(
-            showNet ? params.data?.net_earnings_short_ann : params.value
           ),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          const valA = showNet ? nodeA.data?.net_earnings_short_ann : a;
-          const valB = showNet ? nodeB.data?.net_earnings_short_ann : b;
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 170,
       },
       {
-        field: "earnings_long_ann",
         headerName: showNet
           ? "Net Earnings\nLong-Term Ann"
           : "Earnings\nLong-Term Ann",
@@ -978,11 +945,8 @@ export default function AnalysisPage() {
         },
         valueFormatter: (params: any) =>
           formatCurrency(
-            showNet ? params.data?.net_earnings_long_ann : params.value
           ),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          const valA = showNet ? nodeA.data?.net_earnings_long_ann : a;
-          const valB = showNet ? nodeB.data?.net_earnings_long_ann : b;
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 170,
@@ -1125,7 +1089,6 @@ export default function AnalysisPage() {
         width: 160,
       },
       {
-        field: "revenue_short_ann",
         headerName: showNet
           ? "Net Revenue\nShort-Term Ann"
           : "Revenue\nShort-Term Ann",
@@ -1137,17 +1100,13 @@ export default function AnalysisPage() {
         },
         valueFormatter: (params: any) =>
           formatCurrency(
-            showNet ? params.data?.net_revenue_short_ann : params.value
           ),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          const valA = showNet ? nodeA.data?.net_revenue_short_ann : a;
-          const valB = showNet ? nodeB.data?.net_revenue_short_ann : b;
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 170,
       },
       {
-        field: "revenue_long_ann",
         headerName: showNet
           ? "Net Revenue\nLong-Term Ann"
           : "Revenue\nLong-Term Ann",
@@ -1159,11 +1118,8 @@ export default function AnalysisPage() {
         },
         valueFormatter: (params: any) =>
           formatCurrency(
-            showNet ? params.data?.net_revenue_long_ann : params.value
           ),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) => {
-          const valA = showNet ? nodeA.data?.net_revenue_long_ann : a;
-          const valB = showNet ? nodeB.data?.net_revenue_long_ann : b;
           return numericComparator(valA, valB, nodeA, nodeB, isDesc);
         },
         width: 170,
