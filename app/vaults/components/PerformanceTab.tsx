@@ -400,12 +400,17 @@ export default function PerformanceTab() {
                 <th className="text-right py-3 px-3 font-medium">Vault</th>
                 <th className="text-right py-3 px-3 font-medium">EW Bench</th>
                 <th className="text-right py-3 px-3 font-medium">SOL</th>
+                {hasBtc && <th className="text-right py-3 px-3 font-medium">BTC</th>}
                 <th className="text-right py-3 px-3 font-medium">Alpha</th>
               </tr>
             </thead>
             <tbody>
               {data.monthly_returns.map((row) => {
-                const alpha = row.vault - row.eqWeight;
+                const v = row.vault ?? 0;
+                const ew = row.eqWeight ?? 0;
+                const sol = row.sol ?? 0;
+                const btc = row.btc ?? 0;
+                const alpha = v - ew;
                 return (
                   <tr
                     key={row.month}
@@ -417,30 +422,41 @@ export default function PerformanceTab() {
                     <td
                       className="py-2.5 px-3 text-right font-mono text-sm"
                       style={{
-                        color: row.vault >= 0 ? "#10B981" : "#EF4444",
+                        color: v >= 0 ? "#10B981" : "#EF4444",
                       }}
                     >
-                      {row.vault >= 0 ? "+" : ""}
-                      {row.vault.toFixed(1)}%
+                      {v >= 0 ? "+" : ""}
+                      {v.toFixed(1)}%
                     </td>
                     <td
                       className="py-2.5 px-3 text-right font-mono text-sm"
                       style={{
-                        color: row.eqWeight >= 0 ? "#10B981" : "#EF4444",
+                        color: ew >= 0 ? "#10B981" : "#EF4444",
                       }}
                     >
-                      {row.eqWeight >= 0 ? "+" : ""}
-                      {row.eqWeight.toFixed(1)}%
+                      {ew >= 0 ? "+" : ""}
+                      {ew.toFixed(1)}%
                     </td>
                     <td
                       className="py-2.5 px-3 text-right font-mono text-sm"
                       style={{
-                        color: row.benchmark >= 0 ? "#10B981" : "#EF4444",
+                        color: sol >= 0 ? "#10B981" : "#EF4444",
                       }}
                     >
-                      {row.benchmark >= 0 ? "+" : ""}
-                      {row.benchmark.toFixed(1)}%
+                      {sol >= 0 ? "+" : ""}
+                      {sol.toFixed(1)}%
                     </td>
+                    {hasBtc && (
+                      <td
+                        className="py-2.5 px-3 text-right font-mono text-sm"
+                        style={{
+                          color: btc >= 0 ? "#10B981" : "#EF4444",
+                        }}
+                      >
+                        {btc >= 0 ? "+" : ""}
+                        {btc.toFixed(1)}%
+                      </td>
+                    )}
                     <td
                       className="py-2.5 px-3 text-right font-mono text-sm font-bold"
                       style={{

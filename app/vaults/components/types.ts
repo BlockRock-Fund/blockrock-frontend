@@ -116,7 +116,7 @@ export interface BacktestDaily {
 export interface BacktestData {
   summary: BacktestSummary;
   daily: BacktestDaily[];
-  monthly_returns: { month: string; vault: number; eqWeight: number; benchmark: number }[];
+  monthly_returns: { month: string; vault: number; eqWeight: number; sol: number; btc: number }[];
 }
 
 export function pct(val: string | null | undefined): string {
