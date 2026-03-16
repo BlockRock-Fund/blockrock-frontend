@@ -90,6 +90,12 @@ export interface BacktestSummary {
   volatility: number | null;
 }
 
+export interface BacktestHolding {
+  symbol: string;
+  weight: number;
+  side: "long" | "short";
+}
+
 export interface BacktestDaily {
   date: string;
   vault_nav: number;
@@ -100,6 +106,7 @@ export interface BacktestDaily {
   eq_weight_dd: number;
   sol_dd: number;
   btc_dd: number | null;
+  holdings: BacktestHolding[] | null;
 }
 
 export interface BacktestData {

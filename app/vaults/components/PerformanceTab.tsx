@@ -10,7 +10,7 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
-import { API_BASE_URL, type BacktestData } from "./types";
+import { API_BASE_URL, type BacktestData, type BacktestDaily } from "./types";
 
 const TOOLTIP_STYLE = {
   backgroundColor: "var(--bg-secondary)",
@@ -97,6 +97,86 @@ function SkeletonChart({ height = 350 }: { height?: number }) {
 function formatDateLabel(dateStr: unknown): string {
   const d = new Date(String(dateStr) + "T00:00:00");
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function NavTooltip({ active, payload, label }: {
+  active?: boolean;
+  payload?: Array<{ dataKey: string; name: string; value: number; color: string; payload?: any }>;
+  label?: string;
+}) {
+  if (!active || !payload?.length) return null;
+
+  const row = payload[0]?.payload as BacktestDaily | undefined;
+  const holdings = row?.holdings;
+  const longs = holdings?.filter((h) => h.side === "long") ?? [];
+  const shorts = holdings?.filter((h) => h.side === "short") ?? [];
+
+  return (
+    <div
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: "10px",
+        padding: "12px 14px",
+        minWidth: 220,
+        maxWidth: 320,
+      }}
+    >
+      <p style={{ color: "var(--text-secondary)", fontSize: 11, marginBottom: 8 }}>
+        {formatDateLabel(label)}
+      </p>
+
+      {/* NAV values */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: holdings ? 10 : 0 }}>
+        {payload.map((entry) => (
+          <div key={entry.dataKey} style={{ display: "flex", justifyContent: "space-between", gap: 16 }}>
+            <span style={{ color: entry.color, fontSize: 12 }}>{entry.name}</span>
+            <span style={{ color: "var(--text-primary)", fontSize: 12, fontFamily: "var(--font-geist-mono), monospace" }}>
+              {entry.value?.toFixed(2)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Holdings breakdown */}
+      {holdings && holdings.length > 0 && (
+        <>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: 8 }} />
+
+          {longs.length > 0 && (
+            <div style={{ marginBottom: shorts.length > 0 ? 6 : 0 }}>
+              <p style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 3 }}>
+                Longs ({longs.length})
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 6px" }}>
+                {longs.map((h) => (
+                  <span key={h.symbol} style={{ fontSize: 11, color: "#10B981", fontFamily: "var(--font-geist-mono), monospace" }}>
+                    {h.symbol} {(h.weight * 100).toFixed(1)}%
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {shorts.length > 0 && (
+            <div>
+              <p style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 3 }}>
+                Shorts ({shorts.length})
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 6px" }}>
+                {shorts.map((h) => (
+                  <span key={h.symbol} style={{ fontSize: 11, color: "#EF4444", fontFamily: "var(--font-geist-mono), monospace" }}>
+                    {h.symbol} {(h.weight * 100).toFixed(1)}%
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function PerformanceTab() {
@@ -261,10 +341,7 @@ export default function PerformanceTab() {
               domain={["auto", "auto"]}
               width={50}
             />
-            <RechartsTooltip
-              contentStyle={TOOLTIP_STYLE}
-              labelFormatter={formatDateLabel}
-            />
+            <RechartsTooltip content={<NavTooltip />} />
             <Area
               type="monotone"
               dataKey="vault_nav"
