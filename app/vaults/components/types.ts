@@ -62,20 +62,9 @@ export type AllocationRecord = {
   short_allocation_pct: string | null;
 };
 
-export const CHART_COLORS = [
-  "#DDB110",
-  "#3B82F6",
-  "#10B981",
-  "#F59E0B",
-  "#8B5CF6",
-  "#EC4899",
-  "#14B8A6",
-  "#F97316",
-  "#6366F1",
-  "#A78BFA",
-];
+export const CHART_COLORS = ["#4ADE80"];
 
-export const SHORT_COLORS = ["#F87171", "#FB923C", "#F472B6", "#FBBF24", "#E879F9"];
+export const SHORT_COLORS = ["#F87171"];
 
 export interface BacktestSummary {
   backtest_start: string;
