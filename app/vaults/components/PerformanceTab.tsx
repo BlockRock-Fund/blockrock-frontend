@@ -169,29 +169,29 @@ export default function PerformanceTab() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <MetricCard
           label="Total Return"
-          value={fmtPct(m.total_return)}
-          positive={m.total_return >= 0}
+          value={m.total_return != null ? fmtPct(m.total_return) : "\u2014"}
+          positive={m.total_return != null ? m.total_return >= 0 : undefined}
         />
-        <MetricCard label="Sharpe" value={m.sharpe.toFixed(2)} positive={m.sharpe > 0} />
+        <MetricCard label="Sharpe" value={m.sharpe?.toFixed(2) ?? "\u2014"} positive={m.sharpe != null ? m.sharpe > 0 : undefined} />
         <MetricCard
           label="Max Drawdown"
-          value={`${m.max_drawdown}%`}
-          positive={false}
+          value={m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"}
+          positive={m.max_drawdown != null ? false : undefined}
         />
         <MetricCard
           label="Win Rate"
-          value={`${m.win_rate}%`}
-          positive={m.win_rate >= 50}
+          value={m.win_rate != null ? `${m.win_rate}%` : "\u2014"}
+          positive={m.win_rate != null ? m.win_rate >= 50 : undefined}
         />
         <MetricCard
           label="Alpha"
-          value={fmtPct(m.alpha)}
-          positive={m.alpha >= 0}
+          value={m.alpha != null ? fmtPct(m.alpha) : "\u2014"}
+          positive={m.alpha != null ? m.alpha >= 0 : undefined}
         />
         <MetricCard
           label="Sortino"
-          value={m.sortino.toFixed(2)}
-          positive={m.sortino > 0}
+          value={m.sortino?.toFixed(2) ?? "\u2014"}
+          positive={m.sortino != null ? m.sortino > 0 : undefined}
         />
       </div>
 
@@ -311,7 +311,7 @@ export default function PerformanceTab() {
       <div className="glass rounded-2xl p-6">
         <h3 className="text-xl font-semibold mb-1">Drawdown from Peak</h3>
         <p className="text-xs text-text-muted mb-4">
-          Vault max drawdown {m.max_drawdown}% vs EW {m.eq_weight_max_drawdown}% vs SOL {m.sol_max_drawdown}%
+          Vault max drawdown {m.max_drawdown ?? "\u2014"}% vs EW {m.eq_weight_max_drawdown ?? "\u2014"}% vs SOL {m.sol_max_drawdown ?? "\u2014"}%
           {m.btc_max_drawdown != null ? ` vs BTC ${m.btc_max_drawdown}%` : ""}
         </p>
         <ResponsiveContainer width="100%" height={250}>
@@ -468,12 +468,12 @@ export default function PerformanceTab() {
             </p>
             <div className="space-y-3">
               {([
-                ["Total Return", fmtPct(m.total_return)],
-                ["EW Benchmark", fmtPct(m.eq_weight_return)],
-                ["SOL Return", fmtPct(m.sol_return)],
+                ["Total Return", m.total_return != null ? fmtPct(m.total_return) : "\u2014"],
+                ["EW Benchmark", m.eq_weight_return != null ? fmtPct(m.eq_weight_return) : "\u2014"],
+                ["SOL Return", m.sol_return != null ? fmtPct(m.sol_return) : "\u2014"],
                 ["BTC Return", m.btc_return != null ? fmtPct(m.btc_return) : "N/A"],
-                ["Alpha", fmtPct(m.alpha)],
-                ["Win Rate", `${m.win_rate}%`],
+                ["Alpha", m.alpha != null ? fmtPct(m.alpha) : "\u2014"],
+                ["Win Rate", m.win_rate != null ? `${m.win_rate}%` : "\u2014"],
               ] as const).map(([label, val]) => (
                 <div
                   key={label}
@@ -491,13 +491,13 @@ export default function PerformanceTab() {
             </p>
             <div className="space-y-3">
               {([
-                ["Volatility", `${m.volatility}%`],
-                ["Beta", m.beta.toFixed(2)],
-                ["Sharpe Ratio", m.sharpe.toFixed(2)],
-                ["Sortino Ratio", m.sortino.toFixed(2)],
-                ["Calmar Ratio", m.calmar.toFixed(2)],
-                ["Information Ratio", m.information_ratio.toFixed(2)],
-                ["Max Drawdown", `${m.max_drawdown}%`],
+                ["Volatility", m.volatility != null ? `${m.volatility}%` : "\u2014"],
+                ["Beta", m.beta?.toFixed(2) ?? "\u2014"],
+                ["Sharpe Ratio", m.sharpe?.toFixed(2) ?? "\u2014"],
+                ["Sortino Ratio", m.sortino?.toFixed(2) ?? "\u2014"],
+                ["Calmar Ratio", m.calmar?.toFixed(2) ?? "\u2014"],
+                ["Information Ratio", m.information_ratio?.toFixed(2) ?? "\u2014"],
+                ["Max Drawdown", m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"],
               ] as const).map(([label, val]) => (
                 <div
                   key={label}

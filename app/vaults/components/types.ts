@@ -83,22 +83,22 @@ export interface BacktestSummary {
   measurement_start: string | null;
   num_assets: number;
   warnings: string[];
-  total_return: number;
-  sharpe: number;
-  sortino: number;
-  calmar: number;
-  alpha: number;
-  beta: number;
-  max_drawdown: number;
-  eq_weight_return: number;
-  eq_weight_max_drawdown: number;
-  sol_return: number;
-  sol_max_drawdown: number;
+  total_return: number | null;
+  sharpe: number | null;
+  sortino: number | null;
+  calmar: number | null;
+  alpha: number | null;
+  beta: number | null;
+  max_drawdown: number | null;
+  eq_weight_return: number | null;
+  eq_weight_max_drawdown: number | null;
+  sol_return: number | null;
+  sol_max_drawdown: number | null;
   btc_return: number | null;
   btc_max_drawdown: number | null;
-  information_ratio: number;
-  win_rate: number;
-  volatility: number;
+  information_ratio: number | null;
+  win_rate: number | null;
+  volatility: number | null;
 }
 
 export interface BacktestDaily {
