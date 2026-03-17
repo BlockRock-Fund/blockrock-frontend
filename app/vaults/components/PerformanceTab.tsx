@@ -23,15 +23,16 @@ function fmtPct(v: number): string {
   return `${v >= 0 ? "+" : ""}${v}%`;
 }
 
-type Timeframe = "7D" | "30D" | "90D" | "180D" | "1Y";
+type Timeframe = "30D" | "90D" | "6M" | "1Y" | "2Y" | "4Y";
 const TIMEFRAME_DAYS: Record<Timeframe, number> = {
-  "7D": 7,
   "30D": 30,
   "90D": 90,
-  "180D": 180,
+  "6M": 182,
   "1Y": 365,
+  "2Y": 730,
+  "4Y": 1461,
 };
-const TIMEFRAMES: Timeframe[] = ["7D", "30D", "90D", "180D", "1Y"];
+const TIMEFRAMES: Timeframe[] = ["30D", "90D", "6M", "1Y", "2Y", "4Y"];
 
 function MetricCard({
   label,
@@ -94,8 +95,13 @@ function SkeletonChart({ height = 350 }: { height?: number }) {
   );
 }
 
-function formatDateLabel(dateStr: unknown): string {
+function formatDateLabel(dateStr: unknown, multiYear?: boolean): string {
   const d = new Date(String(dateStr) + "T00:00:00");
+  if (multiYear) {
+    const month = d.toLocaleDateString("en-US", { month: "short" });
+    const year = d.getFullYear().toString().slice(2);
+    return `${month} '${year}`;
+  }
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
@@ -183,7 +189,7 @@ export default function PerformanceTab() {
   const [data, setData] = useState<BacktestData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeframe, setTimeframe] = useState<Timeframe>("1Y");
+  const [timeframe, setTimeframe] = useState<Timeframe>("4Y");
 
   useEffect(() => {
     async function fetchBacktest() {
@@ -212,6 +218,13 @@ export default function PerformanceTab() {
     const sliceStart = Math.max(0, len - days);
     return data.daily.slice(sliceStart);
   }, [data, timeframe]);
+
+  const isMultiYear = timeframe === "2Y" || timeframe === "4Y";
+  const tickFormatter = useMemo(
+    () => (dateStr: unknown) => formatDateLabel(dateStr, isMultiYear),
+    [isMultiYear],
+  );
+  const minTickGap = isMultiYear ? 60 : 40;
 
   const hasBtc = useMemo(() => {
     if (!data) return false;
@@ -332,8 +345,8 @@ export default function PerformanceTab() {
             />
             <XAxis
               dataKey="date"
-              tickFormatter={formatDateLabel}
-              minTickGap={40}
+              tickFormatter={tickFormatter}
+              minTickGap={minTickGap}
               tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
             />
             <YAxis
@@ -409,8 +422,8 @@ export default function PerformanceTab() {
             />
             <XAxis
               dataKey="date"
-              tickFormatter={formatDateLabel}
-              minTickGap={40}
+              tickFormatter={tickFormatter}
+              minTickGap={minTickGap}
               tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
             />
             <YAxis
