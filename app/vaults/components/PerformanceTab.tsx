@@ -434,7 +434,7 @@ export default function PerformanceTab() {
             />
             <RechartsTooltip
               contentStyle={TOOLTIP_STYLE}
-              labelFormatter={formatDateLabel}
+              labelFormatter={(label) => formatDateLabel(label)}
               formatter={(value) => [`${Number(value).toFixed(1)}%`]}
             />
             <Area
