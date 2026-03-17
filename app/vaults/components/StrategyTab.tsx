@@ -230,28 +230,28 @@ export default function StrategyTab({
         </div>
         <div className="space-y-4 mb-5">
           <ScoreBar
-            label="Net Distributions Yield"
-            weight={50}
+            label="Distributions Yield"
+            weight={40}
             color="#10B981"
-            tooltip="Expected 1-year distributions yield after subtracting estimated token emissions dilution. Captures actual cash/token flows to holders."
+            tooltip="Expected 1-year gross distributions yield (sensitivity-adjusted projection). Measures actual cash/token flows to holders without over-penalizing emissions."
           />
           <ScoreBar
-            label="Net Revenue Yield"
-            weight={30}
+            label="Net Earnings Yield"
+            weight={35}
             color="#3B82F6"
-            tooltip="Expected 1-year protocol revenue yield after emissions adjustment. Measures the protocol's ability to generate revenue relative to market cap."
+            tooltip="Expected 1-year net earnings yield after emissions. For stocks: net income / market cap. For tokens: earnings minus dilution / market cap."
           />
           <ScoreBar
-            label="Growth Trend"
-            weight={20}
+            label="Treasury Coverage"
+            weight={25}
             color="#8B5CF6"
-            tooltip="Period-over-period revenue/volume growth momentum. Captures whether the protocol is accelerating or decelerating."
+            tooltip="Fraction of market cap backed by treasury assets. Higher coverage provides downside protection and signals protocol sustainability."
           />
         </div>
         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
           <p className="text-xs font-mono text-text-secondary mb-2">
-            composite = 0.50 * net_dist_yield + 0.30 * net_rev_yield + 0.20 *
-            growth_trend
+            composite = 0.40 * dist_yield + 0.35 * net_earnings_yield + 0.25 *
+            treasury_coverage
           </p>
           <p className="text-xs text-text-muted">
             <span className="text-green-400 font-medium">
@@ -463,8 +463,8 @@ export default function StrategyTab({
               desc: "25% max per long, 25% max per short — bounds concentration risk on both sides",
             },
             {
-              title: "Emissions Sensitivity",
-              desc: "Net yields strip token inflation so the strategy avoids chasing unsustainable inflationary yield",
+              title: "Treasury Coverage",
+              desc: "25% weight on treasury-backed value ensures the strategy favors protocols with real balance sheet support",
             },
             {
               title: "Rebalance Cadence",

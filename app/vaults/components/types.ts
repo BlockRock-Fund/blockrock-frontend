@@ -8,6 +8,11 @@ export type TargetWeight = {
   mint_address: string;
   composite_score: string;
   target_weight: string;
+  // Current scoring fields
+  distributions_yield_expected_1y: string | null;
+  net_earnings_yield_expected_1y: string | null;
+  treasury_coverage: string | null;
+  // Legacy fields
   net_distributions_yield_expected_1y: string | null;
   net_revenue_yield_expected_1y: string | null;
   growth_trend: string | null;

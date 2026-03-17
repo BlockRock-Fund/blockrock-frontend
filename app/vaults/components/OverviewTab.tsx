@@ -322,13 +322,13 @@ export default function OverviewTab({
                   <th className="text-left py-3 px-3 font-medium">Symbol</th>
                   <th className="text-center py-3 px-3 font-medium">Side</th>
                   <th className="text-right py-3 px-3 font-medium">
-                    Net Dist. Yield
+                    Dist. Yield
                   </th>
                   <th className="text-right py-3 px-3 font-medium">
-                    Net Rev. Yield
+                    Net Earn. Yield
                   </th>
                   <th className="text-right py-3 px-3 font-medium">
-                    Growth Trend
+                    Treasury Cov.
                   </th>
                   <th className="text-right py-3 px-3 font-medium">
                     Composite Score
@@ -372,13 +372,13 @@ export default function OverviewTab({
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right">
-                        {pct(w.net_distributions_yield_expected_1y)}
+                        {pct(w.distributions_yield_expected_1y)}
                       </td>
                       <td className="py-3 px-3 text-right">
-                        {pct(w.net_revenue_yield_expected_1y)}
+                        {pct(w.net_earnings_yield_expected_1y)}
                       </td>
                       <td className="py-3 px-3 text-right">
-                        {pct(w.growth_trend)}
+                        {pct(w.treasury_coverage)}
                       </td>
                       <td
                         className="py-3 px-3 text-right font-mono"
@@ -407,8 +407,8 @@ export default function OverviewTab({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            title: "50/30/20 Scoring",
-            desc: "Dist Yield + Rev Yield + Growth",
+            title: "40/35/25 Scoring",
+            desc: "Dist Yield + Earnings Yield + Treasury",
             icon: "📊",
           },
           {
