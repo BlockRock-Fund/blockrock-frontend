@@ -216,7 +216,41 @@ export default function PerformanceTab() {
     const days = TIMEFRAME_DAYS[timeframe];
     const len = data.daily.length;
     const sliceStart = Math.max(0, len - days);
-    return data.daily.slice(sliceStart);
+    const slice = data.daily.slice(sliceStart);
+    if (slice.length === 0) return [];
+
+    // Rebase all NAV series to 100 at slice start
+    const first = slice[0];
+    const vBase = first.vault_nav || 1;
+    const ewBase = first.eq_weight_nav || 1;
+    const solBase = first.sol_nav || 1;
+    const btcBase = first.btc_nav || 1;
+
+    // Rebase NAV to 100 and recompute drawdowns with running peaks
+    let vPeak = 100, ewPeak = 100, solPeak = 100, btcPeak = 100;
+    return slice.map((row) => {
+      const vNav = Math.round(((row.vault_nav / vBase) * 100) * 100) / 100;
+      const ewNav = Math.round(((row.eq_weight_nav / ewBase) * 100) * 100) / 100;
+      const solNav = Math.round(((row.sol_nav / solBase) * 100) * 100) / 100;
+      const btcNav = row.btc_nav != null ? Math.round(((row.btc_nav / btcBase) * 100) * 100) / 100 : null;
+
+      vPeak = Math.max(vPeak, vNav);
+      ewPeak = Math.max(ewPeak, ewNav);
+      solPeak = Math.max(solPeak, solNav);
+      if (btcNav != null) btcPeak = Math.max(btcPeak, btcNav);
+
+      return {
+        ...row,
+        vault_nav: vNav,
+        eq_weight_nav: ewNav,
+        sol_nav: solNav,
+        btc_nav: btcNav,
+        vault_dd: Math.round((vNav / vPeak - 1) * 100 * 100) / 100,
+        eq_weight_dd: Math.round((ewNav / ewPeak - 1) * 100 * 100) / 100,
+        sol_dd: Math.round((solNav / solPeak - 1) * 100 * 100) / 100,
+        btc_dd: btcNav != null ? Math.round((btcNav / btcPeak - 1) * 100 * 100) / 100 : null,
+      };
+    });
   }, [data, timeframe]);
 
   const isMultiYear = timeframe === "2Y" || timeframe === "4Y";
