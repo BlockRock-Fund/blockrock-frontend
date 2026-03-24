@@ -112,6 +112,7 @@ export interface BacktestDaily {
   sol_dd: number;
   btc_dd: number | null;
   holdings: BacktestHolding[] | null;
+  eq_holdings: BacktestHolding[] | null;
 }
 
 export interface BacktestData {

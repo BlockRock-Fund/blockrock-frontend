@@ -115,8 +115,12 @@ function NavTooltip({ active, payload, label }: {
 
   const row = payload[0]?.payload as BacktestDaily | undefined;
   const holdings = row?.holdings;
+  const eqHoldings = row?.eq_holdings;
   const longs = holdings?.filter((h) => h.side === "long") ?? [];
   const shorts = holdings?.filter((h) => h.side === "short") ?? [];
+  const ewLongs = eqHoldings?.filter((h) => h.side === "long") ?? [];
+
+  const hasHoldings = (holdings && holdings.length > 0) || (eqHoldings && eqHoldings.length > 0);
 
   return (
     <div
@@ -126,7 +130,7 @@ function NavTooltip({ active, payload, label }: {
         borderRadius: "10px",
         padding: "12px 14px",
         minWidth: 220,
-        maxWidth: 320,
+        maxWidth: 340,
       }}
     >
       <p style={{ color: "var(--text-secondary)", fontSize: 11, marginBottom: 8 }}>
@@ -134,7 +138,7 @@ function NavTooltip({ active, payload, label }: {
       </p>
 
       {/* NAV values */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: holdings ? 10 : 0 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: hasHoldings ? 10 : 0 }}>
         {payload.map((entry) => (
           <div key={entry.dataKey} style={{ display: "flex", justifyContent: "space-between", gap: 16 }}>
             <span style={{ color: entry.color, fontSize: 12 }}>{entry.name}</span>
@@ -145,10 +149,13 @@ function NavTooltip({ active, payload, label }: {
         ))}
       </div>
 
-      {/* Holdings breakdown */}
+      {/* Vault Holdings */}
       {holdings && holdings.length > 0 && (
         <>
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: 8 }} />
+          <p style={{ fontSize: 10, color: "#DDB110", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5, fontWeight: 600 }}>
+            Vault
+          </p>
 
           {longs.length > 0 && (
             <div style={{ marginBottom: shorts.length > 0 ? 6 : 0 }}>
@@ -173,6 +180,28 @@ function NavTooltip({ active, payload, label }: {
               <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 6px" }}>
                 {shorts.map((h) => (
                   <span key={h.symbol} style={{ fontSize: 11, color: "#EF4444", fontFamily: "var(--font-geist-mono), monospace" }}>
+                    {h.symbol} {(h.weight * 100).toFixed(1)}%
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* EW Benchmark Holdings */}
+      {eqHoldings && eqHoldings.length > 0 && (
+        <>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginTop: holdings && holdings.length > 0 ? 8 : 0, marginBottom: 8 }} />
+          <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5, fontWeight: 600 }}>
+            EW Benchmark
+          </p>
+
+          {ewLongs.length > 0 && (
+            <div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 6px" }}>
+                {ewLongs.map((h) => (
+                  <span key={h.symbol} style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-geist-mono), monospace" }}>
                     {h.symbol} {(h.weight * 100).toFixed(1)}%
                   </span>
                 ))}
