@@ -46,6 +46,7 @@ export default function VaultPage() {
   const [confluenceMultiplier, setConfluenceMultiplier] = useState<string | null>(null);
   const [confluenceStressed, setConfluenceStressed] = useState<number | null>(null);
   const [confluenceTotal, setConfluenceTotal] = useState<number | null>(null);
+  const [presetName, setPresetName] = useState<string>("default");
 
   const fetchData = async () => {
     try {
@@ -66,6 +67,7 @@ export default function VaultPage() {
       setConfluenceMultiplier(weightsData.confluence_multiplier ?? null);
       setConfluenceStressed(weightsData.confluence_stressed ?? null);
       setConfluenceTotal(weightsData.confluence_total ?? null);
+      setPresetName(weightsData.preset_name ?? "default");
 
       if (statusRes.ok) setStatus(await statusRes.json());
       if (allocsRes.ok) {
@@ -258,7 +260,7 @@ export default function VaultPage() {
             confluenceTotal={confluenceTotal}
           />
         )}
-        {activeTab === "performance" && <PerformanceTab />}
+        {activeTab === "performance" && <PerformanceTab presetName={presetName} />}
         {activeTab === "live" && (
           <LiveVaultTab
             status={status}

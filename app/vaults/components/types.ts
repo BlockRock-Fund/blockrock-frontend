@@ -25,6 +25,7 @@ export type TargetWeight = {
 export type TargetWeightsResponse = {
   weights: TargetWeight[];
   computed_at: string;
+  preset_name: string;
   regime_score: string | null;
   short_allocation_pct: string | null;
   confluence_multiplier: string | null;
@@ -72,6 +73,7 @@ export const CHART_COLORS = ["#4ADE80"];
 export const SHORT_COLORS = ["#F87171"];
 
 export interface BacktestSummary {
+  preset_name: string;
   backtest_start: string;
   backtest_end: string;
   measurement_start: string | null;

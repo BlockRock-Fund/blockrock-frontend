@@ -214,7 +214,7 @@ function NavTooltip({ active, payload, label }: {
   );
 }
 
-export default function PerformanceTab() {
+export default function PerformanceTab({ presetName = "default" }: { presetName?: string }) {
   const [data, setData] = useState<BacktestData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -223,7 +223,8 @@ export default function PerformanceTab() {
   useEffect(() => {
     async function fetchBacktest() {
       try {
-        const res = await fetch(`${API_BASE_URL}/vault/backtest`);
+        const params = new URLSearchParams({ preset: presetName });
+        const res = await fetch(`${API_BASE_URL}/vault/backtest?${params}`);
         if (res.status === 503) {
           setError("Backtest data not yet available. Please try again later.");
           return;
@@ -238,7 +239,7 @@ export default function PerformanceTab() {
       }
     }
     fetchBacktest();
-  }, []);
+  }, [presetName]);
 
   const filteredDaily = useMemo(() => {
     if (!data) return [];
