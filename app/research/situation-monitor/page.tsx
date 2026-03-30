@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { TerminalMarketList, TerminalPricesTable, TerminalTweetList } from "./charts";
-import type { BangitFeedsResponse, HyperliquidPricesResponse, PolymarketEventsResponse } from "./data";
+import { TerminalMarketList, TerminalNewsList, TerminalPricesTable, TerminalTweetList } from "./charts";
+import type { BangitFeedsResponse, HyperliquidPricesResponse, NewsHeadlinesResponse, PolymarketEventsResponse } from "./data";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -12,6 +12,7 @@ const API_BASE_URL =
 
 type Category = "all" | "politics" | "finance" | "geopolitics" | "tech" | "economy";
 type FeedType = "HOT" | "TOP_7D" | "BUMP";
+type NewsCategory = "all" | "crypto" | "finance" | "macro" | "tech";
 
 const CATEGORIES: { key: Category; label: string }[] = [
   { key: "all", label: "ALL" },
@@ -28,6 +29,14 @@ const FEED_TYPES: { key: FeedType; label: string }[] = [
   { key: "BUMP", label: "BUMP" },
 ];
 
+const NEWS_CATEGORIES: { key: NewsCategory; label: string }[] = [
+  { key: "all", label: "ALL" },
+  { key: "crypto", label: "CRYPTO" },
+  { key: "finance", label: "FIN" },
+  { key: "macro", label: "MACRO" },
+  { key: "tech", label: "TECH" },
+];
+
 export default function SituationMonitorPage() {
   const [markets, setMarkets] = useState<PolymarketEventsResponse | null>(null);
   const [loadingMarkets, setLoadingMarkets] = useState(true);
@@ -35,8 +44,11 @@ export default function SituationMonitorPage() {
   const [loadingPrices, setLoadingPrices] = useState(true);
   const [tweets, setTweets] = useState<BangitFeedsResponse | null>(null);
   const [loadingTweets, setLoadingTweets] = useState(true);
+  const [news, setNews] = useState<NewsHeadlinesResponse | null>(null);
+  const [loadingNews, setLoadingNews] = useState(true);
   const [category, setCategory] = useState<Category>("all");
   const [feedType, setFeedType] = useState<FeedType>("HOT");
+  const [newsCategory, setNewsCategory] = useState<NewsCategory>("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   const fetchMarkets = useCallback(async (cat: Category) => {
@@ -77,6 +89,18 @@ export default function SituationMonitorPage() {
     }
   }, []);
 
+  const fetchNews = useCallback(async (cat: NewsCategory) => {
+    setLoadingNews(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/news/headlines?category=${cat}&limit=40`);
+      if (res.ok) setNews(await res.json());
+    } catch (err) {
+      console.error("Failed to fetch news headlines:", err);
+    } finally {
+      setLoadingNews(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchMarkets(category);
   }, [category, fetchMarkets]);
@@ -90,14 +114,19 @@ export default function SituationMonitorPage() {
   }, [feedType, fetchTweets]);
 
   useEffect(() => {
+    fetchNews(newsCategory);
+  }, [newsCategory, fetchNews]);
+
+  useEffect(() => {
     if (!autoRefresh) return;
     const interval = setInterval(() => {
       fetchMarkets(category);
       fetchPrices();
       fetchTweets(feedType);
+      fetchNews(newsCategory);
     }, 60_000);
     return () => clearInterval(interval);
-  }, [autoRefresh, category, feedType, fetchMarkets, fetchPrices, fetchTweets]);
+  }, [autoRefresh, category, feedType, newsCategory, fetchMarkets, fetchPrices, fetchTweets, fetchNews]);
 
   return (
     <div className="fixed inset-x-0 top-16 bottom-0 flex flex-col font-mono border-t border-accent-cyan/20 bg-bg-primary overflow-hidden z-10">
@@ -128,8 +157,8 @@ export default function SituationMonitorPage() {
         </button>
       </div>
 
-      {/* 3-column grid */}
-      <div className="flex-1 grid grid-cols-[1fr_1.5fr_1fr] overflow-hidden min-h-0">
+      {/* 4-column grid */}
+      <div className="flex-1 grid grid-cols-[1fr_1.2fr_1fr_1fr] overflow-hidden min-h-0">
         {/* LEFT — Prediction Markets */}
         <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
           {/* Column header */}
@@ -189,8 +218,8 @@ export default function SituationMonitorPage() {
           </div>
         </div>
 
-        {/* RIGHT — Tweets */}
-        <div className="flex flex-col overflow-hidden min-h-0">
+        {/* RIGHT-LEFT — Tweets */}
+        <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -222,6 +251,45 @@ export default function SituationMonitorPage() {
           {/* Scrollable content */}
           <div className="overflow-y-auto flex-1 min-h-0">
             <TerminalTweetList tweets={tweets?.tweets ?? []} loading={loadingTweets} />
+          </div>
+        </div>
+
+        {/* RIGHT — News */}
+        <div className="flex flex-col overflow-hidden min-h-0">
+          {/* Column header */}
+          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-accent-cyan tracking-widest uppercase">
+                News
+              </span>
+              <span className="text-[10px] text-text-muted">rss</span>
+            </div>
+            <div className="flex items-center gap-0.5">
+              {NEWS_CATEGORIES.map((cat, i) => (
+                <span key={cat.key} className="flex items-center">
+                  <button
+                    onClick={() => setNewsCategory(cat.key)}
+                    className={`text-[10px] px-1.5 py-0.5 transition-colors ${
+                      newsCategory === cat.key
+                        ? "text-accent-cyan"
+                        : "text-text-muted hover:text-text-secondary"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                  {i < NEWS_CATEGORIES.length - 1 && (
+                    <span className="text-text-muted/40 text-[10px]">|</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+          {/* Scrollable content */}
+          <div className="overflow-y-auto flex-1 min-h-0">
+            <TerminalNewsList
+              articles={news?.articles ?? []}
+              loading={loadingNews}
+            />
           </div>
         </div>
       </div>

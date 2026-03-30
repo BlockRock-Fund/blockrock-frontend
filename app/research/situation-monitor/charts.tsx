@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BarChart3, ExternalLink, Globe } from "lucide-react";
 import { SIGNAL_TOOLTIPS, formatImpact, formatPercentChange, formatPrice, formatVolume, hyperliquidIconUrl, hyperliquidTradeUrl } from "./data";
-import type { BangitTweet, HyperliquidPriceData, PolymarketEventData } from "./data";
+import type { BangitTweet, HyperliquidPriceData, NewsArticle, PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 // ---------- Signal Gauges ----------
@@ -801,6 +801,107 @@ export function HyperliquidPricesSkeleton() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+// ---------- Terminal News List ----------
+
+function timeAgo(dateStr: string | null): string {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  return `${Math.floor(hrs / 24)}d`;
+}
+
+export function TerminalNewsList({
+  articles,
+  loading,
+}: {
+  articles: NewsArticle[];
+  loading: boolean;
+}) {
+  const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
+
+  if (loading) {
+    return (
+      <div className="flex flex-col">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="px-3 py-2.5 border-b border-accent-cyan/10 animate-pulse"
+          >
+            <div className="flex items-start gap-2">
+              <div className="w-10 h-10 rounded bg-bg-tertiary/50 shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3 bg-bg-tertiary/50 rounded w-full" />
+                <div className="h-3 bg-bg-tertiary/40 rounded w-3/4" />
+                <div className="h-2.5 bg-bg-tertiary/30 rounded w-1/3" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!articles.length) {
+    return (
+      <div className="px-3 py-6 text-center text-text-muted text-xs font-mono">
+        // no data
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      {articles.map((article, idx) => (
+        <a
+          key={idx}
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+        >
+          <div className="px-3 py-2.5 border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer">
+            <div className="flex items-start gap-2">
+              {article.image_url && !imgErrors[idx] ? (
+                <img
+                  src={article.image_url}
+                  alt=""
+                  className="w-10 h-10 rounded object-cover shrink-0 mt-0.5 opacity-80"
+                  onError={() =>
+                    setImgErrors((prev) => ({ ...prev, [idx]: true }))
+                  }
+                />
+              ) : (
+                <div className="w-10 h-10 rounded bg-bg-tertiary/50 flex items-center justify-center shrink-0 mt-0.5">
+                  <Globe className="w-4 h-4 text-text-muted" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-text-primary line-clamp-2 leading-snug">
+                  {article.title}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-[10px] font-semibold text-accent-cyan truncate">
+                    {article.source_name}
+                  </span>
+                  {article.published_at && (
+                    <span className="text-[10px] text-text-muted shrink-0">
+                      {timeAgo(article.published_at)}
+                    </span>
+                  )}
+                  <ExternalLink className="w-3 h-3 text-text-muted shrink-0 ml-auto" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
     </div>
   );
 }

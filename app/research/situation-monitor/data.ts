@@ -105,6 +105,22 @@ export interface BangitFeedsResponse {
   fetched_at?: string | null;
 }
 
+// ---------- News types ----------
+
+export interface NewsArticle {
+  title: string;
+  source_name: string;
+  url: string;
+  image_url: string | null;
+  published_at: string | null;
+  category: string;
+}
+
+export interface NewsHeadlinesResponse {
+  articles: NewsArticle[];
+  fetched_at: string | null;
+}
+
 // ---------- Asset icons ----------
 
 export function hyperliquidIconUrl(coin: string): string {
