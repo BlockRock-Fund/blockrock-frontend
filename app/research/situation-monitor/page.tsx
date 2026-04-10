@@ -198,12 +198,12 @@ export default function SituationMonitorPage() {
           </div>
         </div>
 
-        {/* CENTER — Prices */}
+        {/* CENTER — Assets */}
         <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center">
             <span className="text-xs text-accent-cyan tracking-widest uppercase">
-              Prices
+              Assets
             </span>
             <span className="text-[10px] text-text-muted ml-2">
               hyperliquid

@@ -9,6 +9,7 @@ import {
   Brain,
   BarChart3,
   Radio,
+  FlaskConical,
 } from "lucide-react";
 import {
   API_BASE_URL,
@@ -22,11 +23,13 @@ import OverviewTab from "./components/OverviewTab";
 import StrategyTab from "./components/StrategyTab";
 import PerformanceTab from "./components/PerformanceTab";
 import LiveVaultTab from "./components/LiveVaultTab";
+import FactorResearchTab from "./components/FactorResearchTab";
 
 const TABS = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "strategy", label: "Strategy", icon: Brain },
   { id: "performance", label: "Performance", icon: BarChart3 },
+  { id: "factors", label: "Factor Research", icon: FlaskConical },
   { id: "live", label: "Live Vault", icon: Radio },
 ] as const;
 
@@ -261,6 +264,7 @@ export default function VaultPage() {
           />
         )}
         {activeTab === "performance" && <PerformanceTab presetName={presetName} />}
+        {activeTab === "factors" && <FactorResearchTab />}
         {activeTab === "live" && (
           <LiveVaultTab
             status={status}
