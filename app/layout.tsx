@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Rubik } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -19,6 +19,12 @@ export const metadata: Metadata = {
   title: "BlockRock — Ownership Funds",
   description:
     "Asset management powered by ownership, futarchy, and AI.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({

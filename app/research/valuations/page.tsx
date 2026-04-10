@@ -397,6 +397,7 @@ type SimpleTableRow = {
   treasury_assets?: string | number | null;
   treasury_debt?: string | number | null;
   treasury_value?: string | number | null;
+  treasury_coverage?: string | number | null;
 
   circ_supply?: string | number | null;
   total_supply?: string | number | null;
@@ -486,8 +487,6 @@ export default function AnalysisPage() {
   const currentGroup = Array.from(visibleGroups)[0];
   const showNetToggle = NET_TOGGLE_GROUPS.includes(currentGroup);
 
-  const GRID_BUFFER = 70;
-
   const tableWidth = useMemo(() => {
     let width = 50 + 110;
 
@@ -497,13 +496,13 @@ export default function AnalysisPage() {
       earnings: 170 * 3 + 160 * 14 + 150 + 150,
       revenue:
         140 + 170 + 170 + 160 + 150 + 160 + 150 + 160 + 150 + 165 + 150 + 160 + 160 + 160 + 160,
-      treasury: 140 + 140 + 140,
+      treasury: 140 + 140 + 140 + 150,
       supply: 170 + 130 + 140 + 130 + 140 + 160,
       market: 110 + 130 + 130,
     };
 
     width += groupWidths[currentGroup] || 0;
-    return width + GRID_BUFFER;
+    return width;
   }, [currentGroup]);
 
   const myTheme = themeQuartz.withParams({
@@ -574,7 +573,7 @@ export default function AnalysisPage() {
         "revenue_expected_1y",
         "take_rate_pct",
       ],
-      treasury: ["treasury_assets", "treasury_debt", "treasury_value"],
+      treasury: ["treasury_assets", "treasury_debt", "treasury_value", "treasury_coverage"],
       supply: [
         "circ_supply",
         "total_supply",
@@ -1128,6 +1127,18 @@ export default function AnalysisPage() {
         comparator: numericComparator,
         width: 140,
       },
+      {
+        field: "treasury_coverage",
+        headerName: "Treasury Coverage",
+        headerComponent: CustomHeader,
+        headerComponentParams: {
+          tooltip:
+            "Treasury Value / Market Cap — how much of the market cap is backed by treasury assets",
+        },
+        valueFormatter: (params: any) => formatPercent(params.value),
+        comparator: numericComparator,
+        width: 150,
+      },
 
       // ── Supply ──
       {
@@ -1260,17 +1271,17 @@ export default function AnalysisPage() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen pt-4">
-      <div className="px-4 sm:px-6 mb-2">
+    <div className="fixed inset-x-0 top-16 bottom-0 flex flex-col overflow-hidden">
+      <div className="shrink-0 px-4 sm:px-6 mt-3 mb-1.5">
         <Link href="/research" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-cyan transition-colors">
           <ArrowLeft className="w-4 h-4" /> Research
         </Link>
       </div>
-      <div className="px-4 sm:px-6 mb-6 text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+      <div className="shrink-0 px-4 sm:px-6 mb-2 sm:mb-4 text-center">
+        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight">
           Valuations
         </h1>
-        <p className="mt-2 text-sm text-text-secondary">
+        <p className="mt-1 sm:mt-2 text-sm text-text-secondary hidden sm:block">
           Sources:&nbsp;
           <a
             href="https://www.defillama.com"
@@ -1306,14 +1317,14 @@ export default function AnalysisPage() {
         </p>
       </div>
 
-      <div className="px-4 sm:px-6 flex-1 flex flex-col overflow-hidden">
+      <div className="shrink-0 px-4 sm:px-6">
         {error && (
-          <div className="mb-3 rounded-lg border border-red-500/30 bg-red-950/20 px-4 py-2.5 text-sm text-red-200">
+          <div className="mb-2 sm:mb-3 rounded-lg border border-red-500/30 bg-red-950/20 px-4 py-2.5 text-sm text-red-200">
             {error}
           </div>
         )}
 
-        <div className="mb-4 text-sm text-text-secondary text-center flex flex-col items-center gap-1">
+        <div className="mb-4 text-sm text-text-secondary text-center hidden sm:flex flex-col items-center gap-1">
           <span className="inline-flex items-center gap-1.5">
             <Wallet className="w-4 h-4 text-text-muted" />
             <span className="font-semibold text-text-primary">
@@ -1345,14 +1356,14 @@ export default function AnalysisPage() {
         </div>
 
         {/* Column Group Toggles */}
-        <div className="mb-2 flex flex-wrap gap-2 justify-center">
+        <div className="mb-1.5 sm:mb-2 flex flex-wrap gap-1.5 sm:gap-2 justify-center">
           {COLUMN_GROUPS.map((group) => {
             const IconComponent = group.icon;
             return (
               <button
                 key={group.id}
                 onClick={() => toggleGroup(group.id)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all border flex items-center gap-1.5 cursor-pointer ${
                   visibleGroups.has(group.id)
                     ? "bg-accent-cyan text-bg-primary border-accent-cyan"
                     : "bg-transparent text-text-secondary border-white/10 hover:border-accent-cyan/40 hover:text-text-primary"
@@ -1367,7 +1378,7 @@ export default function AnalysisPage() {
 
         {/* Net Toggle Button */}
         {showNetToggle && (
-          <div className="mb-4 flex justify-center">
+          <div className="mb-2 sm:mb-4 flex justify-center">
             <div className="flex flex-col items-center gap-1">
               <button
                 onClick={() => setShowNet(!showNet)}
@@ -1379,43 +1390,42 @@ export default function AnalysisPage() {
               >
                 Net (After Emissions + Unlocks)
               </button>
-              <span className="text-sm text-text-secondary italic">
+              <span className="text-sm text-text-secondary italic hidden sm:block">
                 Also accounts for sensitivity of revenue to emissions
               </span>
             </div>
           </div>
         )}
 
-        {!showNetToggle && <div className="mb-2" />}
-
-        <div className="flex justify-center pb-8">
-          <div
-            className="rounded-lg overflow-hidden"
-            style={{
-              width: `min(${tableWidth}px, 100%)`,
-              height: "calc(100vh - 380px)",
-              border: "1px solid rgba(221, 177, 16, 0.15)",
-            }}
-          >
-            <AgGridReact
-              ref={gridRef}
-              theme={myTheme}
-              rowData={rowData}
-              columnDefs={columnDefs as any}
-              defaultColDef={defaultColDef as any}
-              onGridReady={onGridReady}
-              animateRows
-              enableBrowserTooltips={false}
-              tooltipShowDelay={300}
-            />
-          </div>
-        </div>
+        {!showNetToggle && <div className="mb-1 sm:mb-2" />}
 
         {loading && (
-          <div className="mt-2 mb-4 text-xs text-text-muted text-center">
+          <div className="mb-2 text-xs text-text-muted text-center">
             Loading data...
           </div>
         )}
+      </div>
+
+      <div className="flex-1 min-h-0 flex justify-center px-4 sm:px-6 pb-2 sm:pb-4">
+        <div
+          className="rounded-lg overflow-hidden w-full h-full"
+          style={{
+            maxWidth: `${tableWidth}px`,
+            border: "1px solid rgba(221, 177, 16, 0.15)",
+          }}
+        >
+          <AgGridReact
+            ref={gridRef}
+            theme={myTheme}
+            rowData={rowData}
+            columnDefs={columnDefs as any}
+            defaultColDef={defaultColDef as any}
+            onGridReady={onGridReady}
+            animateRows
+            enableBrowserTooltips={false}
+            tooltipShowDelay={300}
+          />
+        </div>
       </div>
     </div>
   );

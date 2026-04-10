@@ -5,7 +5,7 @@ const analyses = [
   {
     title: "Situation Monitor",
     description:
-      "Bloomberg Terminal with prediction market odds + asset prices + tweets",
+      "Birds-eye view of hot assets, predictions, tweets, and news",
     icon: Activity,
     href: "/research/situation-monitor",
     accent: "from-accent-cyan to-accent-green",
@@ -18,6 +18,15 @@ const analyses = [
     icon: TrendingUp,
     href: "/research/valuations",
     accent: "from-accent-cyan to-amber-500",
+    status: "live" as const,
+  },
+  {
+    title: "Strategy",
+    description:
+      "Using fundamental analysis to outperform the market",
+    icon: Layers,
+    href: "/research/strategy",
+    accent: "from-accent-cyan to-red-500",
     status: "live" as const,
   },
   {
@@ -36,15 +45,6 @@ const analyses = [
     icon: PieChart,
     href: "/research/portfolio-builder",
     accent: "from-accent-green to-accent-cyan",
-    status: "live" as const,
-  },
-  {
-    title: "Strategy",
-    description:
-      "Long/short fundamentals vault — target weights, regime scoring, backtests, and factor research.",
-    icon: Layers,
-    href: "/research/strategy",
-    accent: "from-accent-cyan to-red-500",
     status: "live" as const,
   },
 ];

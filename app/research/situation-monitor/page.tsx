@@ -50,6 +50,7 @@ export default function SituationMonitorPage() {
   const [feedType, setFeedType] = useState<FeedType>("HOT");
   const [newsCategory, setNewsCategory] = useState<NewsCategory>("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [activePanel, setActivePanel] = useState(0);
 
   const fetchMarkets = useCallback(async (cat: Category) => {
     setLoadingMarkets(true);
@@ -157,10 +158,26 @@ export default function SituationMonitorPage() {
         </button>
       </div>
 
-      {/* 4-column grid */}
-      <div className="flex-1 grid grid-cols-[1fr_1.2fr_1fr_1fr] overflow-hidden min-h-0">
+      {/* 4-column grid (desktop) / tabbed panels (mobile) */}
+      <div className="flex-1 flex flex-col md:grid md:grid-cols-[1fr_1.2fr_1fr_1fr] overflow-hidden min-h-0">
+        {/* Mobile segmented tab bar */}
+        <div className="md:hidden shrink-0 flex border-b border-accent-cyan/20 bg-bg-secondary/60">
+          {(["PRED", "ASSETS", "TWEETS", "NEWS"] as const).map((label, i) => (
+            <button
+              key={label}
+              onClick={() => setActivePanel(i)}
+              className={`flex-1 py-2 text-[11px] tracking-widest font-mono uppercase transition-colors border-b-2 ${
+                activePanel === i
+                  ? "text-accent-cyan border-accent-cyan"
+                  : "text-text-muted border-transparent hover:text-text-secondary"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
         {/* LEFT — Prediction Markets */}
-        <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
+        <div className={`flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20 ${activePanel === 0 ? "flex flex-1" : "hidden"} md:flex`}>
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -199,7 +216,7 @@ export default function SituationMonitorPage() {
         </div>
 
         {/* CENTER — Assets */}
-        <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
+        <div className={`flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20 ${activePanel === 1 ? "flex flex-1" : "hidden"} md:flex`}>
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center">
             <span className="text-xs text-accent-cyan tracking-widest uppercase">
@@ -219,7 +236,7 @@ export default function SituationMonitorPage() {
         </div>
 
         {/* RIGHT-LEFT — Tweets */}
-        <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
+        <div className={`flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20 ${activePanel === 2 ? "flex flex-1" : "hidden"} md:flex`}>
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -255,7 +272,7 @@ export default function SituationMonitorPage() {
         </div>
 
         {/* RIGHT — News */}
-        <div className="flex flex-col overflow-hidden min-h-0">
+        <div className={`flex-col overflow-hidden min-h-0 ${activePanel === 3 ? "flex flex-1" : "hidden"} md:flex`}>
           {/* Column header */}
           <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
