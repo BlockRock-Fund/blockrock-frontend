@@ -230,28 +230,28 @@ export default function StrategyTab({
         </div>
         <div className="space-y-4 mb-5">
           <ScoreBar
-            label="Distributions Yield"
-            weight={40}
+            label="Net Distributions Yield"
+            weight={50}
             color="#10B981"
-            tooltip="Expected 1-year gross distributions yield (sensitivity-adjusted projection). Measures actual cash/token flows to holders without over-penalizing emissions."
+            tooltip="Expected 1-year net distributions yield (sensitivity-adjusted projection). Measures actual cash/token flows to holders after emissions dilution."
           />
           <ScoreBar
-            label="Net Earnings Yield"
-            weight={35}
+            label="Net Revenue Yield"
+            weight={30}
             color="#3B82F6"
-            tooltip="Expected 1-year net earnings yield after emissions. For stocks: net income / market cap. For tokens: earnings minus dilution / market cap."
+            tooltip="Expected 1-year net revenue yield after emissions. Protocol revenue minus dilution cost relative to market cap."
           />
           <ScoreBar
-            label="Treasury Coverage"
-            weight={25}
+            label="Growth Trend"
+            weight={20}
             color="#8B5CF6"
-            tooltip="Fraction of market cap backed by treasury assets. Higher coverage provides downside protection and signals protocol sustainability."
+            tooltip="Revenue growth trend — measures the trajectory of protocol revenue over time."
           />
         </div>
         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
           <p className="text-xs font-mono text-text-secondary mb-2">
-            composite = 0.40 * dist_yield + 0.35 * net_earnings_yield + 0.25 *
-            treasury_coverage
+            composite = 0.50 * net_dist_yield + 0.30 * net_revenue_yield + 0.20
+            * growth_trend
           </p>
           <p className="text-xs text-text-muted">
             <span className="text-green-400 font-medium">

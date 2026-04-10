@@ -415,7 +415,6 @@ type SimpleTableRow = {
   net_earnings_yield_expected_1y?: string | number | null;
   revenue_yield_expected_1y?: string | number | null;
   net_revenue_yield_expected_1y?: string | number | null;
-  treasury_coverage?: string | number | null;
   growth_trend?: string | number | null;
 };
 
@@ -523,7 +522,6 @@ export default function AnalysisPage() {
         showNet ? "net_distributions_yield_expected_1y" : "distributions_yield_expected_1y",
         showNet ? "net_earnings_yield_expected_1y" : "earnings_yield_expected_1y",
         showNet ? "net_revenue_yield_expected_1y" : "revenue_yield_expected_1y",
-        "treasury_coverage",
         "growth_trend",
       ],
       distributions: [
@@ -703,15 +701,6 @@ export default function AnalysisPage() {
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) =>
           numericComparator(a, b, nodeA, nodeB, isDesc),
         width: 195,
-      },
-      {
-        field: "treasury_coverage",
-        headerName: "Treasury Coverage",
-        headerComponent: CustomHeader,
-        headerComponentParams: { tooltip: "Treasury Value / Market Cap" },
-        valueFormatter: (params: any) => formatPercent(params.value),
-        comparator: numericComparator,
-        width: 160,
       },
       {
         field: "growth_trend",

@@ -328,9 +328,6 @@ export default function OverviewTab({
                     Net Earn. Yield
                   </th>
                   <th className="text-right py-3 px-3 font-medium">
-                    Treasury Cov.
-                  </th>
-                  <th className="text-right py-3 px-3 font-medium">
                     Composite Score
                   </th>
                   <th className="text-right py-3 px-3 font-medium">
@@ -376,9 +373,6 @@ export default function OverviewTab({
                       </td>
                       <td className="py-3 px-3 text-right">
                         {pct(w.net_earnings_yield_expected_1y)}
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        {pct(w.treasury_coverage)}
                       </td>
                       <td
                         className="py-3 px-3 text-right font-mono"
