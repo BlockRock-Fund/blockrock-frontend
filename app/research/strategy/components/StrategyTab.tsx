@@ -482,32 +482,6 @@ export default function StrategyTab({
         </div>
       </div>
 
-      {/* Infrastructure Stack */}
-      <div className="glass rounded-2xl p-5">
-        <p className="text-xs uppercase tracking-wider text-text-muted mb-3 text-center">
-          Infrastructure Stack
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {[
-            "Voltr",
-            "Jupiter",
-            "Drift",
-            "Solana",
-            "CoinGecko",
-            "DeFiLlama",
-            "FRED",
-          ].map((name, i, arr) => (
-            <div key={name} className="flex items-center gap-3">
-              <span className="text-sm font-medium px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/5">
-                {name}
-              </span>
-              {i < arr.length - 1 && (
-                <ArrowRight className="w-3.5 h-3.5 text-text-muted" />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

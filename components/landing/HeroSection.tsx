@@ -23,19 +23,11 @@ export default function HeroSection() {
 
             {/* Headline */}
             <h1
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6 whitespace-nowrap animate-fade-in-up"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6 sm:whitespace-nowrap animate-fade-in-up"
               style={{ animationDelay: "0.1s" }}
             >
               Onchain Asset Management
             </h1>
-
-            {/* Description */}
-            <p
-              className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-2xl mb-8 animate-fade-in-up"
-              style={{ animationDelay: "0.2s" }}
-            >
-              Grow wealth with confidence.
-            </p>
 
             {/* CTAs */}
             <div
