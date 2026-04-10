@@ -35,7 +35,7 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-export default function VaultPage() {
+export default function StrategyPage() {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [weights, setWeights] = useState<TargetWeight[]>([]);
   const [status, setStatus] = useState<VaultStatus | null>(null);
@@ -109,11 +109,10 @@ export default function VaultPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Link
-            href="/"
-            className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+            href="/research"
+            className="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-cyan transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Home</span>
+            <ArrowLeft className="w-4 h-4" /> Research
           </Link>
           <div className="flex-1" />
           <button

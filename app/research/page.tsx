@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PieChart, Activity, TrendingUp, FileText } from "lucide-react";
+import { PieChart, Activity, TrendingUp, FileText, Layers } from "lucide-react";
 
 const analyses = [
   {
@@ -36,6 +36,15 @@ const analyses = [
     icon: PieChart,
     href: "/research/portfolio-builder",
     accent: "from-accent-green to-accent-cyan",
+    status: "live" as const,
+  },
+  {
+    title: "Strategy",
+    description:
+      "Long/short fundamentals vault — target weights, regime scoring, backtests, and factor research.",
+    icon: Layers,
+    href: "/research/strategy",
+    accent: "from-accent-cyan to-red-500",
     status: "live" as const,
   },
 ];

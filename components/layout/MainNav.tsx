@@ -12,7 +12,6 @@ const navItems = [
   //{ label: "Chat", href: "/chat" },
   //{ label: "Team", href: "/team" },
   //{ label: "Portfolio", href: "/portfolio" },
-  { label: "Vaults", href: "/vaults" },
 ];
 
 export default function MainNav() {
