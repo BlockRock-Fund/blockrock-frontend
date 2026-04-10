@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, type CSSProperties } from "react";
 import { API_BASE_URL } from "./types";
 
 type FactorRow = {
@@ -32,13 +32,149 @@ type CrossHorizonRow = {
 
 type ViewMode = "cross_horizon" | "single_7d" | "single_30d" | "single_90d";
 
-function icColor(ic: number | null): string {
-  if (ic === null) return "var(--text-muted)";
-  const abs = Math.abs(ic);
-  if (abs >= 0.05) return ic > 0 ? "#10B981" : "#EF4444";
-  if (abs >= 0.03) return ic > 0 ? "#34D399" : "#F87171";
-  return "var(--text-secondary)";
+// ---------------------------------------------------------------------------
+// Metric name humanizer
+// ---------------------------------------------------------------------------
+
+const METRIC_EXACT: Record<string, string> = {
+  mc: "Market Cap",
+  price: "Price",
+  fdv: "FDV",
+  circ_supply: "Circulating Supply",
+  max_supply: "Max Supply",
+  total_supply: "Total Supply",
+  mr_mc_fees: "Mean Reversion: MC/Fees",
+  treasury_value: "Treasury Value",
+  treasury_assets: "Treasury Assets",
+  treasury_debt: "Treasury Debt",
+};
+
+function titleCase(word: string): string {
+  if (word.length === 0) return word;
+  return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
+function humanizeBase(base: string): string {
+  return base
+    .split("_")
+    .map(titleCase)
+    .join(" ");
+}
+
+function humanizeMetric(raw: string): string {
+  // Strip V: prefix
+  let s = raw;
+  if (s.startsWith("V:")) s = s.slice(2);
+
+  // Exact match
+  if (METRIC_EXACT[s]) return METRIC_EXACT[s];
+
+  // Extract net_ prefix
+  let prefix = "";
+  if (s.startsWith("net_")) {
+    prefix = "Net ";
+    s = s.slice(4);
+  }
+
+  // Exact match after net_ strip
+  if (METRIC_EXACT[s]) return prefix + METRIC_EXACT[s];
+
+  // Pattern: *_yield_chg_Xd or *_yield_chg_365d
+  let m = s.match(/^(.+?)_yield_chg_(\d+d|\d+)$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} Yield \u0394 (${m[2]})`;
+
+  // Pattern: *_yield_expected_1y
+  m = s.match(/^(.+?)_yield_expected_1y$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} Yield (Exp. 1y)`;
+
+  // Pattern: *_Xd_o_Xd or *_1y_o_1y (momentum)
+  m = s.match(/^(.+?)_(\d+d|1y)_o_\2$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} Momentum (${m[2]})`;
+
+  // Pattern: *_rate_expected_1y
+  m = s.match(/^(.+?)_rate_expected_1y$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} Rate (Exp. 1y)`;
+
+  // Pattern: *_expected_1y
+  m = s.match(/^(.+?)_expected_1y$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} (Exp. 1y)`;
+
+  // Pattern: *_Xd_ann (annualized)
+  m = s.match(/^(.+?)_(\d+d)_ann$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} (${m[2]}, Ann.)`;
+
+  // Pattern: *_pct (percentage ratio)
+  m = s.match(/^(.+?)_(.+?)_pct$/);
+  if (m) return `${prefix}${humanizeBase(m[1])}/${humanizeBase(m[2])} %`;
+
+  // Pattern: *_Xd or *_1y (raw level)
+  m = s.match(/^(.+?)_(\d+d|1y)$/);
+  if (m) return `${prefix}${humanizeBase(m[1])} (${m[2]})`;
+
+  // Fallback: just title-case with underscores → spaces
+  return prefix + humanizeBase(s);
+}
+
+// ---------------------------------------------------------------------------
+// Heatmap cell style
+// ---------------------------------------------------------------------------
+
+function icCellStyle(ic: number | null): CSSProperties {
+  if (ic === null) return { color: "var(--text-muted)" };
+  const abs = Math.abs(ic);
+
+  if (abs < 0.02) {
+    return { color: "var(--text-muted)", backgroundColor: "transparent" };
+  }
+
+  const intensity = Math.min(1, (abs - 0.02) / 0.06);
+  const alpha = 0.12 + intensity * 0.32;
+
+  const bg = ic > 0
+    ? `rgba(16, 185, 129, ${alpha.toFixed(2)})`
+    : `rgba(239, 68, 68, ${alpha.toFixed(2)})`;
+
+  const textColor = abs >= 0.04
+    ? (ic > 0 ? "#6ee7b7" : "#fca5a5")
+    : (ic > 0 ? "#a7f3d0" : "#fecaca");
+
+  return { backgroundColor: bg, color: textColor, borderRadius: "4px" };
+}
+
+// ---------------------------------------------------------------------------
+// Strength label for cross-horizon view
+// ---------------------------------------------------------------------------
+
+function strengthLabel(r: CrossHorizonRow): { label: string; color: string } {
+  const absIc = r.mean_abs_ic ?? 0;
+  const maxT = Math.max(
+    Math.abs(r.t_7d ?? 0),
+    Math.abs(r.t_30d ?? 0),
+    Math.abs(r.t_90d ?? 0),
+  );
+
+  const ics = [r.ic_7d, r.ic_30d, r.ic_90d].filter(
+    (v): v is number => v !== null,
+  );
+  const posCount = ics.filter((v) => v > 0).length;
+  const isPos = posCount > ics.length / 2;
+  const arrow = isPos ? " \u2191" : " \u2193";
+
+  if (absIc >= 0.05 && maxT >= 2.0 && r.sign_consistent) {
+    return { label: `Strong${arrow}`, color: isPos ? "#10B981" : "#EF4444" };
+  }
+  if (absIc >= 0.035 && maxT >= 1.5) {
+    return { label: `Mod.${arrow}`, color: isPos ? "#34D399" : "#F87171" };
+  }
+  if (absIc >= 0.02 && maxT >= 1.0) {
+    return { label: `Weak${arrow}`, color: "#F59E0B" };
+  }
+  return { label: "Noise", color: "var(--text-muted)" };
+}
+
+// ---------------------------------------------------------------------------
+// Formatting helpers
+// ---------------------------------------------------------------------------
 
 function tStatBadge(t: number | null): string {
   if (t === null) return "";
@@ -68,6 +204,15 @@ function fmtRet(v: number | null): string {
   return `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
 }
 
+function retColor(v: number | null): string {
+  if (v === null) return "var(--text-muted)";
+  return v >= 0 ? "#10B981" : "#EF4444";
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export default function FactorResearchTab() {
   const [singleFactors, setSingleFactors] = useState<FactorRow[]>([]);
   const [crossHorizon, setCrossHorizon] = useState<CrossHorizonRow[]>([]);
@@ -96,8 +241,13 @@ export default function FactorResearchTab() {
   const filteredCrossHorizon = useMemo(() => {
     const q = search.toLowerCase();
     return crossHorizon
-      .filter((r) => !q || r.metric.toLowerCase().includes(q))
-      .sort((a, b) => (b.consistency ?? 0) - (a.consistency ?? 0));
+      .filter(
+        (r) =>
+          !q ||
+          r.metric.toLowerCase().includes(q) ||
+          humanizeMetric(r.metric).toLowerCase().includes(q),
+      )
+      .sort((a, b) => (b.mean_abs_ic ?? 0) - (a.mean_abs_ic ?? 0));
   }, [crossHorizon, search]);
 
   const filteredSingle = useMemo(() => {
@@ -106,7 +256,12 @@ export default function FactorResearchTab() {
     const q = search.toLowerCase();
     return singleFactors
       .filter((r) => r.period === period)
-      .filter((r) => !q || r.metric.toLowerCase().includes(q))
+      .filter(
+        (r) =>
+          !q ||
+          r.metric.toLowerCase().includes(q) ||
+          humanizeMetric(r.metric).toLowerCase().includes(q),
+      )
       .sort((a, b) => Math.abs(b.mean_ic ?? 0) - Math.abs(a.mean_ic ?? 0));
   }, [singleFactors, view, search]);
 
@@ -132,9 +287,9 @@ export default function FactorResearchTab() {
       <div>
         <h2 className="text-xl font-bold mb-1">Factor Research</h2>
         <p className="text-text-secondary text-sm">
-          Spearman rank correlation (IC) of each metric with forward-looking
-          price returns. Higher |IC| and |t-stat| indicate stronger, more
-          reliable predictive signal.
+          How strongly each metric correlates with forward-looking price
+          returns. Green = direct correlation (higher metric → higher return),
+          red = inverse. Brighter = stronger signal.
         </p>
       </div>
 
@@ -199,72 +354,79 @@ export default function FactorResearchTab() {
                   <th className="text-right px-3 py-3 text-xs uppercase tracking-wider text-text-muted font-medium">
                     90d t
                   </th>
-                  <th className="text-center px-3 py-3 text-xs uppercase tracking-wider text-text-muted font-medium">
-                    Consistent
-                  </th>
-                  <th className="text-right px-3 py-3 text-xs uppercase tracking-wider text-text-muted font-medium">
-                    Score
+                  <th className="text-center px-3 py-3 text-xs uppercase tracking-wider text-text-muted font-medium whitespace-nowrap">
+                    Signal
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {filteredCrossHorizon.map((r, i) => (
-                  <tr
-                    key={r.metric}
-                    className={`border-b border-white/5 ${
-                      i % 2 === 0 ? "bg-white/[0.02]" : ""
-                    } hover:bg-white/[0.04] transition-colors`}
-                  >
-                    <td className="px-4 py-2.5 font-mono text-xs whitespace-nowrap">
-                      {r.metric}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_7d)}`}
-                      style={{ color: icColor(r.ic_7d) }}
+                {filteredCrossHorizon.map((r, i) => {
+                  const sig = strengthLabel(r);
+                  return (
+                    <tr
+                      key={r.metric}
+                      className={`border-b border-white/5 ${
+                        i % 2 === 0 ? "bg-white/[0.02]" : ""
+                      } hover:bg-white/[0.04] transition-colors`}
                     >
-                      {fmtIc(r.ic_7d)}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_7d)}`}
-                    >
-                      {fmtT(r.t_7d)}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_30d)}`}
-                      style={{ color: icColor(r.ic_30d) }}
-                    >
-                      {fmtIc(r.ic_30d)}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_30d)}`}
-                    >
-                      {fmtT(r.t_30d)}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_90d)}`}
-                      style={{ color: icColor(r.ic_90d) }}
-                    >
-                      {fmtIc(r.ic_90d)}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_90d)}`}
-                    >
-                      {fmtT(r.t_90d)}
-                    </td>
-                    <td className="px-3 py-2.5 text-center">
-                      {r.sign_consistent === null ? (
-                        "\u2014"
-                      ) : r.sign_consistent ? (
-                        <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
-                      ) : (
-                        <span className="inline-block w-2 h-2 rounded-full bg-red-400" />
-                      )}
-                    </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-xs font-bold">
-                      {r.consistency?.toFixed(1) ?? "\u2014"}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-4 py-2.5 whitespace-nowrap">
+                        <span
+                          className="text-sm font-medium text-text-primary cursor-default"
+                          title={r.metric}
+                        >
+                          {humanizeMetric(r.metric)}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <span
+                          className="inline-block px-1.5 py-0.5 font-mono text-xs"
+                          style={icCellStyle(r.ic_7d)}
+                        >
+                          {fmtIc(r.ic_7d)}
+                        </span>
+                      </td>
+                      <td
+                        className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_7d)}`}
+                      >
+                        {fmtT(r.t_7d)}
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <span
+                          className="inline-block px-1.5 py-0.5 font-mono text-xs"
+                          style={icCellStyle(r.ic_30d)}
+                        >
+                          {fmtIc(r.ic_30d)}
+                        </span>
+                      </td>
+                      <td
+                        className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_30d)}`}
+                      >
+                        {fmtT(r.t_30d)}
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <span
+                          className="inline-block px-1.5 py-0.5 font-mono text-xs"
+                          style={icCellStyle(r.ic_90d)}
+                        >
+                          {fmtIc(r.ic_90d)}
+                        </span>
+                      </td>
+                      <td
+                        className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_90d)}`}
+                      >
+                        {fmtT(r.t_90d)}
+                      </td>
+                      <td className="px-3 py-2.5 text-center whitespace-nowrap">
+                        <span
+                          className="text-xs font-semibold"
+                          style={{ color: sig.color }}
+                        >
+                          {sig.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -323,14 +485,21 @@ export default function FactorResearchTab() {
                     <td className="px-4 py-2.5 text-text-muted text-xs">
                       {i + 1}
                     </td>
-                    <td className="px-3 py-2.5 font-mono text-xs whitespace-nowrap">
-                      {r.metric}
+                    <td className="px-3 py-2.5 whitespace-nowrap">
+                      <span
+                        className="text-sm font-medium text-text-primary cursor-default"
+                        title={r.metric}
+                      >
+                        {humanizeMetric(r.metric)}
+                      </span>
                     </td>
-                    <td
-                      className="px-3 py-2.5 text-right font-mono text-xs font-bold"
-                      style={{ color: icColor(r.mean_ic) }}
-                    >
-                      {fmtIc(r.mean_ic)}
+                    <td className="px-3 py-2.5 text-right">
+                      <span
+                        className="inline-block px-1.5 py-0.5 font-mono text-xs font-bold"
+                        style={icCellStyle(r.mean_ic)}
+                      >
+                        {fmtIc(r.mean_ic)}
+                      </span>
                     </td>
                     <td
                       className={`px-3 py-2.5 text-right font-mono text-xs ${tStatBadge(r.t_stat)}`}
@@ -342,27 +511,13 @@ export default function FactorResearchTab() {
                     </td>
                     <td
                       className="px-3 py-2.5 text-right font-mono text-xs"
-                      style={{
-                        color:
-                          r.long_mean_ret !== null
-                            ? r.long_mean_ret >= 0
-                              ? "#10B981"
-                              : "#EF4444"
-                            : "var(--text-muted)",
-                      }}
+                      style={{ color: retColor(r.long_mean_ret) }}
                     >
                       {fmtRet(r.long_mean_ret)}
                     </td>
                     <td
                       className="px-3 py-2.5 text-right font-mono text-xs"
-                      style={{
-                        color:
-                          r.short_mean_ret !== null
-                            ? r.short_mean_ret >= 0
-                              ? "#10B981"
-                              : "#EF4444"
-                            : "var(--text-muted)",
-                      }}
+                      style={{ color: retColor(r.short_mean_ret) }}
                     >
                       {fmtRet(r.short_mean_ret)}
                     </td>
@@ -398,28 +553,34 @@ export default function FactorResearchTab() {
       {/* Legend */}
       <div className="glass rounded-xl p-4 text-xs text-text-muted space-y-1">
         <p>
+          <strong className="text-text-secondary">Cell color</strong> ={" "}
+          <span style={{ color: "#6ee7b7" }}>Green</span> = direct correlation
+          (higher metric predicts higher return),{" "}
+          <span style={{ color: "#fca5a5" }}>Red</span> = inverse. Brighter =
+          stronger. Gray = noise. Hover metric name for raw field name.
+        </p>
+        <p>
+          <strong className="text-text-secondary">Signal</strong> ={" "}
+          <span style={{ color: "#10B981" }}>Strong &uarr;&darr;</span>{" "}
+          requires |IC| &ge; 0.05 &amp; |t| &ge; 2.0 with consistent sign;{" "}
+          <span style={{ color: "#34D399" }}>Mod.</span> requires |IC| &ge;
+          0.035 &amp; |t| &ge; 1.5;{" "}
+          <span style={{ color: "#F59E0B" }}>Weak</span> is marginal;{" "}
+          <span style={{ color: "var(--text-muted)" }}>Noise</span> is below
+          threshold.
+        </p>
+        <p>
           <strong className="text-text-secondary">IC</strong> = Information
-          Coefficient (Spearman rank correlation between metric and forward
-          return). Positive IC means higher metric values predict higher returns.
+          Coefficient (Spearman rank correlation). &uarr; means higher metric
+          &rarr; higher return.
         </p>
         <p>
           <strong className="text-text-secondary">t-stat</strong> = Statistical
-          significance. |t| &ge; 2.0 is strong,{" "}
-          |t| &ge; 1.5 is moderate.
-        </p>
-        <p>
-          <strong className="text-text-secondary">Hit Rate</strong> = % of
-          cross-sections where IC had the same sign as the mean.
+          significance. |t| &ge; 2.0 is strong, |t| &ge; 1.5 is moderate.
         </p>
         <p>
           <strong className="text-text-secondary">L/S Spread</strong> = Mean
-          return of top tercile minus bottom tercile (long/short signal
-          profitability).
-        </p>
-        <p>
-          <strong className="text-text-secondary">Consistency Score</strong> =
-          Mean |IC| / Std across horizons. Higher = more robust across
-          timeframes.
+          return of top tercile minus bottom tercile.
         </p>
       </div>
     </div>
