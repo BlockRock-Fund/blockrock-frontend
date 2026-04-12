@@ -406,6 +406,13 @@ type SimpleTableRow = {
   emissions_usd_expected_1y?: string | number | null;
   emissions_rate_expected_1y?: string | number | null;
 
+  tvl?: string | number | null;
+  tvl_chg_7d?: string | number | null;
+  tvl_chg_30d?: string | number | null;
+  tvl_chg_90d?: string | number | null;
+  tvl_chg_180d?: string | number | null;
+  tvl_chg_1y?: string | number | null;
+
   price?: string | number | null;
   mc?: string | number | null;
   fdv?: string | number | null;
@@ -417,6 +424,7 @@ type SimpleTableRow = {
   revenue_yield_expected_1y?: string | number | null;
   net_revenue_yield_expected_1y?: string | number | null;
   growth_trend?: string | number | null;
+  tvl_mc_ratio?: string | number | null;
 };
 
 const API_BASE_URL =
@@ -522,6 +530,7 @@ export default function AnalysisPage() {
         showNet ? "net_earnings_yield_expected_1y" : "earnings_yield_expected_1y",
         showNet ? "net_revenue_yield_expected_1y" : "revenue_yield_expected_1y",
         "growth_trend",
+        "tvl_mc_ratio",
       ],
       distributions: [
         "distributions_24h",
@@ -573,7 +582,10 @@ export default function AnalysisPage() {
         "revenue_expected_1y",
         "take_rate_pct",
       ],
-      treasury: ["treasury_assets", "treasury_debt", "treasury_value", "treasury_coverage"],
+      treasury: [
+        "treasury_assets", "treasury_debt", "treasury_value", "treasury_coverage",
+        "tvl", "tvl_chg_7d", "tvl_chg_30d", "tvl_chg_90d", "tvl_chg_180d", "tvl_chg_1y",
+      ],
       supply: [
         "circ_supply",
         "total_supply",
@@ -712,6 +724,22 @@ export default function AnalysisPage() {
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
         width: 160,
+      },
+      {
+        field: "tvl_mc_ratio",
+        headerName: "TVL / MC",
+        headerComponent: CustomHeader,
+        headerComponentParams: {
+          tooltip:
+            "Protocol TVL / Market Cap — capital efficiency ratio. Higher = more value locked per dollar of market cap",
+        },
+        valueFormatter: (params: any) => {
+          const num = toNumber(params.value);
+          if (num === null) return "";
+          return `${num.toFixed(2)}x`;
+        },
+        comparator: numericComparator,
+        width: 140,
       },
 
       // ── Distributions ──
@@ -1138,6 +1166,63 @@ export default function AnalysisPage() {
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
         width: 150,
+      },
+      {
+        field: "tvl",
+        headerName: "Protocol TVL",
+        headerComponent: CustomHeader,
+        headerComponentParams: {
+          tooltip:
+            "Total Value Locked — aggregate TVL across all chains from DeFiLlama",
+        },
+        valueFormatter: (params: any) => formatCurrency(params.value),
+        comparator: numericComparator,
+        width: 150,
+      },
+      {
+        field: "tvl_chg_7d",
+        headerName: "TVL\nChg 7d",
+        headerComponent: CustomHeader,
+        headerComponentParams: { tooltip: "TVL change vs 7 days ago" },
+        valueFormatter: (params: any) => formatPercent(params.value),
+        comparator: numericComparator,
+        width: 120,
+      },
+      {
+        field: "tvl_chg_30d",
+        headerName: "TVL\nChg 30d",
+        headerComponent: CustomHeader,
+        headerComponentParams: { tooltip: "TVL change vs 30 days ago" },
+        valueFormatter: (params: any) => formatPercent(params.value),
+        comparator: numericComparator,
+        width: 120,
+      },
+      {
+        field: "tvl_chg_90d",
+        headerName: "TVL\nChg 90d",
+        headerComponent: CustomHeader,
+        headerComponentParams: { tooltip: "TVL change vs 90 days ago" },
+        valueFormatter: (params: any) => formatPercent(params.value),
+        comparator: numericComparator,
+        width: 120,
+      },
+      {
+        field: "tvl_chg_180d",
+        headerName: "TVL\nChg 180d",
+        headerComponent: CustomHeader,
+        headerComponentParams: { tooltip: "TVL change vs 180 days ago" },
+        valueFormatter: (params: any) => formatPercent(params.value),
+        comparator: numericComparator,
+        width: 130,
+      },
+      {
+        field: "tvl_chg_1y",
+        headerName: "TVL\nChg 1y",
+        headerComponent: CustomHeader,
+        headerComponentParams: { tooltip: "TVL change vs 1 year ago" },
+        valueFormatter: (params: any) => formatPercent(params.value),
+        comparator: numericComparator,
+        width: 120,
       },
 
       // ── Supply ──
