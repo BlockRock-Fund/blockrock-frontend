@@ -402,7 +402,7 @@ export default function OverviewTab({
         {[
           {
             title: "40/35/25 Scoring",
-            desc: "Dist Yield + Earnings Yield + Treasury",
+            desc: "Gross Dist Yield + Net Earnings Yield + Treasury",
             icon: "📊",
           },
           {

@@ -126,9 +126,8 @@ export default function StrategyPage() {
 
         <h1 className="text-3xl font-bold mb-1">Fundamentals Vault</h1>
         <p className="text-text-secondary text-sm mb-8">
-          Long Value, Short Bloat: based on forward-looking cashflows to
-          holders, emissions/unlocks dilution cost, and revenue growth vs. current
-          market value.
+          Long Value, Short Bloat: based on forward-looking distribution yield,
+          net earnings yield, and treasury coverage vs. current market value.
         </p>
 
         {error && (

@@ -148,8 +148,8 @@ export default function StrategyTab({
                 <Zap className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" />
                 <span>
                   <strong>Long the best fundamentals</strong> — top composite
-                  scores by emissions-adjusted distribution yield, revenue
-                  yield, and growth trend
+                  scores by gross distribution yield, net earnings yield,
+                  and treasury coverage
                 </span>
               </li>
               <li className="flex gap-2">
@@ -171,8 +171,8 @@ export default function StrategyTab({
               <li className="flex gap-2">
                 <Database className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Emissions-adjusted yields</strong> — net metrics strip
-                  out inflationary token emissions to reveal real economic yield
+                  <strong>Treasury coverage</strong> — 25% weight on treasury-backed
+                  value favors protocols with real balance sheet support
                 </span>
               </li>
             </ul>
@@ -191,7 +191,7 @@ export default function StrategyTab({
                 {
                   step: 2,
                   label: "Fundamental Scoring",
-                  desc: "50% dist yield + 30% rev yield + 20% growth",
+                  desc: "40% dist yield + 35% earnings yield + 25% treasury",
                 },
                 {
                   step: 3,
@@ -230,28 +230,28 @@ export default function StrategyTab({
         </div>
         <div className="space-y-4 mb-5">
           <ScoreBar
-            label="Net Distributions Yield"
-            weight={50}
+            label="Gross Distributions Yield"
+            weight={40}
             color="#10B981"
-            tooltip="Expected 1-year net distributions yield (sensitivity-adjusted projection). Measures actual cash/token flows to holders after emissions dilution."
+            tooltip="Expected 1-year gross distributions yield. Measures projected cash/token flows to holders relative to market cap — the strongest single return predictor in our factor research."
           />
           <ScoreBar
-            label="Net Revenue Yield"
-            weight={30}
+            label="Net Earnings Yield"
+            weight={35}
             color="#3B82F6"
-            tooltip="Expected 1-year net revenue yield after emissions. Protocol revenue minus dilution cost relative to market cap."
+            tooltip="Expected 1-year net earnings yield after emissions. Protocol earnings minus dilution cost relative to market cap — captures real profitability."
           />
           <ScoreBar
-            label="Growth Trend"
-            weight={20}
+            label="Treasury Coverage"
+            weight={25}
             color="#8B5CF6"
-            tooltip="Revenue growth trend — measures the trajectory of protocol revenue over time."
+            tooltip="Treasury value relative to market cap. Favors protocols with real balance sheet backing — downside protection and intrinsic value floor."
           />
         </div>
         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
           <p className="text-xs font-mono text-text-secondary mb-2">
-            composite = 0.50 * net_dist_yield + 0.30 * net_revenue_yield + 0.20
-            * growth_trend
+            composite = 0.40 * dist_yield + 0.35 * net_earnings_yield + 0.25
+            * treasury_coverage
           </p>
           <p className="text-xs text-text-muted">
             <span className="text-green-400 font-medium">
@@ -464,7 +464,7 @@ export default function StrategyTab({
             },
             {
               title: "Treasury Coverage",
-              desc: "25% weight on treasury-backed value ensures the strategy favors protocols with real balance sheet support",
+              desc: "25% composite weight on treasury-backed value favors protocols with real balance sheet support and intrinsic value floors",
             },
             {
               title: "Rebalance Cadence",
