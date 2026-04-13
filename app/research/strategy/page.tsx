@@ -126,8 +126,9 @@ export default function StrategyPage() {
 
         <h1 className="text-3xl font-bold mb-1">Fundamentals Vault</h1>
         <p className="text-text-secondary text-sm mb-8">
-          Long Value, Short Bloat: based on forward-looking distribution yield,
-          net earnings yield, and treasury coverage vs. current market value.
+          Dual-scored long/short: longs ranked by fundamental yields, momentum,
+          and mean reversion. Shorts independently scored on technical reversal
+          signals and token emissions. Regime-smoothed allocation via BTC trend.
         </p>
 
         {error && (

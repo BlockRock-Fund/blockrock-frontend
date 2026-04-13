@@ -16,9 +16,9 @@ import { regimeColor, regimeLabel } from "./types";
 interface StrategyTabProps {
   regimeScore: string | null;
   shortAllocationPct: string | null;
-  confluenceMultiplier: string | null;
-  confluenceStressed: number | null;
-  confluenceTotal: number | null;
+  confluenceMultiplier?: string | null;
+  confluenceStressed?: number | null;
+  confluenceTotal?: number | null;
 }
 
 function ScoreBar({
@@ -53,68 +53,7 @@ function ScoreBar({
   );
 }
 
-function RegimeGauge({
-  label,
-  weight,
-  description,
-}: {
-  label: string;
-  weight: number;
-  description: string;
-}) {
-  return (
-    <div className="flex items-center gap-4 py-2">
-      <div className="w-24 shrink-0">
-        <p className="text-sm font-medium">{label}</p>
-        <p className="text-xs text-text-muted">{weight}% weight</p>
-      </div>
-      <div className="flex-1">
-        <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-green-500 via-amber-500 to-red-500"
-            style={{ width: "100%" }}
-          />
-        </div>
-      </div>
-      <p className="text-xs text-text-muted w-32 shrink-0 text-right">
-        {description}
-      </p>
-    </div>
-  );
-}
 
-const REGIME_SIGNALS = {
-  "Tier 1 — Primary": [
-    { id: "VAL_SPREAD", label: "Valuation Spread", weight: 25, description: "Quartile yield divergence" },
-    { id: "BAMLH0A0HYM2", label: "HY Spreads", weight: 15, description: "Credit risk premium" },
-    { id: "REAL_RATE", label: "Real Rate", weight: 15, description: "DGS10 minus breakeven" },
-  ],
-  "Tier 2 — TradFi Directional": [
-    { id: "NFCI", label: "NFCI", weight: 12, description: "Financial conditions" },
-    { id: "T10Y2Y", label: "Yield Curve", weight: 10, description: "10Y-2Y spread" },
-  ],
-  "Tier 3 — Crypto-Native": [
-    { id: "STABLE_MCAP", label: "Stablecoin Mcap", weight: 8, description: "Capital flow indicator" },
-    { id: "DEFI_TVL", label: "DeFi TVL", weight: 8, description: "Ecosystem health" },
-    { id: "BTC_DEFI_CORR", label: "BTC-DeFi Corr", weight: 7, description: "Beta risk measure" },
-  ],
-};
-
-function confluenceLabel(stressed: number, total: number): string {
-  if (total === 0) return "No data";
-  const ratio = stressed / total;
-  if (ratio >= 0.6) return "High agreement";
-  if (ratio >= 0.3) return "Mixed signals";
-  return "Low agreement";
-}
-
-function confluenceLabelColor(stressed: number, total: number): string {
-  if (total === 0) return "var(--text-muted)";
-  const ratio = stressed / total;
-  if (ratio >= 0.6) return "#EF4444";
-  if (ratio >= 0.3) return "#F59E0B";
-  return "#10B981";
-}
 
 export default function StrategyTab({
   regimeScore,
@@ -125,18 +64,17 @@ export default function StrategyTab({
 }: StrategyTabProps) {
   const rs = regimeScore ? parseFloat(regimeScore) : null;
   const saPct = shortAllocationPct ? parseFloat(shortAllocationPct) * 100 : null;
-  const cm = confluenceMultiplier ? parseFloat(confluenceMultiplier) : null;
 
   return (
     <div className="space-y-10">
       {/* Strategy Thesis Hero */}
       <div className="gradient-border rounded-2xl p-8">
         <h3 className="text-2xl font-bold mb-2">
-          Long/Short Fundamental DeFi Strategy
+          Dual-Scored Long/Short DeFi Strategy
         </h3>
         <p className="text-text-muted text-sm mb-6">
-          Systematic long/short allocation driven by on-chain fundamentals and
-          macro regime scoring
+          Independent scoring formulas for longs and shorts, with smoothed
+          regime-driven allocation via BTC trend
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -147,32 +85,33 @@ export default function StrategyTab({
               <li className="flex gap-2">
                 <Zap className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" />
                 <span>
-                  <strong>Long the best fundamentals</strong> — top composite
-                  scores by gross distribution yield, net earnings yield,
-                  and treasury coverage
+                  <strong>Long the best fundamentals</strong> — 7-factor blend
+                  of distribution yield, earnings yield, technical momentum,
+                  mean reversion, and earnings quality
                 </span>
               </li>
               <li className="flex gap-2">
                 <Shield className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Short the worst via perps</strong> — negative composite
-                  scores shorted through perpetual futures for portfolio
-                  insurance
+                  <strong>Independent short scoring</strong> — shorts are NOT
+                  just inverted longs. A separate 5-factor formula targets
+                  high-emission tokens showing technical reversal signals
                 </span>
               </li>
               <li className="flex gap-2">
                 <Activity className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Macro regime scoring</strong> — dynamically sizes the
-                  short sleeve based on aggregate macro and crypto-native stress
-                  signals (credit spreads, stablecoin flows, DeFi TVL, BTC correlation)
+                  <strong>Smoothed regime filter</strong> — BTC&apos;s distance from
+                  its 140-day SMA continuously interpolates the short allocation
+                  between 20% (bull) and 80% (bear), eliminating binary whipsaw
                 </span>
               </li>
               <li className="flex gap-2">
                 <Database className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Treasury coverage</strong> — 25% weight on treasury-backed
-                  value favors protocols with real balance sheet support
+                  <strong>Mean reversion</strong> — time-series z-score on
+                  market cap / fees ratio detects cheap assets relative to their
+                  own history
                 </span>
               </li>
             </ul>
@@ -186,22 +125,22 @@ export default function StrategyTab({
                 {
                   step: 1,
                   label: "Data Ingestion",
-                  desc: "CoinGecko, DeFiLlama, FRED, Helius, SEC",
+                  desc: "CoinGecko, DeFiLlama, FRED, on-chain price/volume",
                 },
                 {
                   step: 2,
-                  label: "Fundamental Scoring",
-                  desc: "40% dist yield + 35% earnings yield + 25% treasury",
+                  label: "Dual Scoring",
+                  desc: "Long formula (yields + momentum) + Short formula (technicals + emissions)",
                 },
                 {
                   step: 3,
-                  label: "Regime Analysis",
-                  desc: "8-signal hybrid scoring with confluence adjustment",
+                  label: "Regime Filter",
+                  desc: "Smoothed BTC/SMA ratio with 80/20 bear/bull allocation",
                 },
                 {
                   step: 4,
-                  label: "Long/Short Allocation",
-                  desc: "Position sizing with caps and regime-driven shorts",
+                  label: "Portfolio Construction",
+                  desc: "Independent long/short selection with position caps",
                 },
               ].map((s, i) => (
                 <div key={s.step} className="flex items-start gap-3">
@@ -222,112 +161,192 @@ export default function StrategyTab({
         </div>
       </div>
 
-      {/* Composite Score Formula */}
+      {/* Long Score Formula */}
       <div className="glass-strong rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-5">
           <Target className="w-5 h-5 text-accent-cyan" />
-          <h3 className="text-xl font-semibold">Composite Score Formula</h3>
+          <h3 className="text-xl font-semibold">Long Score Formula</h3>
         </div>
         <div className="space-y-4 mb-5">
           <ScoreBar
-            label="Gross Distributions Yield"
-            weight={40}
+            label="Distributions Yield"
+            weight={25}
             color="#10B981"
-            tooltip="Expected 1-year gross distributions yield. Measures projected cash/token flows to holders relative to market cap — the strongest single return predictor in our factor research."
+            tooltip="Expected 1-year distributions yield. Measures projected cash/token flows to holders relative to market cap — the strongest single return predictor in factor research."
           />
           <ScoreBar
             label="Net Earnings Yield"
-            weight={35}
+            weight={20}
             color="#3B82F6"
             tooltip="Expected 1-year net earnings yield after emissions. Protocol earnings minus dilution cost relative to market cap — captures real profitability."
           />
           <ScoreBar
-            label="Treasury Coverage"
-            weight={25}
+            label="Price vs 50d High"
+            weight={15}
+            color="#F59E0B"
+            tooltip="Current price relative to 50-day high. Rewards assets trading near recent highs — momentum confirmation signal."
+          />
+          <ScoreBar
+            label="MACD Histogram"
+            weight={12}
+            color="#F59E0B"
+            tooltip="MACD histogram as percentage of price. Positive MACD indicates bullish momentum with accelerating trend strength."
+          />
+          <ScoreBar
+            label="Earnings Quality"
+            weight={10}
             color="#8B5CF6"
-            tooltip="Treasury value relative to market cap. Favors protocols with real balance sheet backing — downside protection and intrinsic value floor."
+            tooltip="Earnings-to-distributions ratio. Higher values indicate protocols that distribute a larger share of earnings — signals capital efficiency."
+          />
+          <ScoreBar
+            label="Mean Reversion"
+            weight={10}
+            color="#06B6D4"
+            tooltip="Time-series z-score of market cap / annualized fees. Detects assets that are cheap relative to their own historical valuation."
+          />
+          <ScoreBar
+            label="30d Momentum"
+            weight={8}
+            color="#F59E0B"
+            tooltip="30-day rate of change in price. Captures short-term momentum — trending assets tend to continue trending."
           />
         </div>
-        <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
+        <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
           <p className="text-xs font-mono text-text-secondary mb-2">
-            composite = 0.40 * dist_yield + 0.35 * net_earnings_yield + 0.25
-            * treasury_coverage
+            long_score = 0.25 * dist_yield + 0.20 * net_earnings_yield + 0.15
+            * price_vs_high_50d + 0.12 * macd_hist + 0.10 * earnings_quality
+            + 0.10 * mean_reversion + 0.08 * roc_30d
           </p>
           <p className="text-xs text-text-muted">
-            <span className="text-green-400 font-medium">
-              Positive scores
-            </span>{" "}
-            are long candidates ranked by magnitude.{" "}
-            <span className="text-red-400 font-medium">Negative scores</span>{" "}
-            are short candidates — assets with poor fundamentals that the
-            strategy bets against.
+            Penalty term:{" "}
+            <span className="text-red-400 font-medium">
+              -0.10 * distribution decline (180d)
+            </span>
+            {" "}— assets with falling distributions are penalized.
           </p>
         </div>
       </div>
 
-      {/* Macro Regime Scoring */}
+      {/* Short Score Formula */}
+      <div className="glass-strong rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-5">
+          <Shield className="w-5 h-5 text-red-400" />
+          <h3 className="text-xl font-semibold">Short Score Formula</h3>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 font-medium">
+            Independent
+          </span>
+        </div>
+        <p className="text-sm text-text-muted mb-5">
+          Shorts are scored by a completely separate formula optimized for
+          identifying assets likely to underperform. High short scores mean
+          strong short candidates.
+        </p>
+        <div className="space-y-4 mb-5">
+          <ScoreBar
+            label="Emissions Rate"
+            weight={30}
+            color="#EF4444"
+            tooltip="Expected 1-year token emissions as percentage of supply. High emissions dilute existing holders and create persistent sell pressure — the strongest short signal."
+          />
+          <ScoreBar
+            label="OBV Trend (20d)"
+            weight={25}
+            color="#F97316"
+            tooltip="On-Balance Volume 20-day trend. Rising OBV without price follow-through signals distribution — smart money selling into retail buying."
+          />
+          <ScoreBar
+            label="30d Rate of Change"
+            weight={20}
+            color="#F97316"
+            tooltip="30-day price momentum. High recent momentum often precedes mean reversion — overextended assets are ripe for pullbacks."
+          />
+          <ScoreBar
+            label="RSI (14-day)"
+            weight={15}
+            color="#F97316"
+            tooltip="Relative Strength Index. High RSI indicates overbought conditions — statistically more likely to revert downward."
+          />
+          <ScoreBar
+            label="Price vs 50d High"
+            weight={10}
+            color="#F97316"
+            tooltip="Current price relative to 50-day high. Assets near recent highs with deteriorating internals are good short candidates."
+          />
+        </div>
+        <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
+          <p className="text-xs font-mono text-text-secondary mb-2">
+            short_score = 0.30 * emissions_rate + 0.25 * obv_trend_20d + 0.20
+            * roc_30d + 0.15 * rsi_14 + 0.10 * price_vs_high_50d
+          </p>
+          <p className="text-xs text-text-muted">
+            Combines{" "}
+            <span className="text-red-400 font-medium">
+              fundamental dilution
+            </span>{" "}
+            (emissions) with{" "}
+            <span className="text-orange-400 font-medium">
+              technical reversal
+            </span>{" "}
+            signals (OBV, RSI, momentum) — targeting overvalued tokens with
+            high supply inflation.
+          </p>
+        </div>
+      </div>
+
+      {/* Smoothed Regime Filter */}
       <div className="glass-strong rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-5">
           <Activity className="w-5 h-5 text-amber-400" />
           <h3 className="text-xl font-semibold">
-            Dynamic Short Allocation via Macro Regime
+            Smoothed BTC Regime Filter
           </h3>
         </div>
 
-        <div className="space-y-5 mb-6">
-          {Object.entries(REGIME_SIGNALS).map(([tier, signals]) => (
-            <div key={tier}>
-              <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
-                {tier}
-              </p>
-              <div className="space-y-2">
-                {signals.map((s) => (
-                  <RegimeGauge
-                    key={s.id}
-                    label={s.label}
-                    weight={s.weight}
-                    description={s.description}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <p className="text-sm text-text-muted mb-6">
+          The short allocation is continuously adjusted based on BTC&apos;s position
+          relative to its 140-day simple moving average. Instead of a binary
+          bull/bear flip, the signal is linearly interpolated across a &plusmn;10%
+          band — eliminating whipsaw turnover spikes near the crossover.
+        </p>
 
-        {/* Confluence indicator */}
-        {confluenceStressed !== null && confluenceTotal !== null && confluenceTotal > 0 && (
-          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Signal Confluence</span>
-              <div className="flex items-center gap-2">
-                <span
-                  className="text-sm font-bold font-mono"
-                  style={{ color: confluenceLabelColor(confluenceStressed, confluenceTotal) }}
-                >
-                  {confluenceStressed}/{confluenceTotal} stressed
-                </span>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-medium"
-                  style={{
-                    backgroundColor: `${confluenceLabelColor(confluenceStressed, confluenceTotal)}20`,
-                    color: confluenceLabelColor(confluenceStressed, confluenceTotal),
-                  }}
-                >
-                  {confluenceLabel(confluenceStressed, confluenceTotal)}
+        {/* Regime visualization */}
+        <div className="bg-white/[0.03] rounded-xl p-5 border border-white/5 mb-6">
+          <div className="flex items-center justify-between text-xs text-text-muted mb-3">
+            <span>BTC/SMA Ratio</span>
+            <span>Short Allocation</span>
+          </div>
+          <div className="space-y-2.5">
+            {[
+              { ratio: "0.90 or below", label: "Bearish", short: "80%", color: "#EF4444", width: 100 },
+              { ratio: "0.95", label: "", short: "60%", color: "#F97316", width: 75 },
+              { ratio: "1.00 (at SMA)", label: "Neutral", short: "50%", color: "#F59E0B", width: 50 },
+              { ratio: "1.05", label: "", short: "40%", color: "#84CC16", width: 25 },
+              { ratio: "1.10 or above", label: "Bullish", short: "20%", color: "#10B981", width: 0 },
+            ].map((row) => (
+              <div key={row.ratio} className="flex items-center gap-3">
+                <span className="text-xs font-mono w-28 shrink-0 text-text-secondary">{row.ratio}</span>
+                {row.label && (
+                  <span
+                    className="text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0"
+                    style={{ backgroundColor: `${row.color}20`, color: row.color }}
+                  >
+                    {row.label}
+                  </span>
+                )}
+                {!row.label && <span className="w-[52px] shrink-0" />}
+                <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{ width: `${20 + row.width * 0.6}%`, backgroundColor: row.color }}
+                  />
+                </div>
+                <span className="text-xs font-bold font-mono w-10 text-right" style={{ color: row.color }}>
+                  {row.short}
                 </span>
               </div>
-            </div>
-            {cm !== null && (
-              <p className="text-xs text-text-muted">
-                Confluence multiplier:{" "}
-                <span className="font-mono font-medium text-text-secondary">
-                  {cm.toFixed(2)}x
-                </span>
-                {" "}&mdash; {cm < 1 ? "dampens isolated signals" : cm > 1 ? "boosts aligned signals" : "neutral"}
-              </p>
-            )}
+            ))}
           </div>
-        )}
+        </div>
 
         {rs !== null && (
           <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
@@ -368,9 +387,9 @@ export default function StrategyTab({
           <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
             <BarChart3 className="w-5 h-5 text-accent-cyan mx-auto mb-2" />
             <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
-              Regime Score
+              BTC/SMA Ratio
             </p>
-            <p className="text-sm text-text-secondary">0.00 - 1.00</p>
+            <p className="text-sm text-text-secondary">140-day window</p>
           </div>
           <div className="flex items-center justify-center">
             <ArrowRight className="w-5 h-5 text-text-muted" />
@@ -380,13 +399,14 @@ export default function StrategyTab({
             <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
               Short Allocation
             </p>
-            <p className="text-sm text-text-secondary">10% - 50%</p>
+            <p className="text-sm text-text-secondary">20% &ndash; 80%</p>
           </div>
         </div>
         <p className="text-xs text-text-muted mt-4">
-          Hybrid scoring: weighted average of 8 signals across 3 tiers, adjusted
-          by confluence multiplier (0.70x&ndash;1.30x). Linear interpolation:
-          regime score 0 &rarr; 10% shorts, regime score 1 &rarr; 50% shorts.
+          Linear interpolation: BTC at 90% of SMA &rarr; 80% shorts (full
+          bear), at SMA &rarr; 50% shorts (neutral), at 110% of SMA &rarr; 20%
+          shorts (full bull). Smooth transitions reduce turnover vs. binary
+          regime flips.
         </p>
       </div>
 
@@ -419,12 +439,12 @@ export default function StrategyTab({
             },
             {
               label: "Max Short Allocation",
-              value: "50%",
+              value: "80%",
               accent: "#F87171",
             },
             {
               label: "Min Short Alloc",
-              value: "10%",
+              value: "20%",
               accent: "#F87171",
             },
           ].map((c) => (
@@ -455,20 +475,20 @@ export default function StrategyTab({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             {
-              title: "Downside Hedging",
-              desc: "Perp shorts on worst-scoring assets provide portfolio insurance during macro stress periods",
+              title: "Independent Short Scoring",
+              desc: "Shorts selected by their own technical + emissions formula, not just inverted long scores — better hedge targeting",
             },
             {
               title: "Concentration Limits",
               desc: "25% max per long, 25% max per short — bounds concentration risk on both sides",
             },
             {
-              title: "Treasury Coverage",
-              desc: "25% composite weight on treasury-backed value favors protocols with real balance sheet support and intrinsic value floors",
+              title: "Smoothed Regime Transitions",
+              desc: "Linear interpolation eliminates binary whipsaw — allocation shifts gradually as BTC trend evolves",
             },
             {
               title: "Rebalance Cadence",
-              desc: "24-hour cycle with dry-run gate — manual promotion to live execution for safety",
+              desc: "Weekly cycle with turnover threshold gate — only executes when drift exceeds 5%",
             },
           ].map((r) => (
             <div

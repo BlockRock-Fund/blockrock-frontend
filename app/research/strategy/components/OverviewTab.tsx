@@ -430,18 +430,18 @@ export default function OverviewTab({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            title: "40/35/25 Scoring",
-            desc: "Gross Dist Yield + Net Earnings Yield + Treasury",
+            title: "Dual Scoring",
+            desc: "Independent long (7-factor) and short (5-factor) formulas",
             icon: "📊",
           },
           {
-            title: "Long / Short",
-            desc: "Best fundamentals long, worst short",
+            title: "Smart Shorts",
+            desc: "Emissions + technical reversal signals, not inverted longs",
             icon: "⚖️",
           },
           {
-            title: "Regime-Driven Shorts",
-            desc: "Macro stress controls hedge size",
+            title: "Smoothed Regime",
+            desc: "BTC/SMA ratio drives 20-80% short allocation",
             icon: "🌡️",
           },
           {
