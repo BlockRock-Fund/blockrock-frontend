@@ -49,6 +49,24 @@ const METRIC_EXACT: Record<string, string> = {
   treasury_debt: "Treasury Debt",
 };
 
+const TECHNICAL_EXACT: Record<string, string> = {
+  price_vs_sma20: "Price vs SMA-20",
+  price_vs_sma50: "Price vs SMA-50",
+  price_vs_sma200: "Price vs SMA-200",
+  sma50_vs_sma200: "SMA-50 vs SMA-200",
+  price_vs_high_20d: "Price vs 20d High",
+  price_vs_high_50d: "Price vs 50d High",
+  price_vs_low_20d: "Price vs 20d Low",
+  price_vs_low_50d: "Price vs 50d Low",
+  volume_ratio_20d: "Volume Ratio (20d)",
+  obv_trend_20d: "OBV Trend (20d)",
+  rsi_14: "RSI-14",
+  macd_hist_pct: "MACD Histogram %",
+  roc_14d: "Rate of Change (14d)",
+  roc_30d: "Rate of Change (30d)",
+  vol_price_divergence: "Vol/Price Divergence",
+};
+
 function titleCase(word: string): string {
   if (word.length === 0) return word;
   return word.charAt(0).toUpperCase() + word.slice(1);
@@ -65,6 +83,12 @@ function humanizeMetric(raw: string): string {
   // Strip V: prefix
   let s = raw;
   if (s.startsWith("V:")) s = s.slice(2);
+
+  // Strip TI: prefix and use technical lookup
+  if (s.startsWith("TI:")) {
+    const key = s.slice(3);
+    return TECHNICAL_EXACT[key] ?? humanizeBase(key);
+  }
 
   // Exact match
   if (METRIC_EXACT[s]) return METRIC_EXACT[s];

@@ -35,11 +35,40 @@ interface OverviewTabProps {
 }
 
 const TOOLTIP_STYLE = {
-  backgroundColor: "var(--bg-secondary)",
-  border: "1px solid rgba(255,255,255,0.1)",
+  backgroundColor: "rgba(15, 23, 42, 0.95)",
+  border: "1px solid rgba(255,255,255,0.12)",
   borderRadius: "8px",
-  color: "var(--text-primary)",
+  color: "#f1f5f9",
+  fontSize: "12px",
 };
+
+const RADIAN = Math.PI / 180;
+
+function renderPieLabel({
+  cx,
+  cy,
+  midAngle,
+  outerRadius,
+  name,
+  value,
+}: any) {
+  const radius = outerRadius + 40;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={x > cx ? "start" : "end"}
+      dominantBaseline="central"
+      fill="var(--text-secondary)"
+      fontSize={10}
+    >
+      {name} {value.toFixed(1)}%
+    </text>
+  );
+}
 
 export default function OverviewTab({
   weights,
@@ -101,7 +130,7 @@ export default function OverviewTab({
         {/* Donut Chart */}
         <div className="glass rounded-2xl p-6">
           <h3 className="text-xl font-semibold mb-4">Target Allocation</h3>
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={400}>
             <PieChart>
               <Pie
                 data={pieData}
@@ -109,11 +138,11 @@ export default function OverviewTab({
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius={70}
-                outerRadius={120}
+                innerRadius={60}
+                outerRadius={100}
                 paddingAngle={2}
-                label={({ name, value }) => `${name} ${value.toFixed(1)}%`}
-                labelLine={true}
+                label={renderPieLabel}
+                labelLine={{ stroke: "rgba(255,255,255,0.15)", strokeWidth: 1 }}
               >
                 {pieData.map((entry, idx) => {
                   if (entry.side === "short") {
