@@ -180,7 +180,7 @@ export default function StrategyPage() {
             confluenceTotal={confluenceTotal}
           />
         )}
-        {activeTab === "performance" && <PerformanceTab presetName={presetName} />}
+        {activeTab === "performance" && <PerformanceTab presetName="default" />}
         {activeTab === "factors" && <FactorResearchTab />}
       </div>
     </main>
