@@ -50,7 +50,6 @@ export default function SituationMonitorPage() {
   const [feedType, setFeedType] = useState<FeedType>("HOT");
   const [newsCategory, setNewsCategory] = useState<NewsCategory>("all");
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [activePanel, setActivePanel] = useState(0);
 
   const fetchMarkets = useCallback(async (cat: Category) => {
     setLoadingMarkets(true);
@@ -130,24 +129,22 @@ export default function SituationMonitorPage() {
   }, [autoRefresh, category, feedType, newsCategory, fetchMarkets, fetchPrices, fetchTweets, fetchNews]);
 
   return (
-    <div className="fixed inset-x-0 top-16 bottom-0 flex flex-col font-mono border-t border-accent-cyan/20 bg-bg-primary overflow-hidden z-10">
+    <div className="fixed inset-0 flex flex-col font-mono border-t border-accent-cyan/20 bg-bg-primary overflow-hidden z-50">
       {/* Terminal top bar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-accent-cyan/20 bg-bg-secondary/60 shrink-0">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/research"
-            className="flex items-center gap-1 text-xs text-text-muted hover:text-accent-cyan transition-colors"
-          >
-            <ArrowLeft className="w-3 h-3" />
-            BACK
-          </Link>
-          <span className="text-xs text-accent-cyan tracking-widest font-semibold">
-            SITUATION MONITOR
-          </span>
-        </div>
+      <div className="relative flex items-center justify-center px-4 py-1.5 border-b border-accent-cyan/30 bg-bg-secondary shrink-0">
+        <Link
+          href="/research"
+          className="absolute left-4 flex items-center gap-1 text-[10px] text-text-muted hover:text-accent-cyan transition-colors"
+        >
+          <ArrowLeft className="w-3 h-3" />
+          BACK
+        </Link>
+        <span className="text-xs text-accent-cyan tracking-widest font-bold uppercase">
+          SITUATION MONITOR
+        </span>
         <button
           onClick={() => setAutoRefresh((v) => !v)}
-          className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-accent-cyan transition-colors"
+          className="absolute right-4 flex items-center gap-1.5 text-xs text-text-secondary hover:text-accent-cyan transition-colors"
         >
           <span
             className={`w-1.5 h-1.5 rounded-full ${
@@ -158,33 +155,17 @@ export default function SituationMonitorPage() {
         </button>
       </div>
 
-      {/* 4-column grid (desktop) / tabbed panels (mobile) */}
-      <div className="flex-1 flex flex-col md:grid md:grid-cols-[1fr_1.2fr_1fr_1fr] overflow-hidden min-h-0">
-        {/* Mobile segmented tab bar */}
-        <div className="md:hidden shrink-0 flex border-b border-accent-cyan/20 bg-bg-secondary/60">
-          {(["PRED", "ASSETS", "TWEETS", "NEWS"] as const).map((label, i) => (
-            <button
-              key={label}
-              onClick={() => setActivePanel(i)}
-              className={`flex-1 py-2 text-[11px] tracking-widest font-mono uppercase transition-colors border-b-2 ${
-                activePanel === i
-                  ? "text-accent-cyan border-accent-cyan"
-                  : "text-text-muted border-transparent hover:text-text-secondary"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        {/* LEFT — Prediction Markets */}
-        <div className={`flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20 ${activePanel === 0 ? "flex flex-1" : "hidden"} md:flex`}>
+      {/* 2x2 grid */}
+      <div className="flex-1 grid grid-cols-2 grid-rows-2 overflow-hidden min-h-0">
+        {/* TOP-LEFT — Prediction Markets */}
+        <div className="flex flex-col overflow-hidden min-h-0 border-r border-b border-accent-cyan/20">
           {/* Column header */}
-          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
+          <div className="shrink-0 h-8 border-b border-accent-cyan/30 bg-bg-secondary px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-accent-cyan tracking-widest uppercase">
+              <span className="text-[11px] text-text-primary tracking-widest uppercase font-bold">
                 Predictions
               </span>
-              <span className="text-[10px] text-text-muted">polymarket</span>
+              <span className="text-[10px] text-accent-cyan">polymarket</span>
             </div>
             <div className="flex items-center gap-0.5">
               {CATEGORIES.map((cat, i) => (
@@ -215,14 +196,14 @@ export default function SituationMonitorPage() {
           </div>
         </div>
 
-        {/* CENTER — Assets */}
-        <div className={`flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20 ${activePanel === 1 ? "flex flex-1" : "hidden"} md:flex`}>
+        {/* TOP-RIGHT — Assets */}
+        <div className="flex flex-col overflow-hidden min-h-0 border-b border-accent-cyan/20">
           {/* Column header */}
-          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center">
-            <span className="text-xs text-accent-cyan tracking-widest uppercase">
+          <div className="shrink-0 h-8 border-b border-accent-cyan/30 bg-bg-secondary px-3 flex items-center">
+            <span className="text-[11px] text-text-primary tracking-widest uppercase font-bold">
               Assets
             </span>
-            <span className="text-[10px] text-text-muted ml-2">
+            <span className="text-[10px] text-accent-cyan ml-2">
               hyperliquid
             </span>
           </div>
@@ -235,15 +216,15 @@ export default function SituationMonitorPage() {
           </div>
         </div>
 
-        {/* RIGHT-LEFT — Tweets */}
-        <div className={`flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20 ${activePanel === 2 ? "flex flex-1" : "hidden"} md:flex`}>
+        {/* BOTTOM-LEFT — Tweets */}
+        <div className="flex flex-col overflow-hidden min-h-0 border-r border-accent-cyan/20">
           {/* Column header */}
-          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
+          <div className="shrink-0 h-8 border-b border-accent-cyan/30 bg-bg-secondary px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-accent-cyan tracking-widest uppercase">
+              <span className="text-[11px] text-text-primary tracking-widest uppercase font-bold">
                 Tweets
               </span>
-              <span className="text-[10px] text-text-muted">bangit</span>
+              <span className="text-[10px] text-accent-cyan">bangit</span>
             </div>
             <div className="flex items-center gap-0.5">
               {FEED_TYPES.map((ft, i) => (
@@ -271,15 +252,15 @@ export default function SituationMonitorPage() {
           </div>
         </div>
 
-        {/* RIGHT — News */}
-        <div className={`flex-col overflow-hidden min-h-0 ${activePanel === 3 ? "flex flex-1" : "hidden"} md:flex`}>
+        {/* BOTTOM-RIGHT — News */}
+        <div className="flex flex-col overflow-hidden min-h-0">
           {/* Column header */}
-          <div className="shrink-0 h-10 border-b border-accent-cyan/30 bg-bg-secondary/60 px-3 flex items-center justify-between gap-2">
+          <div className="shrink-0 h-8 border-b border-accent-cyan/30 bg-bg-secondary px-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-accent-cyan tracking-widest uppercase">
+              <span className="text-[11px] text-text-primary tracking-widest uppercase font-bold">
                 News
               </span>
-              <span className="text-[10px] text-text-muted">rss</span>
+              <span className="text-[10px] text-accent-cyan">rss</span>
             </div>
             <div className="flex items-center gap-0.5">
               {NEWS_CATEGORIES.map((cat, i) => (

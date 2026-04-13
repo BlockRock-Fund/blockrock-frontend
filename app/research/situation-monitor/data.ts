@@ -5,6 +5,7 @@ export interface PolymarketOutcome {
   probability: number;
   resolved?: boolean;
   probability_change?: number | null;
+  volume?: number | null;
 }
 
 export interface PolymarketEventData {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, ExternalLink, Globe } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronUp, ExternalLink, Globe } from "lucide-react";
 import { SIGNAL_TOOLTIPS, formatImpact, formatPercentChange, formatPrice, formatVolume, hyperliquidIconUrl, hyperliquidTradeUrl } from "./data";
 import type { BangitTweet, HyperliquidPriceData, NewsArticle, PolymarketEventData } from "./data";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
@@ -362,6 +362,7 @@ export function TerminalMarketList({
   loading: boolean;
 }) {
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   if (loading) {
     return (
@@ -390,41 +391,88 @@ export function TerminalMarketList({
   return (
     <div className="flex flex-col">
       {events.map((ev) => {
-        // Binary markets: always show the "Yes" outcome.
-        // Multi-outcome: prefer highest-probability unresolved outcome (>=1%);
-        // fall back to highest-probability overall (e.g. resolved winner).
-        let topOutcome: (typeof ev.outcomes)[number] | undefined;
+        // Binary markets: show "Yes" outcome in a single row.
         if (ev.is_binary) {
-          topOutcome = ev.outcomes.find((o) => o.label === "Yes") ?? ev.outcomes[0];
-        } else {
-          const liveUnresolved = ev.outcomes.filter((o) => !o.resolved && o.probability >= 0.01);
-          const pool = liveUnresolved.length ? liveUnresolved : ev.outcomes;
-          topOutcome = pool.length
-            ? pool.reduce((best, o) =>
-                o.probability > best.probability ? o : best
-              )
-            : undefined;
+          const topOutcome = ev.outcomes.find((o) => o.label === "Yes") ?? ev.outcomes[0];
+          const pct = topOutcome ? (topOutcome.probability * 100).toFixed(0) : "—";
+          const probChange = topOutcome?.probability_change ?? null;
+          const changeStr =
+            probChange != null
+              ? `${probChange > 0 ? "+" : ""}${(probChange * 100).toFixed(1)}%`
+              : null;
+          const changeCls =
+            probChange != null && probChange > 0
+              ? "text-accent-green"
+              : probChange != null && probChange < 0
+                ? "text-red-400"
+                : "text-text-muted";
+
+          const row = (
+            <div className="px-3 py-2.5 border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer">
+              <div className="flex items-start gap-2 mb-1.5">
+                {ev.image_url && !imgErrors[ev.gamma_event_id] ? (
+                  <img
+                    src={ev.image_url}
+                    alt=""
+                    className="w-5 h-5 rounded object-cover shrink-0 mt-0.5 opacity-80"
+                    onError={() =>
+                      setImgErrors((prev) => ({ ...prev, [ev.gamma_event_id]: true }))
+                    }
+                  />
+                ) : (
+                  <Globe className="w-4 h-4 text-text-muted shrink-0 mt-0.5" />
+                )}
+                <span className="text-xs text-text-primary line-clamp-2 leading-snug flex-1">
+                  {ev.title}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0 ml-1">
+                  {changeStr && (
+                    <span className={`text-[10px] font-mono ${changeCls}`}>{changeStr}</span>
+                  )}
+                  <span className="text-xs font-bold text-accent-cyan">{pct}%</span>
+                </div>
+              </div>
+              <div className="pl-6">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-text-muted truncate pr-2">YES</span>
+                  <span className="text-[10px] text-text-muted shrink-0">
+                    vol {formatVolume(ev.volume_24hr)}
+                  </span>
+                </div>
+                {topOutcome && <TerminalProbBar probability={topOutcome.probability} />}
+              </div>
+            </div>
+          );
+
+          return ev.polymarket_url ? (
+            <a
+              key={ev.gamma_event_id}
+              href={ev.polymarket_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              {row}
+            </a>
+          ) : (
+            <div key={ev.gamma_event_id}>{row}</div>
+          );
         }
-        const pct = topOutcome
-          ? (topOutcome.probability * 100).toFixed(0)
-          : "—";
-        const label = ev.is_binary ? "YES" : topOutcome?.label ?? "";
-        const probChange = topOutcome?.probability_change ?? null;
-        const changeStr =
-          probChange != null
-            ? `${probChange > 0 ? "+" : ""}${(probChange * 100).toFixed(1)}%`
-            : null;
-        const changeCls =
-          probChange != null && probChange > 0
-            ? "text-accent-green"
-            : probChange != null && probChange < 0
-              ? "text-red-400"
-              : "text-text-muted";
+
+        // Multi-option markets: show inline sub-rows for each outcome.
+        const sorted = [...ev.outcomes].sort((a, b) => {
+          if (a.resolved !== b.resolved) return a.resolved ? 1 : -1;
+          return b.probability - a.probability;
+        });
+
+        const MAX_COLLAPSED = 3;
+        const isExpanded = sorted.length <= 4 || expanded[ev.gamma_event_id];
+        const visible = isExpanded ? sorted : sorted.slice(0, MAX_COLLAPSED);
+        const hiddenCount = sorted.length - MAX_COLLAPSED;
 
         const row = (
-          <div
-            className="px-3 py-2.5 border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer"
-          >
+          <div className="px-3 py-2.5 border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors">
+            {/* Title row */}
             <div className="flex items-start gap-2 mb-1.5">
               {ev.image_url && !imgErrors[ev.gamma_event_id] ? (
                 <img
@@ -432,10 +480,7 @@ export function TerminalMarketList({
                   alt=""
                   className="w-5 h-5 rounded object-cover shrink-0 mt-0.5 opacity-80"
                   onError={() =>
-                    setImgErrors((prev) => ({
-                      ...prev,
-                      [ev.gamma_event_id]: true,
-                    }))
+                    setImgErrors((prev) => ({ ...prev, [ev.gamma_event_id]: true }))
                   }
                 />
               ) : (
@@ -444,28 +489,87 @@ export function TerminalMarketList({
               <span className="text-xs text-text-primary line-clamp-2 leading-snug flex-1">
                 {ev.title}
               </span>
-              <div className="flex items-center gap-1.5 shrink-0 ml-1">
-                {changeStr && (
-                  <span className={`text-[10px] font-mono ${changeCls}`}>
-                    {changeStr}
-                  </span>
-                )}
-                <span className="text-xs font-bold text-accent-cyan">
-                  {pct}%
-                </span>
-              </div>
             </div>
-            <div className="pl-6">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] text-text-muted truncate pr-2">
-                  {label}
-                </span>
-                <span className="text-[10px] text-text-muted shrink-0">
-                  vol {formatVolume(ev.volume_24hr)}
-                </span>
-              </div>
-              {topOutcome && (
-                <TerminalProbBar probability={topOutcome.probability} />
+            {/* Column headers */}
+            <div className="pl-7 flex items-center gap-2 mb-1.5">
+              <span className="w-24 shrink-0" />
+              <div className="flex-1 min-w-0" />
+              <span className="text-[9px] text-text-muted uppercase tracking-wider w-8 text-right shrink-0">odds</span>
+              <span className="text-[9px] text-text-muted uppercase tracking-wider w-11 text-right shrink-0">24h</span>
+              <span className="text-[9px] text-text-muted uppercase tracking-wider w-12 text-right shrink-0">vol</span>
+            </div>
+            {/* Outcome sub-rows */}
+            <div className="pl-7 flex flex-col gap-1">
+              {visible.map((o, i) => {
+                const oPct = (o.probability * 100).toFixed(0);
+                const oChange = o.probability_change ?? null;
+                const oChangeStr =
+                  oChange != null
+                    ? `${oChange > 0 ? "+" : ""}${(oChange * 100).toFixed(1)}%`
+                    : null;
+                const oChangeCls =
+                  oChange != null && oChange > 0
+                    ? "text-accent-green"
+                    : oChange != null && oChange < 0
+                      ? "text-red-400"
+                      : "text-text-muted";
+                return (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-2${o.resolved ? " opacity-40" : ""}`}
+                  >
+                    <span className="text-[10px] text-text-primary w-24 truncate shrink-0">
+                      {o.label}
+                      {o.resolved && (
+                        <span className="ml-1 text-[9px] uppercase text-text-muted">res</span>
+                      )}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <TerminalProbBar probability={o.probability} />
+                    </div>
+                    <span className="text-[10px] font-mono text-text-primary w-8 text-right shrink-0">
+                      {oPct}%
+                    </span>
+                    {oChangeStr ? (
+                      <span className={`text-[10px] font-mono ${oChangeCls} w-11 text-right shrink-0`}>
+                        {oChangeStr}
+                      </span>
+                    ) : (
+                      <span className="w-11 shrink-0" />
+                    )}
+                    <span className="text-[10px] font-mono text-text-primary w-12 text-right shrink-0">
+                      {o.volume != null ? formatVolume(o.volume) : "—"}
+                    </span>
+                  </div>
+                );
+              })}
+              {sorted.length > 4 && !isExpanded && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setExpanded((prev) => ({ ...prev, [ev.gamma_event_id]: true }));
+                  }}
+                  className="text-[10px] text-accent-cyan/70 hover:text-accent-cyan text-left mt-0.5 flex items-center gap-1"
+                >
+                  <ChevronDown className="w-3 h-3" />
+                  +{hiddenCount} more
+                </button>
+              )}
+              {sorted.length > 4 && isExpanded && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setExpanded((prev) => ({ ...prev, [ev.gamma_event_id]: false }));
+                  }}
+                  className="text-[10px] text-accent-cyan/70 hover:text-accent-cyan text-left mt-0.5 flex items-center gap-1"
+                >
+                  <ChevronDown className="w-3 h-3 rotate-180" />
+                  show less
+                </button>
               )}
             </div>
           </div>
@@ -521,6 +625,8 @@ function TerminalPriceChangeCell({
   );
 }
 
+type SortColumn = "change_4h_pct" | "change_1d_pct" | "change_7d_pct" | "funding_rate" | "day_ntl_volume";
+
 export function TerminalPricesTable({
   assets,
   loading,
@@ -528,6 +634,33 @@ export function TerminalPricesTable({
   assets: HyperliquidPriceData[];
   loading: boolean;
 }) {
+  const [sortCol, setSortCol] = useState<SortColumn>("day_ntl_volume");
+  const [sortAsc, setSortAsc] = useState(false);
+
+  const handleSort = (col: SortColumn) => {
+    if (col === sortCol) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortCol(col);
+      setSortAsc(false);
+    }
+  };
+
+  const sortedAssets = [...assets].sort((a, b) => {
+    const av = a[sortCol] ?? -Infinity;
+    const bv = b[sortCol] ?? -Infinity;
+    return sortAsc ? av - bv : bv - av;
+  });
+
+  const SortIcon = ({ col }: { col: SortColumn }) =>
+    sortCol === col ? (
+      sortAsc ? (
+        <ChevronUp className="inline w-3 h-3 ml-0.5 -mt-px" />
+      ) : (
+        <ChevronDown className="inline w-3 h-3 ml-0.5 -mt-px" />
+      )
+    ) : null;
+
   if (loading) {
     return (
       <table className="min-w-full text-[11px] font-mono">
@@ -566,15 +699,15 @@ export function TerminalPricesTable({
         <tr className="text-text-muted uppercase tracking-widest text-[10px] border-b border-accent-cyan/20 sticky top-0 bg-bg-primary z-10">
           <th className="px-3 py-2 text-left font-medium">Asset</th>
           <th className="px-2 py-2 text-right font-medium">Price</th>
-          <th className="px-2 py-2 text-right font-medium">4H</th>
-          <th className="px-2 py-2 text-right font-medium">1D</th>
-          <th className="px-2 py-2 text-right font-medium">7D</th>
-          <th className="px-2 py-2 text-right font-medium">Funding</th>
-          <th className="px-3 py-2 text-right font-medium">Vol</th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_4h_pct")}>4H<SortIcon col="change_4h_pct" /></th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_1d_pct")}>1D<SortIcon col="change_1d_pct" /></th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_7d_pct")}>7D<SortIcon col="change_7d_pct" /></th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("funding_rate")}>Funding<SortIcon col="funding_rate" /></th>
+          <th className="px-3 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("day_ntl_volume")}>Vol<SortIcon col="day_ntl_volume" /></th>
         </tr>
       </thead>
       <tbody>
-        {assets.map((asset) => (
+        {sortedAssets.map((asset) => (
           <tr
             key={asset.coin}
             className="border-b border-accent-cyan/10 hover:bg-accent-cyan/5 transition-colors cursor-pointer"
