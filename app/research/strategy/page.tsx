@@ -17,6 +17,7 @@ import {
   AllocationRecord,
   regimeColor,
   regimeLabel,
+  type Universe,
 } from "./components/types";
 import OverviewTab from "./components/OverviewTab";
 import StrategyTab from "./components/StrategyTab";
@@ -47,6 +48,7 @@ export default function StrategyPage() {
   const [confluenceStressed, setConfluenceStressed] = useState<number | null>(null);
   const [confluenceTotal, setConfluenceTotal] = useState<number | null>(null);
   const [presetName, setPresetName] = useState<string>("default");
+  const [universe, setUniverse] = useState<Universe>("all");
 
   const fetchData = async () => {
     try {
@@ -125,11 +127,40 @@ export default function StrategyPage() {
         </div>
 
         <h1 className="text-3xl font-bold mb-1">Fundamentals Vault</h1>
-        <p className="text-text-secondary text-sm mb-8">
-          Dual-scored long/short: longs ranked by fundamental yields, momentum,
-          and mean reversion. Shorts independently scored on technical reversal
-          signals and token emissions. Regime-smoothed allocation via BTC trend.
+        <p className="text-text-secondary text-sm mb-4">
+          Sortino-optimized strategies tailored to each asset universe.
+          Each uses a different scoring formula validated by factor research.
         </p>
+
+        {/* Universe Selector */}
+        <div className="flex gap-2 mb-8">
+          {(
+            [
+              { id: "all", label: "All Assets", desc: "Tokens + Equities" },
+              { id: "token", label: "Tokens", desc: "DeFi protocols" },
+              { id: "equity", label: "Equities", desc: "Public stocks" },
+            ] as const
+          ).map((u) => (
+            <button
+              key={u.id}
+              onClick={() => setUniverse(u.id)}
+              className={`flex-1 rounded-xl px-4 py-3 text-left transition-all ${
+                universe === u.id
+                  ? "bg-accent-cyan/10 border-2 border-accent-cyan/40"
+                  : "bg-white/[0.03] border-2 border-transparent hover:border-white/10"
+              }`}
+            >
+              <p
+                className={`text-sm font-semibold ${
+                  universe === u.id ? "text-accent-cyan" : "text-text-primary"
+                }`}
+              >
+                {u.label}
+              </p>
+              <p className="text-xs text-text-muted">{u.desc}</p>
+            </button>
+          ))}
+        </div>
 
         {error && (
           <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
@@ -174,6 +205,7 @@ export default function StrategyPage() {
         )}
         {activeTab === "strategy" && (
           <StrategyTab
+            universe={universe}
             regimeScore={regimeScore}
             shortAllocationPct={shortAllocationPct}
             confluenceMultiplier={confluenceMultiplier}
@@ -181,8 +213,12 @@ export default function StrategyPage() {
             confluenceTotal={confluenceTotal}
           />
         )}
-        {activeTab === "performance" && <PerformanceTab presetName="default" />}
-        {activeTab === "factors" && <FactorResearchTab />}
+        {activeTab === "performance" && (
+          <PerformanceTab
+            presetName={universe === "all" ? "default" : `default-${universe}`}
+          />
+        )}
+        {activeTab === "factors" && <FactorResearchTab universe={universe} />}
       </div>
     </main>
   );

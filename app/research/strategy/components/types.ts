@@ -2,6 +2,8 @@ export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   "https://blockrock-backend-production.up.railway.app";
 
+export type Universe = "all" | "token" | "equity";
+
 export type TargetWeight = {
   asset_id: number;
   symbol: string;

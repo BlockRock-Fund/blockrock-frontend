@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, type CSSProperties } from "react";
-import { API_BASE_URL } from "./types";
+import { API_BASE_URL, type Universe } from "./types";
 
 type FactorRow = {
   metric: string;
@@ -237,7 +237,7 @@ function retColor(v: number | null): string {
 // Component
 // ---------------------------------------------------------------------------
 
-export default function FactorResearchTab() {
+export default function FactorResearchTab({ universe = "all" }: { universe?: Universe }) {
   const [singleFactors, setSingleFactors] = useState<FactorRow[]>([]);
   const [crossHorizon, setCrossHorizon] = useState<CrossHorizonRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -249,7 +249,11 @@ export default function FactorResearchTab() {
     (async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/vault/factor-research`);
+        setSingleFactors([]);
+        setCrossHorizon([]);
+        setError(null);
+        const params = universe !== "all" ? `?universe=${universe}` : "";
+        const res = await fetch(`${API_BASE_URL}/vault/factor-research${params}`);
         if (!res.ok) throw new Error("Failed to load factor research data");
         const data = await res.json();
         setSingleFactors(data.single_factors || []);
@@ -260,7 +264,7 @@ export default function FactorResearchTab() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [universe]);
 
   const filteredCrossHorizon = useMemo(() => {
     const q = search.toLowerCase();
