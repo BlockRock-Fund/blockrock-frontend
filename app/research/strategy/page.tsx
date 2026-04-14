@@ -131,19 +131,18 @@ export default function StrategyPage() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-1">Fundamentals Vault</h1>
+        <h1 className="text-3xl font-bold mb-1">Strategy</h1>
         <p className="text-text-secondary text-sm mb-4">
-          Sortino-optimized strategies tailored to each asset universe.
-          Each uses a different scoring formula validated by factor research.
+          Investment strategies optimized for each asset universe.
         </p>
 
         {/* Universe Selector */}
         <div className="flex gap-2 mb-8">
           {(
             [
-              { id: "all", label: "All Assets", desc: "Tokens + Equities" },
-              { id: "token", label: "Tokens", desc: "DeFi protocols" },
-              { id: "equity", label: "Equities", desc: "Public stocks" },
+              { id: "token", label: "Tokens" },
+              { id: "equity", label: "Equities" },
+              { id: "all", label: "Tokens + Equities" },
             ] as const
           ).map((u) => (
             <button
@@ -162,7 +161,6 @@ export default function StrategyPage() {
               >
                 {u.label}
               </p>
-              <p className="text-xs text-text-muted">{u.desc}</p>
             </button>
           ))}
         </div>
