@@ -120,7 +120,7 @@ export default function StrategyPage() {
           </Link>
           <div className="flex-1" />
           <button
-            onClick={fetchData}
+            onClick={() => fetchData()}
             disabled={loading}
             className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-white/10 hover:border-white/20 transition-colors disabled:opacity-50"
           >
