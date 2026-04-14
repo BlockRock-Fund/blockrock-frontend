@@ -21,6 +21,7 @@ import {
   SHORT_COLORS,
   pct,
   scoreColor,
+  type Universe,
 } from "./types";
 
 interface OverviewTabProps {
@@ -31,6 +32,7 @@ interface OverviewTabProps {
   shortAllocationPct: string | null;
   status: VaultStatus | null;
   loading: boolean;
+  universe: Universe;
   onTabChange: (tab: string) => void;
 }
 
@@ -77,6 +79,7 @@ export default function OverviewTab({
   shortAllocationPct,
   status,
   loading,
+  universe,
   onTabChange,
 }: OverviewTabProps) {
   if (loading) {

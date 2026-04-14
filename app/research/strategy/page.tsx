@@ -50,13 +50,18 @@ export default function StrategyPage() {
   const [presetName, setPresetName] = useState<string>("default");
   const [universe, setUniverse] = useState<Universe>("all");
 
-  const fetchData = async () => {
+  const fetchData = async (uni: Universe = universe) => {
     try {
       setLoading(true);
       setError(null);
 
+      const weightsUrl =
+        uni === "all"
+          ? `${API_BASE_URL}/vault/target-weights`
+          : `${API_BASE_URL}/vault/target-weights?universe=${uni}`;
+
       const [weightsRes, statusRes, allocsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/vault/target-weights`),
+        fetch(weightsUrl),
         fetch(`${API_BASE_URL}/vault/status`),
         fetch(`${API_BASE_URL}/vault/allocations?limit=10`),
       ]);
@@ -85,8 +90,8 @@ export default function StrategyPage() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(universe);
+  }, [universe]);
 
   const longs = useMemo(
     () => weights.filter((w) => w.side !== "short"),
@@ -200,6 +205,7 @@ export default function StrategyPage() {
             shortAllocationPct={shortAllocationPct}
             status={status}
             loading={loading}
+            universe={universe}
             onTabChange={(tab) => setActiveTab(tab as TabId)}
           />
         )}
