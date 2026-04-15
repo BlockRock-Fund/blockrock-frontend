@@ -1,0 +1,139 @@
+import Link from "next/link";
+import { Activity, TrendingUp, Layers, FileText, PieChart } from "lucide-react";
+
+const modules = [
+  {
+    title: "Situation Monitor",
+    description:
+      "Birds-eye view of hot assets, prediction markets, tweets, and live news. The terminal for staying ahead.",
+    icon: Activity,
+    href: "/research/situation-monitor",
+    accentFrom: "#DDB110",
+    accentTo: "#10b981",
+  },
+  {
+    title: "Valuations",
+    description:
+      "Cashflow analysis across tokens and equities — revenue multiples, earnings yield, and treasury coverage.",
+    icon: TrendingUp,
+    href: "/research/valuations",
+    accentFrom: "#DDB110",
+    accentTo: "#f59e0b",
+  },
+  {
+    title: "Strategy",
+    description:
+      "Factor-driven allocation engine with regime detection, backtests, and live target weights.",
+    icon: Layers,
+    href: "/research/strategy",
+    accentFrom: "#DDB110",
+    accentTo: "#f87171",
+  },
+  {
+    title: "AI & Markets",
+    description:
+      "How AI affects the economy and what it means for portfolio construction — synthesized from 15+ primary sources.",
+    icon: FileText,
+    href: "/research/ai-markets",
+    accentFrom: "#f59e0b",
+    accentTo: "#d97706",
+  },
+  {
+    title: "Portfolio Builder",
+    description:
+      "Allocation modeling with correlation matrices, risk/return scatter, and custom profile presets.",
+    icon: PieChart,
+    href: "/research/portfolio-builder",
+    accentFrom: "#10b981",
+    accentTo: "#DDB110",
+  },
+];
+
+export default function ResearchSection() {
+  return (
+    <section id="research" className="py-20 sm:py-28 border-t border-white/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
+              Research
+            </h2>
+            <p className="text-text-secondary text-lg max-w-xl">
+              Deep-dive into fundamentals, risk, and market dynamics.
+            </p>
+          </div>
+          <Link
+            href="/research"
+            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-accent-cyan transition-colors"
+          >
+            Browse all
+            <span className="text-accent-cyan">→</span>
+          </Link>
+        </div>
+
+        {/* Cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {modules.map((mod) => {
+            const Icon = mod.icon;
+            return (
+              <Link key={mod.title} href={mod.href} className="block group">
+                <div className="gradient-border rounded-2xl p-6 h-full flex flex-col transition-all duration-300 hover:scale-[1.02] glow-cyan-hover cursor-pointer">
+
+                  {/* Accent bar */}
+                  <div
+                    className="h-[3px] w-full rounded-full mb-5"
+                    style={{
+                      background: `linear-gradient(to right, ${mod.accentFrom}, ${mod.accentTo})`,
+                    }}
+                  />
+
+                  {/* Icon row */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-2.5 rounded-xl bg-bg-tertiary/50">
+                      <Icon className="w-5 h-5 text-accent-cyan" />
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-accent-green bg-accent-green/10 border border-accent-green/20 rounded-full px-2.5 py-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
+                      Live
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold text-text-primary mb-2 group-hover:text-accent-cyan transition-colors">
+                    {mod.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-text-secondary text-sm leading-relaxed flex-1">
+                    {mod.description}
+                  </p>
+
+                  {/* CTA */}
+                  <div className="mt-5 pt-4 border-t border-glass-border">
+                    <span className="text-sm font-medium text-accent-cyan group-hover:underline">
+                      Open →
+                    </span>
+                  </div>
+
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Mobile browse-all link */}
+        <div className="mt-8 text-center sm:hidden">
+          <Link
+            href="/research"
+            className="text-sm font-medium text-text-muted hover:text-accent-cyan transition-colors"
+          >
+            Browse all research →
+          </Link>
+        </div>
+
+      </div>
+    </section>
+  );
+}
