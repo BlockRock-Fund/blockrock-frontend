@@ -48,7 +48,7 @@ export default function StrategyPage() {
   const [confluenceStressed, setConfluenceStressed] = useState<number | null>(null);
   const [confluenceTotal, setConfluenceTotal] = useState<number | null>(null);
   const [presetName, setPresetName] = useState<string>("default");
-  const [universe, setUniverse] = useState<Universe>("all");
+  const [universe, setUniverse] = useState<Universe>("token");
 
   const fetchData = async (uni: Universe = universe) => {
     try {
