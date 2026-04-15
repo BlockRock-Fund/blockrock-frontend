@@ -43,9 +43,6 @@ export default function HeroSection() {
                 <GlowButton href="#research" size="lg">
                   Research ↓
                 </GlowButton>
-                <GlowButton href="/charter" size="lg" variant="secondary">
-                  Read Charter
-                </GlowButton>
               </div>
             </div>
 
