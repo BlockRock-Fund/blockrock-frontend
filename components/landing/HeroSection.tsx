@@ -27,14 +27,6 @@ export default function HeroSection() {
                 Onchain Asset Management
               </h1>
 
-              {/* Sub-headline */}
-              <p
-                className="text-text-secondary text-lg sm:text-xl leading-relaxed mb-8 max-w-lg animate-fade-in-up"
-                style={{ animationDelay: "0.2s" }}
-              >
-                Fundamental analysis, AI-driven allocation, and governance — all onchain.
-              </p>
-
               {/* CTAs */}
               <div
                 className="flex flex-col sm:flex-row gap-4 animate-fade-in-up"
