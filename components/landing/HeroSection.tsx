@@ -62,11 +62,6 @@ export default function HeroSection() {
                     priority
                   />
                 </div>
-                {/* Caption badge */}
-                <div className="absolute -bottom-4 -right-4 glass rounded-xl px-4 py-2 text-sm font-medium text-text-primary border border-accent-cyan/20">
-                  <span className="text-accent-cyan font-semibold">Larry Funk</span>
-                  <span className="text-text-muted ml-1.5">— CIO, BlockRock</span>
-                </div>
               </div>
             </div>
 

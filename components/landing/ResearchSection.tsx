@@ -54,13 +54,6 @@ export default function ResearchSection() {
               Deep-dive into fundamentals, risk, and market dynamics.
             </p>
           </div>
-          <Link
-            href="/research"
-            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-accent-cyan transition-colors"
-          >
-            Browse all
-            <span className="text-accent-cyan">→</span>
-          </Link>
         </div>
 
         {/* Cards grid */}
@@ -105,15 +98,6 @@ export default function ResearchSection() {
           })}
         </div>
 
-        {/* Mobile browse-all link */}
-        <div className="mt-8 text-center sm:hidden">
-          <Link
-            href="/research"
-            className="text-sm font-medium text-text-muted hover:text-accent-cyan transition-colors"
-          >
-            Browse all research →
-          </Link>
-        </div>
 
       </div>
     </section>
