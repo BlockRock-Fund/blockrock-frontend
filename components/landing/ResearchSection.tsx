@@ -7,35 +7,35 @@ const modules = [
     description:
       "Birds-eye view of hot assets, prediction markets, tweets, and live news. The terminal for staying ahead.",
     icon: Activity,
-    href: "/research/situation-monitor",
+    href: "/situation-monitor",
   },
   {
     title: "Valuations",
     description:
       "Cashflow analysis across tokens and equities — revenue multiples, earnings yield, and treasury coverage.",
     icon: TrendingUp,
-    href: "/research/valuations",
+    href: "/valuations",
   },
   {
     title: "Strategy",
     description:
       "Factor-driven allocation engine with regime detection, backtests, and live target weights.",
     icon: Layers,
-    href: "/research/strategy",
+    href: "/strategy",
   },
   {
     title: "AI & Markets",
     description:
       "How AI affects the economy and what it means for portfolio construction — synthesized from 15+ primary sources.",
     icon: FileText,
-    href: "/research/ai-markets",
+    href: "/ai-markets",
   },
   {
     title: "Portfolio Builder",
     description:
       "Allocation modeling with correlation matrices, risk/return scatter, and custom profile presets.",
     icon: PieChart,
-    href: "/research/portfolio-builder",
+    href: "/portfolio-builder",
   },
 ];
 
