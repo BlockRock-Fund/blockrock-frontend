@@ -8,8 +8,6 @@ const modules = [
       "Birds-eye view of hot assets, prediction markets, tweets, and live news. The terminal for staying ahead.",
     icon: Activity,
     href: "/research/situation-monitor",
-    accentFrom: "#DDB110",
-    accentTo: "#10b981",
   },
   {
     title: "Valuations",
@@ -17,8 +15,6 @@ const modules = [
       "Cashflow analysis across tokens and equities — revenue multiples, earnings yield, and treasury coverage.",
     icon: TrendingUp,
     href: "/research/valuations",
-    accentFrom: "#DDB110",
-    accentTo: "#f59e0b",
   },
   {
     title: "Strategy",
@@ -26,8 +22,6 @@ const modules = [
       "Factor-driven allocation engine with regime detection, backtests, and live target weights.",
     icon: Layers,
     href: "/research/strategy",
-    accentFrom: "#DDB110",
-    accentTo: "#f87171",
   },
   {
     title: "AI & Markets",
@@ -35,8 +29,6 @@ const modules = [
       "How AI affects the economy and what it means for portfolio construction — synthesized from 15+ primary sources.",
     icon: FileText,
     href: "/research/ai-markets",
-    accentFrom: "#f59e0b",
-    accentTo: "#d97706",
   },
   {
     title: "Portfolio Builder",
@@ -44,8 +36,6 @@ const modules = [
       "Allocation modeling with correlation matrices, risk/return scatter, and custom profile presets.",
     icon: PieChart,
     href: "/research/portfolio-builder",
-    accentFrom: "#10b981",
-    accentTo: "#DDB110",
   },
 ];
 
@@ -80,14 +70,6 @@ export default function ResearchSection() {
             return (
               <Link key={mod.title} href={mod.href} className="block group">
                 <div className="gradient-border rounded-2xl p-6 h-full flex flex-col transition-all duration-300 hover:scale-[1.02] glow-cyan-hover cursor-pointer">
-
-                  {/* Accent bar */}
-                  <div
-                    className="h-[3px] w-full rounded-full mb-5"
-                    style={{
-                      background: `linear-gradient(to right, ${mod.accentFrom}, ${mod.accentTo})`,
-                    }}
-                  />
 
                   {/* Icon row */}
                   <div className="flex items-center justify-between mb-4">
