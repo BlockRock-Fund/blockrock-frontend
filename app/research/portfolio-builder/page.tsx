@@ -180,10 +180,10 @@ export default function PortfolioBuilderPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Back link */}
         <Link
-          href="/research"
+          href="/"
           className="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-cyan transition-colors mb-10"
         >
-          <ArrowLeft className="w-4 h-4" /> Research
+          <ArrowLeft className="w-4 h-4" /> Home
         </Link>
 
         {/* Header */}

@@ -30,8 +30,8 @@ export default function AIMarketsPage() {
     <section className="py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* back link */}
-        <Link href="/research" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-cyan transition-colors mb-10">
-          <ArrowLeft className="w-4 h-4" /> Research
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-cyan transition-colors mb-10">
+          <ArrowLeft className="w-4 h-4" /> Home
         </Link>
 
         {/* ── header / cover ──────────────────────────────────── */}

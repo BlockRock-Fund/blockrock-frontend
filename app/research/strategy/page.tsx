@@ -113,10 +113,10 @@ export default function StrategyPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Link
-            href="/research"
+            href="/"
             className="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-cyan transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Research
+            <ArrowLeft className="w-4 h-4" /> Home
           </Link>
           <div className="flex-1" />
           <button

@@ -133,7 +133,7 @@ export default function SituationMonitorPage() {
       {/* Terminal top bar */}
       <div className="relative flex items-center justify-center px-4 py-1.5 border-b border-accent-cyan/30 bg-bg-secondary shrink-0">
         <Link
-          href="/research"
+          href="/"
           className="absolute left-4 flex items-center gap-1 text-[10px] text-text-muted hover:text-accent-cyan transition-colors"
         >
           <ArrowLeft className="w-3 h-3" />

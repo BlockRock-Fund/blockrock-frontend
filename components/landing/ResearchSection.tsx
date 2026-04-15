@@ -44,18 +44,6 @@ export default function ResearchSection() {
     <section className="py-20 sm:py-28 border-t border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
-        {/* Section header */}
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
-              Research
-            </h2>
-            <p className="text-text-secondary text-lg max-w-xl">
-              Deep-dive into fundamentals, risk, and market dynamics.
-            </p>
-          </div>
-        </div>
-
         {/* Cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {modules.map((mod) => {

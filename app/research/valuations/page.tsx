@@ -1358,8 +1358,8 @@ export default function AnalysisPage() {
   return (
     <div className="fixed inset-x-0 top-16 bottom-0 flex flex-col overflow-hidden">
       <div className="shrink-0 px-4 sm:px-6 mt-3 mb-1.5">
-        <Link href="/research" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-cyan transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Research
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-cyan transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Home
         </Link>
       </div>
       <div className="shrink-0 px-4 sm:px-6 mb-2 sm:mb-4 text-center">
