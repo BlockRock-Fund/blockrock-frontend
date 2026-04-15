@@ -1,11 +1,10 @@
 import Image from "next/image";
 import GridBackground from "../ui/GridBackground";
-import GlowButton from "../ui/GlowButton";
 
 export default function HeroSection() {
   return (
     <GridBackground>
-      <section className="relative min-h-[90vh] flex items-center">
+      <section className="relative">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 w-full py-16 sm:py-24">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
@@ -21,21 +20,11 @@ export default function HeroSection() {
 
               {/* Headline */}
               <h1
-                className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-5 animate-fade-in-up"
+                className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] animate-fade-in-up"
                 style={{ animationDelay: "0.1s" }}
               >
                 Onchain Asset Management
               </h1>
-
-              {/* CTAs */}
-              <div
-                className="flex flex-col sm:flex-row gap-4 animate-fade-in-up"
-                style={{ animationDelay: "0.3s" }}
-              >
-                <GlowButton href="#research" size="lg">
-                  Research ↓
-                </GlowButton>
-              </div>
             </div>
 
             {/* Right: Larry Funk */}

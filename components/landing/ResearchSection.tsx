@@ -41,7 +41,7 @@ const modules = [
 
 export default function ResearchSection() {
   return (
-    <section id="research" className="py-20 sm:py-28 border-t border-white/5">
+    <section className="py-20 sm:py-28 border-t border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
         {/* Section header */}
