@@ -69,6 +69,44 @@ export type AllocationRecord = {
   short_allocation_pct: string | null;
 };
 
+export type ScoreTerm = {
+  field: string;
+  weight: number;
+};
+
+export type RegimeSource = {
+  name: string;
+  weight: number;
+};
+
+export type RegimeConfig = {
+  sma_window_days: number | null;
+  short_pct_bearish: number | null;
+  short_pct_bullish: number | null;
+  sources: RegimeSource[] | null;
+};
+
+export type VaultConstraints = {
+  max_holdings: number | null;
+  max_weight: number | null;
+  max_short_positions: number | null;
+  max_short_weight: number | null;
+  rebalance_threshold: number | null;
+};
+
+export type StrategyConfigResponse = {
+  universe: Universe;
+  preset_name: string;
+  preset_file: string;
+  description: string | null;
+  score_terms: ScoreTerm[];
+  short_score_terms: ScoreTerm[] | null;
+  default_short_leverage: number;
+  regime_config: RegimeConfig | null;
+  exclude_symbols: string[] | null;
+  constraints: VaultConstraints;
+};
+
 export const CHART_COLORS = ["#4ADE80"];
 
 export const SHORT_COLORS = ["#F87171"];

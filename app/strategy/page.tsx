@@ -18,6 +18,7 @@ import {
   regimeColor,
   regimeLabel,
   type Universe,
+  type StrategyConfigResponse,
 } from "./components/types";
 import OverviewTab from "./components/OverviewTab";
 import StrategyTab from "./components/StrategyTab";
@@ -49,6 +50,8 @@ export default function StrategyPage() {
   const [confluenceTotal, setConfluenceTotal] = useState<number | null>(null);
   const [presetName, setPresetName] = useState<string>("default");
   const [universe, setUniverse] = useState<Universe>("token");
+  const [strategyConfig, setStrategyConfig] =
+    useState<StrategyConfigResponse | null>(null);
 
   const fetchData = async (uni: Universe = universe) => {
     try {
@@ -60,11 +63,13 @@ export default function StrategyPage() {
           ? `${API_BASE_URL}/vault/target-weights`
           : `${API_BASE_URL}/vault/target-weights?universe=${uni}`;
 
-      const [weightsRes, statusRes, allocsRes] = await Promise.all([
-        fetch(weightsUrl),
-        fetch(`${API_BASE_URL}/vault/status`),
-        fetch(`${API_BASE_URL}/vault/allocations?limit=10`),
-      ]);
+      const [weightsRes, statusRes, allocsRes, strategyRes] =
+        await Promise.all([
+          fetch(weightsUrl),
+          fetch(`${API_BASE_URL}/vault/status`),
+          fetch(`${API_BASE_URL}/vault/allocations?limit=10`),
+          fetch(`${API_BASE_URL}/vault/strategy-config?universe=${uni}`),
+        ]);
 
       if (!weightsRes.ok) throw new Error("Failed to load target weights");
       const weightsData = await weightsRes.json();
@@ -80,6 +85,11 @@ export default function StrategyPage() {
       if (allocsRes.ok) {
         const allocData = await allocsRes.json();
         setAllocations(allocData.allocations || []);
+      }
+      if (strategyRes.ok) {
+        setStrategyConfig(await strategyRes.json());
+      } else {
+        setStrategyConfig(null);
       }
     } catch (err) {
       console.error(err);
@@ -215,6 +225,7 @@ export default function StrategyPage() {
             confluenceMultiplier={confluenceMultiplier}
             confluenceStressed={confluenceStressed}
             confluenceTotal={confluenceTotal}
+            strategyConfig={strategyConfig}
           />
         )}
         {activeTab === "performance" && (

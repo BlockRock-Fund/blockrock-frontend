@@ -9,7 +9,15 @@ import {
   Layers,
 } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
-import { regimeColor, regimeLabel, type Universe } from "./types";
+import {
+  regimeColor,
+  regimeLabel,
+  type Universe,
+  type ScoreTerm,
+  type StrategyConfigResponse,
+  type VaultConstraints,
+} from "./types";
+import { getFieldMetadata } from "./fieldMetadata";
 
 interface StrategyTabProps {
   universe: Universe;
@@ -18,230 +26,8 @@ interface StrategyTabProps {
   confluenceMultiplier?: string | null;
   confluenceStressed?: number | null;
   confluenceTotal?: number | null;
+  strategyConfig: StrategyConfigResponse | null;
 }
-
-type ScoreTermDef = {
-  label: string;
-  weight: number;
-  color: string;
-  tooltip: string;
-};
-
-type StrategyConfig = {
-  title: string;
-  longTerms: ScoreTermDef[];
-  longFormula: string;
-  shortTerms?: ScoreTermDef[];
-  shortFormula?: string;
-  regimeBear: string;
-  regimeBull: string;
-  constraints: { label: string; value: string; accent: string }[];
-};
-
-const STRATEGY_CONFIGS: Record<Universe, StrategyConfig> = {
-  token: {
-    title: "Pure Fundamental Token Strategy",
-    longTerms: [
-      {
-        label: "Distributions Yield",
-        weight: 35,
-        color: "#10B981",
-        tooltip:
-          "Expected 1-year distributions yield. The strongest single return predictor in factor research (IC 0.14 at 30d, 0.17 at 90d).",
-      },
-      {
-        label: "Net Earnings Yield",
-        weight: 30,
-        color: "#3B82F6",
-        tooltip:
-          "Expected 1-year net earnings yield after emissions. Second strongest factor for tokens.",
-      },
-      {
-        label: "Earnings Quality",
-        weight: 20,
-        color: "#8B5CF6",
-        tooltip:
-          "Earnings-to-distributions ratio. Rewards protocols that distribute a larger share of earnings to holders.",
-      },
-      {
-        label: "Distribution Momentum",
-        weight: 15,
-        color: "#F59E0B",
-        tooltip:
-          "30-day period-over-period change in distributions. Rising distributions signal improving fundamentals.",
-      },
-    ],
-    longFormula:
-      "score = 0.35 * dist_yield + 0.30 * net_earnings_yield + 0.20 * earnings_quality + 0.15 * dist_momentum_30d",
-    regimeBear: "70%",
-    regimeBull: "30%",
-    constraints: [
-      { label: "Max Long Holdings", value: "10", accent: "#DDB110" },
-      { label: "Max Long Weight", value: "25%", accent: "#DDB110" },
-      { label: "Max Short Positions", value: "5", accent: "#F87171" },
-      { label: "Max Short Weight", value: "25%", accent: "#F87171" },
-      { label: "Bear Short Alloc", value: "70%", accent: "#F87171" },
-      { label: "Bull Short Alloc", value: "30%", accent: "#10B981" },
-    ],
-  },
-  equity: {
-    title: "Yield-Weighted Equity Strategy",
-    longTerms: [
-      {
-        label: "Distributions Yield",
-        weight: 35,
-        color: "#10B981",
-        tooltip:
-          "Expected 1-year distributions yield. Dominates equity returns (IC 0.15 at 30d, 0.25 at 90d).",
-      },
-      {
-        label: "Net Earnings Yield",
-        weight: 25,
-        color: "#3B82F6",
-        tooltip:
-          "Expected 1-year net earnings yield. Second strongest equity factor (IC 0.10).",
-      },
-      {
-        label: "Revenue Yield",
-        weight: 15,
-        color: "#06B6D4",
-        tooltip:
-          "Revenue relative to market cap. Cross-horizon consistent for equities (IC 0.08-0.12).",
-      },
-      {
-        label: "Earnings Quality",
-        weight: 15,
-        color: "#8B5CF6",
-        tooltip:
-          "Earnings-to-distributions ratio. High payout ratios signal shareholder-friendly management.",
-      },
-      {
-        label: "Emissions Rate",
-        weight: 10,
-        color: "#EF4444",
-        tooltip:
-          "Share dilution rate. Lower dilution is rewarded — companies buying back shares score higher.",
-      },
-    ],
-    longFormula:
-      "score = 0.35 * dist_yield + 0.25 * net_earnings_yield + 0.15 * revenue_yield + 0.15 * earnings_quality + 0.10 * emissions_rate",
-    regimeBear: "10%",
-    regimeBull: "5%",
-    constraints: [
-      { label: "Max Long Holdings", value: "10", accent: "#DDB110" },
-      { label: "Max Long Weight", value: "25%", accent: "#DDB110" },
-      { label: "Max Short Positions", value: "5", accent: "#F87171" },
-      { label: "Max Short Weight", value: "25%", accent: "#F87171" },
-      { label: "Bear Short Alloc", value: "10%", accent: "#F87171" },
-      { label: "Bull Short Alloc", value: "5%", accent: "#10B981" },
-    ],
-  },
-  all: {
-    title: "Dual-Scored Long/Short Strategy",
-    longTerms: [
-      {
-        label: "Distributions Yield",
-        weight: 25,
-        color: "#10B981",
-        tooltip:
-          "Expected 1-year distributions yield. The strongest single return predictor in factor research.",
-      },
-      {
-        label: "Net Earnings Yield",
-        weight: 20,
-        color: "#3B82F6",
-        tooltip:
-          "Expected 1-year net earnings yield after emissions. Captures real profitability.",
-      },
-      {
-        label: "Price vs 50d High",
-        weight: 15,
-        color: "#F59E0B",
-        tooltip:
-          "Current price relative to 50-day high. Rewards assets trading near recent highs — momentum confirmation.",
-      },
-      {
-        label: "MACD Histogram",
-        weight: 12,
-        color: "#F59E0B",
-        tooltip:
-          "MACD histogram as percentage of price. Positive MACD indicates bullish momentum.",
-      },
-      {
-        label: "Earnings Quality",
-        weight: 10,
-        color: "#8B5CF6",
-        tooltip:
-          "Earnings-to-distributions ratio. Higher values signal capital efficiency.",
-      },
-      {
-        label: "Mean Reversion",
-        weight: 10,
-        color: "#06B6D4",
-        tooltip:
-          "Time-series z-score of market cap / fees. Detects assets cheap relative to own history.",
-      },
-      {
-        label: "30d Momentum",
-        weight: 8,
-        color: "#F59E0B",
-        tooltip:
-          "30-day rate of change in price. Captures short-term trend continuation.",
-      },
-    ],
-    longFormula:
-      "long_score = 0.25 * dist_yield + 0.20 * net_earnings_yield + 0.15 * price_vs_high_50d + 0.12 * macd_hist + 0.10 * earnings_quality + 0.10 * mean_reversion + 0.08 * roc_30d",
-    shortTerms: [
-      {
-        label: "Emissions Rate",
-        weight: 30,
-        color: "#EF4444",
-        tooltip:
-          "Expected 1-year token emissions. High emissions dilute holders and create sell pressure — the strongest short signal.",
-      },
-      {
-        label: "OBV Trend (20d)",
-        weight: 25,
-        color: "#F97316",
-        tooltip:
-          "On-Balance Volume trend. Rising OBV without price follow-through signals distribution.",
-      },
-      {
-        label: "30d Rate of Change",
-        weight: 20,
-        color: "#F97316",
-        tooltip:
-          "30-day price momentum. Overextended assets are ripe for pullbacks.",
-      },
-      {
-        label: "RSI (14-day)",
-        weight: 15,
-        color: "#F97316",
-        tooltip:
-          "Relative Strength Index. High RSI indicates overbought conditions.",
-      },
-      {
-        label: "Price vs 50d High",
-        weight: 10,
-        color: "#F97316",
-        tooltip:
-          "Assets near recent highs with deteriorating internals are good short candidates.",
-      },
-    ],
-    shortFormula:
-      "short_score = 0.30 * emissions_rate + 0.25 * obv_trend_20d + 0.20 * roc_30d + 0.15 * rsi_14 + 0.10 * price_vs_high_50d",
-    regimeBear: "80%",
-    regimeBull: "20%",
-    constraints: [
-      { label: "Max Long Holdings", value: "10", accent: "#DDB110" },
-      { label: "Max Long Weight", value: "25%", accent: "#DDB110" },
-      { label: "Max Short Positions", value: "5", accent: "#F87171" },
-      { label: "Max Short Weight", value: "25%", accent: "#F87171" },
-      { label: "Bear Short Alloc", value: "80%", accent: "#F87171" },
-      { label: "Bull Short Alloc", value: "20%", accent: "#10B981" },
-    ],
-  },
-};
 
 function ScoreBar({
   label,
@@ -254,6 +40,7 @@ function ScoreBar({
   color: string;
   tooltip: string;
 }) {
+  const magnitude = Math.abs(weight);
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
@@ -262,36 +49,128 @@ function ScoreBar({
           <InfoTooltip content={tooltip} />
         </div>
         <span className="text-sm font-bold" style={{ color }}>
-          {weight}%
+          {weight < 0 ? "−" : ""}
+          {magnitude.toFixed(2)}
         </span>
       </div>
       <div className="w-full h-2.5 rounded-full bg-white/5 overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${weight}%`, backgroundColor: color }}
+          style={{ width: `${Math.min(magnitude * 100, 100)}%`, backgroundColor: color }}
         />
       </div>
     </div>
   );
 }
 
+function SkeletonRow() {
+  return (
+    <div className="space-y-1.5 animate-pulse">
+      <div className="flex items-center justify-between">
+        <div className="h-3 bg-white/10 rounded w-40" />
+        <div className="h-3 bg-white/10 rounded w-10" />
+      </div>
+      <div className="h-2.5 bg-white/5 rounded-full" />
+    </div>
+  );
+}
 
+function StrategyTabSkeleton() {
+  return (
+    <div className="space-y-10">
+      <div className="glass rounded-2xl p-6 animate-pulse">
+        <div className="h-6 bg-white/10 rounded w-64 mb-4" />
+        <div className="h-3 bg-white/10 rounded w-full mb-2" />
+        <div className="h-3 bg-white/10 rounded w-2/3" />
+      </div>
+      <div className="glass-strong rounded-2xl p-6">
+        <div className="h-5 bg-white/10 rounded w-48 mb-5 animate-pulse" />
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <SkeletonRow key={i} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function formatPercent(val: number | null, digits = 0): string {
+  if (val === null || val === undefined) return "—";
+  return `${(val * 100).toFixed(digits)}%`;
+}
+
+function formatFormula(prefix: string, terms: ScoreTerm[]): string {
+  return (
+    prefix +
+    " = " +
+    terms
+      .map((t) => {
+        const sign = t.weight < 0 ? "- " : "";
+        const mag = Math.abs(t.weight).toFixed(2);
+        return `${sign}${mag} * ${t.field}`;
+      })
+      .join(" + ")
+      .replace(/\+ - /g, "- ")
+  );
+}
+
+function constraintCards(constraints: VaultConstraints, regimeBear: number | null, regimeBull: number | null) {
+  const cards: { label: string; value: string; accent: string }[] = [];
+  if (constraints.max_holdings !== null) {
+    cards.push({ label: "Max Long Holdings", value: String(constraints.max_holdings), accent: "#DDB110" });
+  }
+  if (constraints.max_weight !== null) {
+    cards.push({ label: "Max Long Weight", value: formatPercent(constraints.max_weight, 0), accent: "#DDB110" });
+  }
+  if (constraints.max_short_positions !== null) {
+    cards.push({ label: "Max Short Positions", value: String(constraints.max_short_positions), accent: "#F87171" });
+  }
+  if (constraints.max_short_weight !== null) {
+    cards.push({ label: "Max Short Weight", value: formatPercent(constraints.max_short_weight, 0), accent: "#F87171" });
+  }
+  if (regimeBear !== null) {
+    cards.push({ label: "Bear Short Alloc", value: formatPercent(regimeBear, 0), accent: "#F87171" });
+  }
+  if (regimeBull !== null) {
+    cards.push({ label: "Bull Short Alloc", value: formatPercent(regimeBull, 0), accent: "#10B981" });
+  }
+  if (constraints.rebalance_threshold !== null) {
+    cards.push({ label: "Rebalance Threshold", value: formatPercent(constraints.rebalance_threshold, 1), accent: "#DDB110" });
+  }
+  return cards;
+}
 
 export default function StrategyTab({
-  universe,
   regimeScore,
   shortAllocationPct,
+  strategyConfig,
 }: StrategyTabProps) {
+  if (!strategyConfig) {
+    return <StrategyTabSkeleton />;
+  }
+
   const rs = regimeScore ? parseFloat(regimeScore) : null;
   const saPct = shortAllocationPct ? parseFloat(shortAllocationPct) * 100 : null;
 
-  const config = STRATEGY_CONFIGS[universe];
+  const regime = strategyConfig.regime_config;
+  const regimeBear = regime?.short_pct_bearish ?? null;
+  const regimeBull = regime?.short_pct_bullish ?? null;
+  const smaWindow = regime?.sma_window_days ?? null;
+
+  const longTerms = strategyConfig.score_terms;
+  const shortTerms = strategyConfig.short_score_terms;
+
+  const cards = constraintCards(strategyConfig.constraints, regimeBear, regimeBull);
 
   return (
     <div className="space-y-10">
       {/* Strategy Title */}
       <div>
-        <h3 className="text-2xl font-bold">{config.title}</h3>
+        <h3 className="text-2xl font-bold">{strategyConfig.preset_name}</h3>
+        <p className="text-xs text-text-muted font-mono mt-1">
+          {strategyConfig.preset_file}
+        </p>
       </div>
 
       {/* Long Score Formula */}
@@ -299,175 +178,250 @@ export default function StrategyTab({
         <div className="flex items-center gap-2 mb-5">
           <Target className="w-5 h-5 text-accent-cyan" />
           <h3 className="text-xl font-semibold">
-            {config.shortTerms ? "Long Score Formula" : "Score Formula"}
+            {shortTerms ? "Long Score Formula" : "Score Formula"}
           </h3>
         </div>
         <div className="space-y-4 mb-5">
-          {config.longTerms.map((t) => (
-            <ScoreBar
-              key={t.label}
-              label={t.label}
-              weight={t.weight}
-              color={t.color}
-              tooltip={t.tooltip}
-            />
-          ))}
+          {longTerms.map((t) => {
+            const meta = getFieldMetadata(t.field);
+            return (
+              <ScoreBar
+                key={t.field}
+                label={meta.label}
+                weight={t.weight}
+                color={t.weight < 0 ? "#EF4444" : meta.color}
+                tooltip={meta.tooltip}
+              />
+            );
+          })}
         </div>
         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
-          <p className="text-xs font-mono text-text-secondary">
-            {config.longFormula}
+          <p className="text-xs font-mono text-text-secondary break-all">
+            {formatFormula("score", longTerms)}
           </p>
         </div>
       </div>
 
-      {/* Short Score Formula (only for universes with independent short scoring) */}
-      {config.shortTerms && (
+      {/* Short Score Formula */}
+      {shortTerms && shortTerms.length > 0 && (
         <div className="glass-strong rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
             <Shield className="w-5 h-5 text-red-400" />
             <h3 className="text-xl font-semibold">Short Score Formula</h3>
           </div>
           <div className="space-y-4 mb-5">
-            {config.shortTerms.map((t) => (
-              <ScoreBar
-                key={t.label}
-                label={t.label}
-                weight={t.weight}
-                color={t.color}
-                tooltip={t.tooltip}
-              />
-            ))}
+            {shortTerms.map((t) => {
+              const meta = getFieldMetadata(t.field);
+              return (
+                <ScoreBar
+                  key={t.field}
+                  label={meta.label}
+                  weight={t.weight}
+                  color={meta.color}
+                  tooltip={meta.tooltip}
+                />
+              );
+            })}
           </div>
           <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
-            <p className="text-xs font-mono text-text-secondary">
-              {config.shortFormula}
+            <p className="text-xs font-mono text-text-secondary break-all">
+              {formatFormula("short_score", shortTerms)}
             </p>
           </div>
         </div>
       )}
 
       {/* Smoothed Regime Filter */}
-      <div className="glass-strong rounded-2xl p-6">
-        <div className="flex items-center gap-2 mb-5">
-          <Activity className="w-5 h-5 text-amber-400" />
-          <h3 className="text-xl font-semibold">
-            Smoothed BTC Regime Filter
-          </h3>
-        </div>
-
-        {/* Regime visualization */}
-        <div className="bg-white/[0.03] rounded-xl p-5 border border-white/5 mb-6">
-          <div className="flex items-center justify-between text-xs text-text-muted mb-3">
-            <span>BTC/SMA Ratio</span>
-            <span>Short Allocation</span>
+      {regime && (
+        <div className="glass-strong rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-5">
+            <Activity className="w-5 h-5 text-amber-400" />
+            <h3 className="text-xl font-semibold">Smoothed BTC Regime Filter</h3>
           </div>
-          <div className="space-y-2.5">
-            {[
-              { ratio: "0.90 or below", label: "Bearish", short: config.regimeBear, color: "#EF4444", width: 100 },
-              { ratio: "1.00 (at SMA)", label: "Neutral", short: "", color: "#F59E0B", width: 50 },
-              { ratio: "1.10 or above", label: "Bullish", short: config.regimeBull, color: "#10B981", width: 0 },
-            ].map((row) => (
-              <div key={row.ratio} className="flex items-center gap-3">
-                <span className="text-xs font-mono w-28 shrink-0 text-text-secondary">{row.ratio}</span>
-                <span
-                  className="text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 w-[52px] text-center"
-                  style={{ backgroundColor: `${row.color}20`, color: row.color }}
-                >
-                  {row.label}
-                </span>
-                <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${20 + row.width * 0.6}%`, backgroundColor: row.color }}
-                  />
+
+          {regime.sources && regime.sources.length > 0 && (
+            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
+              <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
+                Regime Sources
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {regime.sources.map((s) => (
+                  <span
+                    key={s.name}
+                    className="text-xs font-mono px-2 py-1 rounded-md bg-white/[0.04] border border-white/5"
+                  >
+                    <span className="text-text-secondary">{s.name}</span>{" "}
+                    <span className="text-accent-cyan">
+                      {formatPercent(s.weight, 0)}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Regime visualization */}
+          <div className="bg-white/[0.03] rounded-xl p-5 border border-white/5 mb-6">
+            <div className="flex items-center justify-between text-xs text-text-muted mb-3">
+              <span>BTC/SMA Ratio</span>
+              <span>Short Allocation</span>
+            </div>
+            <div className="space-y-2.5">
+              {[
+                {
+                  ratio: "0.90 or below",
+                  label: "Bearish",
+                  short: regimeBear,
+                  color: "#EF4444",
+                  width: 100,
+                },
+                {
+                  ratio: "1.00 (at SMA)",
+                  label: "Neutral",
+                  short: null,
+                  color: "#F59E0B",
+                  width: 50,
+                },
+                {
+                  ratio: "1.10 or above",
+                  label: "Bullish",
+                  short: regimeBull,
+                  color: "#10B981",
+                  width: 0,
+                },
+              ].map((row) => (
+                <div key={row.ratio} className="flex items-center gap-3">
+                  <span className="text-xs font-mono w-28 shrink-0 text-text-secondary">
+                    {row.ratio}
+                  </span>
+                  <span
+                    className="text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 w-[52px] text-center"
+                    style={{ backgroundColor: `${row.color}20`, color: row.color }}
+                  >
+                    {row.label}
+                  </span>
+                  <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${20 + row.width * 0.6}%`,
+                        backgroundColor: row.color,
+                      }}
+                    />
+                  </div>
+                  <span
+                    className="text-xs font-bold font-mono w-10 text-right"
+                    style={{ color: row.color }}
+                  >
+                    {row.short !== null ? formatPercent(row.short, 0) : ""}
+                  </span>
                 </div>
-                <span className="text-xs font-bold font-mono w-10 text-right" style={{ color: row.color }}>
-                  {row.short}
-                </span>
+              ))}
+            </div>
+          </div>
+
+          {rs !== null && (
+            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Current Regime Score</span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: regimeColor(rs) }}
+                  />
+                  <span className="text-lg font-bold font-mono">{rs.toFixed(2)}</span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style={{
+                      backgroundColor: `${regimeColor(rs)}20`,
+                      color: regimeColor(rs),
+                    }}
+                  >
+                    {regimeLabel(rs)}
+                  </span>
+                </div>
+              </div>
+              {saPct !== null && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Current Short Allocation</span>
+                  <span className="text-lg font-bold font-mono text-red-400">
+                    {saPct.toFixed(1)}%
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
+              <BarChart3 className="w-5 h-5 text-accent-cyan mx-auto mb-2" />
+              <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
+                BTC/SMA Ratio
+              </p>
+              <p className="text-sm text-text-secondary">
+                {smaWindow !== null ? `${smaWindow}-day window` : "—"}
+              </p>
+            </div>
+            <div className="flex items-center justify-center">
+              <ArrowRight className="w-5 h-5 text-text-muted" />
+            </div>
+            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
+              <Layers className="w-5 h-5 text-red-400 mx-auto mb-2" />
+              <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
+                Short Allocation
+              </p>
+              <p className="text-sm text-text-secondary">
+                {regimeBull !== null && regimeBear !== null
+                  ? `${formatPercent(regimeBull, 0)} – ${formatPercent(regimeBear, 0)}`
+                  : "—"}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Position Sizing & Constraints */}
+      {cards.length > 0 && (
+        <div>
+          <h3 className="text-xl font-semibold mb-4">
+            Position Sizing & Constraints
+          </h3>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {cards.map((c) => (
+              <div key={c.label} className="glass rounded-2xl p-5 text-center">
+                <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
+                  {c.label}
+                </p>
+                <p
+                  className="text-2xl font-bold font-mono"
+                  style={{ color: c.accent }}
+                >
+                  {c.value}
+                </p>
               </div>
             ))}
           </div>
         </div>
+      )}
 
-        {rs !== null && (
-          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Current Regime Score</span>
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: regimeColor(rs) }}
-                />
-                <span className="text-lg font-bold font-mono">
-                  {rs.toFixed(2)}
-                </span>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-medium"
-                  style={{
-                    backgroundColor: `${regimeColor(rs)}20`,
-                    color: regimeColor(rs),
-                  }}
-                >
-                  {regimeLabel(rs)}
-                </span>
-              </div>
-            </div>
-            {saPct !== null && (
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Current Short Allocation</span>
-                <span className="text-lg font-bold font-mono text-red-400">
-                  {saPct.toFixed(1)}%
-                </span>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
-            <BarChart3 className="w-5 h-5 text-accent-cyan mx-auto mb-2" />
-            <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
-              BTC/SMA Ratio
-            </p>
-            <p className="text-sm text-text-secondary">140-day window</p>
-          </div>
-          <div className="flex items-center justify-center">
-            <ArrowRight className="w-5 h-5 text-text-muted" />
-          </div>
-          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
-            <Layers className="w-5 h-5 text-red-400 mx-auto mb-2" />
-            <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
-              Short Allocation
-            </p>
-            <p className="text-sm text-text-secondary">{config.regimeBull} &ndash; {config.regimeBear}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Position Sizing & Constraints */}
-      <div>
-        <h3 className="text-xl font-semibold mb-4">
-          Position Sizing & Constraints
-        </h3>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {config.constraints.map((c) => (
-            <div
-              key={c.label}
-              className="glass rounded-2xl p-5 text-center"
-            >
-              <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
-                {c.label}
-              </p>
-              <p
-                className="text-2xl font-bold font-mono"
-                style={{ color: c.accent }}
+      {/* Exclude Symbols */}
+      {strategyConfig.exclude_symbols && strategyConfig.exclude_symbols.length > 0 && (
+        <div className="glass rounded-2xl p-5">
+          <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
+            Excluded Symbols
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {strategyConfig.exclude_symbols.map((s) => (
+              <span
+                key={s}
+                className="text-xs font-mono px-2 py-1 rounded-md bg-white/[0.04] border border-white/5 text-text-secondary"
               >
-                {c.value}
-              </p>
-            </div>
-          ))}
+                {s}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
