@@ -153,9 +153,22 @@ function NavTooltip({ active, payload, label }: {
       {holdings && holdings.length > 0 && (
         <>
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: 8 }} />
-          <p style={{ fontSize: 10, color: "#DDB110", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5, fontWeight: 600 }}>
+          <p style={{ fontSize: 10, color: "#DDB110", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4, fontWeight: 600 }}>
             Vault
           </p>
+
+          {holdings.length > 0 && (() => {
+            const totalLong  = longs.reduce((s, h) => s + h.weight, 0);
+            const totalShort = shorts.reduce((s, h) => s + h.weight, 0);
+            return (
+              <p style={{ fontSize: 11, marginBottom: 6, fontFamily: "var(--font-geist-mono), monospace" }}>
+                <span style={{ color: "#10B981" }}>Long: {(totalLong * 100).toFixed(0)}%</span>
+                {shorts.length > 0 && (
+                  <span style={{ color: "#EF4444", marginLeft: 10 }}>Short: {(totalShort * 100).toFixed(0)}%</span>
+                )}
+              </p>
+            );
+          })()}
 
           {longs.length > 0 && (
             <div style={{ marginBottom: shorts.length > 0 ? 6 : 0 }}>

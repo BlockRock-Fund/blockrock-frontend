@@ -2,8 +2,6 @@
 
 import {
   Shield,
-  Zap,
-  Database,
   BarChart3,
   ArrowRight,
   Activity,
@@ -31,14 +29,10 @@ type ScoreTermDef = {
 
 type StrategyConfig = {
   title: string;
-  subtitle: string;
-  edge: { icon: "zap" | "shield" | "activity" | "database"; text: string }[];
   longTerms: ScoreTermDef[];
   longFormula: string;
-  penaltyNote?: string;
   shortTerms?: ScoreTermDef[];
   shortFormula?: string;
-  shortNote?: string;
   regimeBear: string;
   regimeBull: string;
   constraints: { label: string; value: string; accent: string }[];
@@ -47,26 +41,6 @@ type StrategyConfig = {
 const STRATEGY_CONFIGS: Record<Universe, StrategyConfig> = {
   token: {
     title: "Pure Fundamental Token Strategy",
-    subtitle:
-      "Four-factor scoring optimized for Sortino (2.08). Factor research shows distribution yields and earnings quality dominate token returns at every horizon — no technical overlay needed.",
-    edge: [
-      {
-        icon: "zap",
-        text: "**Distribution yield** (35%) — the single strongest return predictor for tokens. Protocols distributing cash/tokens to holders consistently outperform.",
-      },
-      {
-        icon: "database",
-        text: "**Earnings yield** (30%) — net protocol earnings after emissions. Captures real profitability vs. vanity revenue metrics.",
-      },
-      {
-        icon: "activity",
-        text: "**Distribution momentum** (15%) — 30-day period-over-period growth in distributions. Rising payouts signal improving fundamentals.",
-      },
-      {
-        icon: "shield",
-        text: "**Earnings quality** (20%) — share of earnings actually distributed. High payout ratios signal capital-efficient protocols.",
-      },
-    ],
     longTerms: [
       {
         label: "Distributions Yield",
@@ -112,26 +86,6 @@ const STRATEGY_CONFIGS: Record<Universe, StrategyConfig> = {
   },
   equity: {
     title: "Yield-Weighted Equity Strategy",
-    subtitle:
-      "Five-factor yield-heavy scoring optimized for Sortino (1.37). Factor research shows yield metrics dominate equity returns at every horizon. Minimal short allocation (10%/5%) — the small equity universe makes aggressive shorting destructive.",
-    edge: [
-      {
-        icon: "zap",
-        text: "**Distribution yield** (35%) — the dominant equity factor at 90d (IC 0.25). Dividend-paying stocks with high yields consistently outperform.",
-      },
-      {
-        icon: "database",
-        text: "**Multi-yield blend** — earnings yield (25%), revenue yield (15%). Factor research confirms all three yield metrics are cross-horizon consistent for equities.",
-      },
-      {
-        icon: "shield",
-        text: "**Near-zero short allocation** — with only 3-8 stocks, shorting destroys performance. 10% bear / 5% bull keeps the structure while minimizing damage.",
-      },
-      {
-        icon: "activity",
-        text: "**Emissions rate** (10%) — stock dilution via share issuance. Statistically significant short signal even in the small universe.",
-      },
-    ],
     longTerms: [
       {
         label: "Distributions Yield",
@@ -184,26 +138,6 @@ const STRATEGY_CONFIGS: Record<Universe, StrategyConfig> = {
   },
   all: {
     title: "Dual-Scored Long/Short Strategy",
-    subtitle:
-      "Seven-factor long formula with independent five-factor short scoring, optimized for Sortino (1.09 over 4yr). Blends fundamental yields with technical momentum and mean-reversion valuation across the full token + equity universe.",
-    edge: [
-      {
-        icon: "zap",
-        text: "**Long the best fundamentals** — 7-factor blend of distribution yield, earnings yield, technical momentum, mean reversion, and earnings quality.",
-      },
-      {
-        icon: "shield",
-        text: "**Independent short scoring** — shorts are NOT just inverted longs. A separate 5-factor formula targets high-emission tokens showing technical reversal signals.",
-      },
-      {
-        icon: "activity",
-        text: "**Smoothed regime filter** — BTC's distance from its 140-day SMA continuously interpolates the short allocation between 20% (bull) and 80% (bear).",
-      },
-      {
-        icon: "database",
-        text: "**Mean reversion** — time-series z-score on market cap / fees ratio detects cheap assets relative to their own history.",
-      },
-    ],
     longTerms: [
       {
         label: "Distributions Yield",
@@ -257,8 +191,6 @@ const STRATEGY_CONFIGS: Record<Universe, StrategyConfig> = {
     ],
     longFormula:
       "long_score = 0.25 * dist_yield + 0.20 * net_earnings_yield + 0.15 * price_vs_high_50d + 0.12 * macd_hist + 0.10 * earnings_quality + 0.10 * mean_reversion + 0.08 * roc_30d",
-    penaltyNote:
-      "-0.10 * distribution decline (180d) — assets with falling distributions are penalized.",
     shortTerms: [
       {
         label: "Emissions Rate",
@@ -298,8 +230,6 @@ const STRATEGY_CONFIGS: Record<Universe, StrategyConfig> = {
     ],
     shortFormula:
       "short_score = 0.30 * emissions_rate + 0.25 * obv_trend_20d + 0.20 * roc_30d + 0.15 * rsi_14 + 0.10 * price_vs_high_50d",
-    shortNote:
-      "Combines fundamental dilution (emissions) with technical reversal signals (OBV, RSI, momentum).",
     regimeBear: "80%",
     regimeBull: "20%",
     constraints: [
@@ -351,48 +281,17 @@ export default function StrategyTab({
   universe,
   regimeScore,
   shortAllocationPct,
-  confluenceMultiplier,
-  confluenceStressed,
-  confluenceTotal,
 }: StrategyTabProps) {
   const rs = regimeScore ? parseFloat(regimeScore) : null;
   const saPct = shortAllocationPct ? parseFloat(shortAllocationPct) * 100 : null;
 
   const config = STRATEGY_CONFIGS[universe];
-  const iconMap = {
-    zap: <Zap className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" />,
-    shield: <Shield className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />,
-    activity: <Activity className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />,
-    database: <Database className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />,
-  };
 
   return (
     <div className="space-y-10">
-      {/* Strategy Thesis Hero */}
-      <div className="gradient-border rounded-2xl p-8">
-        <h3 className="text-2xl font-bold mb-2">{config.title}</h3>
-        <p className="text-text-muted text-sm mb-6">{config.subtitle}</p>
-        <div>
-          <h4 className="text-sm uppercase tracking-wider text-accent-cyan font-semibold mb-3">
-            The Edge
-          </h4>
-          <ul className="space-y-3 text-sm text-text-secondary">
-            {config.edge.map((e, i) => (
-              <li key={i} className="flex gap-2">
-                {iconMap[e.icon]}
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: e.text
-                      .replace(
-                        /\*\*(.*?)\*\*/g,
-                        "<strong>$1</strong>"
-                      ),
-                  }}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
+      {/* Strategy Title */}
+      <div>
+        <h3 className="text-2xl font-bold">{config.title}</h3>
       </div>
 
       {/* Long Score Formula */}
@@ -414,18 +313,10 @@ export default function StrategyTab({
             />
           ))}
         </div>
-        <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
-          <p className="text-xs font-mono text-text-secondary mb-2">
+        <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
+          <p className="text-xs font-mono text-text-secondary">
             {config.longFormula}
           </p>
-          {config.penaltyNote && (
-            <p className="text-xs text-text-muted">
-              Penalty term:{" "}
-              <span className="text-red-400 font-medium">
-                {config.penaltyNote}
-              </span>
-            </p>
-          )}
         </div>
       </div>
 
@@ -435,14 +326,7 @@ export default function StrategyTab({
           <div className="flex items-center gap-2 mb-5">
             <Shield className="w-5 h-5 text-red-400" />
             <h3 className="text-xl font-semibold">Short Score Formula</h3>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 font-medium">
-              Independent
-            </span>
           </div>
-          <p className="text-sm text-text-muted mb-5">
-            Shorts are scored by a completely separate formula optimized for
-            identifying assets likely to underperform.
-          </p>
           <div className="space-y-4 mb-5">
             {config.shortTerms.map((t) => (
               <ScoreBar
@@ -455,12 +339,9 @@ export default function StrategyTab({
             ))}
           </div>
           <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
-            <p className="text-xs font-mono text-text-secondary mb-2">
+            <p className="text-xs font-mono text-text-secondary">
               {config.shortFormula}
             </p>
-            {config.shortNote && (
-              <p className="text-xs text-text-muted">{config.shortNote}</p>
-            )}
           </div>
         </div>
       )}
@@ -473,13 +354,6 @@ export default function StrategyTab({
             Smoothed BTC Regime Filter
           </h3>
         </div>
-
-        <p className="text-sm text-text-muted mb-6">
-          The short allocation is continuously adjusted based on BTC&apos;s position
-          relative to its 140-day simple moving average. Instead of a binary
-          bull/bear flip, the signal is linearly interpolated across a &plusmn;10%
-          band — eliminating whipsaw turnover spikes near the crossover.
-        </p>
 
         {/* Regime visualization */}
         <div className="bg-white/[0.03] rounded-xl p-5 border border-white/5 mb-6">
@@ -516,8 +390,8 @@ export default function StrategyTab({
         </div>
 
         {rs !== null && (
-          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
-            <div className="flex items-center justify-between mb-2">
+          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5 space-y-2">
+            <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Current Regime Score</span>
               <div className="flex items-center gap-2">
                 <span
@@ -539,13 +413,12 @@ export default function StrategyTab({
               </div>
             </div>
             {saPct !== null && (
-              <p className="text-xs text-text-muted">
-                Current short allocation:{" "}
-                <span className="text-red-400 font-medium">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Current Short Allocation</span>
+                <span className="text-lg font-bold font-mono text-red-400">
                   {saPct.toFixed(1)}%
-                </span>{" "}
-                of portfolio
-              </p>
+                </span>
+              </div>
             )}
           </div>
         )}
@@ -595,47 +468,6 @@ export default function StrategyTab({
           ))}
         </div>
       </div>
-
-      {/* Risk Management */}
-      <div className="glass rounded-2xl p-6">
-        <div className="flex items-center gap-2 mb-5">
-          <Shield className="w-5 h-5 text-green-400" />
-          <h3 className="text-xl font-semibold">Risk Management</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            ...(config.shortTerms
-              ? [
-                  {
-                    title: "Independent Short Scoring",
-                    desc: "Shorts selected by their own technical + emissions formula, not just inverted long scores",
-                  },
-                ]
-              : []),
-            {
-              title: "Concentration Limits",
-              desc: "25% max per long, 25% max per short — bounds concentration risk on both sides",
-            },
-            {
-              title: "Smoothed Regime Transitions",
-              desc: `Linear interpolation from ${config.regimeBull} (bull) to ${config.regimeBear} (bear) short allocation — no binary flips`,
-            },
-            {
-              title: "Rebalance Cadence",
-              desc: "Weekly cycle with turnover threshold gate — only executes when drift exceeds 5%",
-            },
-          ].map((r) => (
-            <div
-              key={r.title}
-              className="bg-white/[0.03] rounded-xl p-4 border border-white/5"
-            >
-              <p className="text-sm font-medium mb-1">{r.title}</p>
-              <p className="text-xs text-text-muted">{r.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
     </div>
   );
 }
