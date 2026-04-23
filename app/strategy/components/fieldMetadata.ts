@@ -5,11 +5,23 @@ export type FieldMetadata = {
 };
 
 export const FIELD_METADATA: Record<string, FieldMetadata> = {
+  distributions_1y: {
+    label: "Distributions 1y",
+    color: "#10B981",
+    tooltip:
+      "Trailing 1-year distributions paid to holders (raw dollar amount). Level-based cash-flow signal — rewards protocols with proven, sustained payout history over yield-ratio noise.",
+  },
   distributions_yield_expected_1y: {
     label: "Distributions Yield",
     color: "#10B981",
     tooltip:
       "Expected 1-year distributions yield. The strongest single return predictor in factor research.",
+  },
+  net_distributions_yield_expected_1y: {
+    label: "Net Distributions Yield",
+    color: "#10B981",
+    tooltip:
+      "Expected 1-year distributions yield after emissions dilution. Captures true holder cash return net of token issuance.",
   },
   net_earnings_yield_expected_1y: {
     label: "Net Earnings Yield",
@@ -22,6 +34,12 @@ export const FIELD_METADATA: Record<string, FieldMetadata> = {
     color: "#06B6D4",
     tooltip:
       "Revenue relative to market cap. Cross-horizon consistent for equities.",
+  },
+  net_revenue_1y_o_1y: {
+    label: "Net Revenue Growth (1y / 1y)",
+    color: "#06B6D4",
+    tooltip:
+      "Current trailing-year net revenue (after emissions) vs. the prior trailing year. Growth signal that rewards protocols whose real cash flows are accelerating.",
   },
   volume_trend_7d_30d: {
     label: "Volume Trend (7d / 30d)",
