@@ -166,10 +166,15 @@ function icCellStyle(ic: number | null): CSSProperties {
 }
 
 // ---------------------------------------------------------------------------
-// Strength label for cross-horizon view
+// Signal strength score for cross-horizon view
 // ---------------------------------------------------------------------------
 
-function strengthLabel(r: CrossHorizonRow): { label: string; color: string } {
+function signalScore(r: CrossHorizonRow): {
+  score: number;
+  display: string;
+  color: string;
+  bg: string;
+} {
   const absIc = r.mean_abs_ic ?? 0;
   const maxT = Math.max(
     Math.abs(r.t_7d ?? 0),
@@ -181,19 +186,36 @@ function strengthLabel(r: CrossHorizonRow): { label: string; color: string } {
     (v): v is number => v !== null,
   );
   const posCount = ics.filter((v) => v > 0).length;
-  const isPos = posCount > ics.length / 2;
-  const arrow = isPos ? " \u2191" : " \u2193";
+  const isPos = ics.length > 0 ? posCount > ics.length / 2 : true;
+  const consistencyMult = r.sign_consistent ? 1.0 : 0.75;
 
-  if (absIc >= 0.05 && maxT >= 2.0 && r.sign_consistent) {
-    return { label: `Strong${arrow}`, color: isPos ? "#10B981" : "#EF4444" };
+  // Aggregate magnitude: |IC| \u00d7 |t| \u00d7 consistency, scaled \u00d7100.
+  // Reference: |IC|=0.05 & |t|=2.0 (consistent) \u2192 10.0 (formerly "Strong").
+  // |IC|=0.035 & |t|=1.5 \u2192 ~5.3 (formerly "Mod."). |IC|=0.02 & |t|=1.0 \u2192 ~2.0 (formerly "Weak").
+  const raw = absIc * maxT * consistencyMult * 100;
+  const score = Number.isFinite(raw) ? raw : 0;
+
+  const arrow = ics.length === 0 ? "" : isPos ? " \u2191" : " \u2193";
+  const display = score < 0.1 ? "0.0" : `${score.toFixed(1)}${arrow}`;
+
+  // Color/intensity by score tier and direction.
+  let color = "var(--text-muted)";
+  let bg = "transparent";
+  if (score >= 10) {
+    color = isPos ? "#10B981" : "#EF4444";
+    const a = Math.min(0.55, 0.25 + (score - 10) / 60);
+    bg = isPos
+      ? `rgba(16, 185, 129, ${a.toFixed(2)})`
+      : `rgba(239, 68, 68, ${a.toFixed(2)})`;
+  } else if (score >= 5) {
+    color = isPos ? "#34D399" : "#F87171";
+    bg = isPos ? "rgba(16, 185, 129, 0.18)" : "rgba(239, 68, 68, 0.18)";
+  } else if (score >= 2) {
+    color = "#F59E0B";
+    bg = "rgba(245, 158, 11, 0.14)";
   }
-  if (absIc >= 0.035 && maxT >= 1.5) {
-    return { label: `Mod.${arrow}`, color: isPos ? "#34D399" : "#F87171" };
-  }
-  if (absIc >= 0.02 && maxT >= 1.0) {
-    return { label: `Weak${arrow}`, color: "#F59E0B" };
-  }
-  return { label: "Noise", color: "var(--text-muted)" };
+
+  return { score, display, color, bg };
 }
 
 // ---------------------------------------------------------------------------
@@ -275,7 +297,7 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
           r.metric.toLowerCase().includes(q) ||
           humanizeMetric(r.metric).toLowerCase().includes(q),
       )
-      .sort((a, b) => (b.mean_abs_ic ?? 0) - (a.mean_abs_ic ?? 0));
+      .sort((a, b) => signalScore(b).score - signalScore(a).score);
   }, [crossHorizon, search]);
 
   const filteredSingle = useMemo(() => {
@@ -389,7 +411,7 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
               </thead>
               <tbody>
                 {filteredCrossHorizon.map((r, i) => {
-                  const sig = strengthLabel(r);
+                  const sig = signalScore(r);
                   return (
                     <tr
                       key={r.metric}
@@ -446,10 +468,11 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
                       </td>
                       <td className="px-3 py-2.5 text-center whitespace-nowrap">
                         <span
-                          className="text-xs font-semibold"
-                          style={{ color: sig.color }}
+                          className="inline-block px-2 py-0.5 rounded font-mono text-xs font-semibold tabular-nums"
+                          style={{ color: sig.color, backgroundColor: sig.bg }}
+                          title={`|IC|×|t|×consistency × 100 = ${sig.score.toFixed(2)}`}
                         >
-                          {sig.label}
+                          {sig.display}
                         </span>
                       </td>
                     </tr>
@@ -588,14 +611,15 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
           stronger. Gray = noise. Hover metric name for raw field name.
         </p>
         <p>
-          <strong className="text-text-secondary">Signal</strong> ={" "}
-          <span style={{ color: "#10B981" }}>Strong &uarr;&darr;</span>{" "}
-          requires |IC| &ge; 0.05 &amp; |t| &ge; 2.0 with consistent sign;{" "}
-          <span style={{ color: "#34D399" }}>Mod.</span> requires |IC| &ge;
-          0.035 &amp; |t| &ge; 1.5;{" "}
-          <span style={{ color: "#F59E0B" }}>Weak</span> is marginal;{" "}
-          <span style={{ color: "var(--text-muted)" }}>Noise</span> is below
-          threshold.
+          <strong className="text-text-secondary">Signal</strong> = aggregated
+          magnitude: mean |IC| &times; max |t| &times; sign-consistency, scaled
+          &times;100. Higher = stronger predictive signal across horizons. Arrow
+          shows direction (&uarr; direct, &darr; inverse). Tiers:{" "}
+          <span style={{ color: "#10B981" }}>&ge; 10 strong</span>,{" "}
+          <span style={{ color: "#34D399" }}>&ge; 5 moderate</span>,{" "}
+          <span style={{ color: "#F59E0B" }}>&ge; 2 weak</span>,{" "}
+          <span style={{ color: "var(--text-muted)" }}>&lt; 2 noise</span>.
+          Sign-inconsistent signals are penalized 25%.
         </p>
         <p>
           <strong className="text-text-secondary">IC</strong> = Information
