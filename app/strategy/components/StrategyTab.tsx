@@ -2,11 +2,8 @@
 
 import {
   Shield,
-  BarChart3,
-  ArrowRight,
   Activity,
   Target,
-  Layers,
 } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import {
@@ -59,6 +56,71 @@ function ScoreBar({
           style={{ width: `${Math.min(magnitude * 100, 100)}%`, backgroundColor: color }}
         />
       </div>
+    </div>
+  );
+}
+
+type RegimeBandRow = {
+  range: string;
+  label: string;
+  short: number | null;
+  color: string;
+  width: number;
+};
+
+function RegimeSourceBands({
+  title,
+  axisLabel,
+  footnote,
+  rows,
+}: {
+  title: string;
+  axisLabel: string;
+  footnote?: string;
+  rows: RegimeBandRow[];
+}) {
+  return (
+    <div className="bg-white/[0.03] rounded-xl p-5 border border-white/5">
+      <div className="flex items-center justify-between text-xs mb-3">
+        <span className="text-text-secondary font-medium">{title}</span>
+        <span className="text-text-muted">Short Allocation</span>
+      </div>
+      <div className="flex items-center justify-between text-[10px] text-text-muted mb-2">
+        <span>{axisLabel}</span>
+      </div>
+      <div className="space-y-2.5">
+        {rows.map((row) => (
+          <div key={row.range} className="flex items-center gap-3">
+            <span className="text-xs font-mono w-28 shrink-0 text-text-secondary">
+              {row.range}
+            </span>
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 w-[52px] text-center"
+              style={{ backgroundColor: `${row.color}20`, color: row.color }}
+            >
+              {row.label}
+            </span>
+            <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${20 + row.width * 0.6}%`,
+                  backgroundColor: row.color,
+                }}
+              />
+            </div>
+            <span
+              className="text-xs font-bold font-mono w-10 text-right"
+              style={{ color: row.color }}
+            >
+              {row.short !== null ? formatPercent(row.short, 0) : ""}
+            </span>
+          </div>
+        ))}
+      </div>
+      {footnote && (
+        <p className="text-[11px] text-text-muted mt-3">{footnote}</p>
+      )}
     </div>
   );
 }
@@ -152,6 +214,9 @@ export default function StrategyTab({
   const regimeBear = regime?.short_pct_bearish ?? null;
   const regimeBull = regime?.short_pct_bullish ?? null;
   const smaWindow = regime?.sma_window_days ?? null;
+  const sourceNames = regime?.sources?.map((s) => s.name) ?? [];
+  const hasBtcSma = sourceNames.includes("btc_sma");
+  const hasFearGreed = sourceNames.includes("fear_greed");
 
   const longTerms = strategyConfig.score_terms;
   const shortTerms = strategyConfig.short_score_terms;
@@ -247,64 +312,70 @@ export default function StrategyTab({
             </div>
           )}
 
-          {/* Regime visualization */}
-          <div className="bg-white/[0.03] rounded-xl p-5 border border-white/5 mb-6">
-            <div className="flex items-center justify-between text-xs text-text-muted mb-3">
-              <span>BTC/SMA Ratio</span>
-              <span>Short Allocation</span>
-            </div>
-            <div className="space-y-2.5">
-              {[
-                {
-                  ratio: "0.90 or below",
-                  label: "Bearish",
-                  short: regimeBear,
-                  color: "#EF4444",
-                  width: 100,
-                },
-                {
-                  ratio: "1.00 (at SMA)",
-                  label: "Neutral",
-                  short: null,
-                  color: "#F59E0B",
-                  width: 50,
-                },
-                {
-                  ratio: "1.10 or above",
-                  label: "Bullish",
-                  short: regimeBull,
-                  color: "#10B981",
-                  width: 0,
-                },
-              ].map((row) => (
-                <div key={row.ratio} className="flex items-center gap-3">
-                  <span className="text-xs font-mono w-28 shrink-0 text-text-secondary">
-                    {row.ratio}
-                  </span>
-                  <span
-                    className="text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 w-[52px] text-center"
-                    style={{ backgroundColor: `${row.color}20`, color: row.color }}
-                  >
-                    {row.label}
-                  </span>
-                  <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${20 + row.width * 0.6}%`,
-                        backgroundColor: row.color,
-                      }}
-                    />
-                  </div>
-                  <span
-                    className="text-xs font-bold font-mono w-10 text-right"
-                    style={{ color: row.color }}
-                  >
-                    {row.short !== null ? formatPercent(row.short, 0) : ""}
-                  </span>
-                </div>
-              ))}
-            </div>
+          {/* Per-source visualizations */}
+          <div className="space-y-4 mb-6">
+            {hasBtcSma && (
+              <RegimeSourceBands
+                title="BTC / SMA Ratio"
+                axisLabel={
+                  smaWindow !== null
+                    ? `${smaWindow}-day simple moving average`
+                    : "Simple moving average"
+                }
+                rows={[
+                  {
+                    range: "0.90 or below",
+                    label: "Bearish",
+                    short: regimeBear,
+                    color: "#EF4444",
+                    width: 100,
+                  },
+                  {
+                    range: "1.00 (at SMA)",
+                    label: "Neutral",
+                    short: null,
+                    color: "#F59E0B",
+                    width: 50,
+                  },
+                  {
+                    range: "1.10 or above",
+                    label: "Bullish",
+                    short: regimeBull,
+                    color: "#10B981",
+                    width: 0,
+                  },
+                ]}
+              />
+            )}
+            {hasFearGreed && (
+              <RegimeSourceBands
+                title="Crypto Fear & Greed Index"
+                axisLabel="0 = Extreme Fear  •  100 = Extreme Greed (contrarian)"
+                rows={[
+                  {
+                    range: "75 or above",
+                    label: "Bearish",
+                    short: regimeBear,
+                    color: "#EF4444",
+                    width: 100,
+                  },
+                  {
+                    range: "50 (neutral)",
+                    label: "Neutral",
+                    short: null,
+                    color: "#F59E0B",
+                    width: 50,
+                  },
+                  {
+                    range: "25 or below",
+                    label: "Bullish",
+                    short: regimeBull,
+                    color: "#10B981",
+                    width: 0,
+                  },
+                ]}
+              />
+            )}
           </div>
 
           {rs !== null && (
@@ -339,31 +410,6 @@ export default function StrategyTab({
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
-              <BarChart3 className="w-5 h-5 text-accent-cyan mx-auto mb-2" />
-              <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
-                BTC/SMA Ratio
-              </p>
-              <p className="text-sm text-text-secondary">
-                {smaWindow !== null ? `${smaWindow}-day window` : "—"}
-              </p>
-            </div>
-            <div className="flex items-center justify-center">
-              <ArrowRight className="w-5 h-5 text-text-muted" />
-            </div>
-            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 text-center">
-              <Layers className="w-5 h-5 text-red-400 mx-auto mb-2" />
-              <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
-                Short Allocation
-              </p>
-              <p className="text-sm text-text-secondary">
-                {regimeBull !== null && regimeBear !== null
-                  ? `${formatPercent(regimeBull, 0)} – ${formatPercent(regimeBear, 0)}`
-                  : "—"}
-              </p>
-            </div>
-          </div>
         </div>
       )}
 
