@@ -12,7 +12,6 @@ import {
   type Universe,
   type ScoreTerm,
   type StrategyConfigResponse,
-  type VaultConstraints,
 } from "./types";
 import { getFieldMetadata } from "./fieldMetadata";
 
@@ -172,32 +171,6 @@ function formatFormula(prefix: string, terms: ScoreTerm[]): string {
   );
 }
 
-function constraintCards(constraints: VaultConstraints, regimeBear: number | null, regimeBull: number | null) {
-  const cards: { label: string; value: string; accent: string }[] = [];
-  if (constraints.max_holdings !== null) {
-    cards.push({ label: "Max Long Holdings", value: String(constraints.max_holdings), accent: "#DDB110" });
-  }
-  if (constraints.max_weight !== null) {
-    cards.push({ label: "Max Long Weight", value: formatPercent(constraints.max_weight, 0), accent: "#DDB110" });
-  }
-  if (constraints.max_short_positions !== null) {
-    cards.push({ label: "Max Short Positions", value: String(constraints.max_short_positions), accent: "#F87171" });
-  }
-  if (constraints.max_short_weight !== null) {
-    cards.push({ label: "Max Short Weight", value: formatPercent(constraints.max_short_weight, 0), accent: "#F87171" });
-  }
-  if (regimeBear !== null) {
-    cards.push({ label: "Bear Short Alloc", value: formatPercent(regimeBear, 0), accent: "#F87171" });
-  }
-  if (regimeBull !== null) {
-    cards.push({ label: "Bull Short Alloc", value: formatPercent(regimeBull, 0), accent: "#10B981" });
-  }
-  if (constraints.rebalance_threshold !== null) {
-    cards.push({ label: "Rebalance Threshold", value: formatPercent(constraints.rebalance_threshold, 1), accent: "#DDB110" });
-  }
-  return cards;
-}
-
 export default function StrategyTab({
   regimeScore,
   shortAllocationPct,
@@ -220,8 +193,6 @@ export default function StrategyTab({
 
   const longTerms = strategyConfig.score_terms;
   const shortTerms = strategyConfig.short_score_terms;
-
-  const cards = constraintCards(strategyConfig.constraints, regimeBear, regimeBull);
 
   return (
     <div className="space-y-10">
@@ -308,6 +279,46 @@ export default function StrategyTab({
                     </span>
                   </span>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Allocation anchors */}
+          {(regimeBear !== null || regimeBull !== null) && (
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
+                <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
+                  Bearish Anchor
+                </p>
+                <p className="text-[11px] text-text-muted mb-2">
+                  Short / Long when regime score = 0
+                </p>
+                <div className="flex items-baseline gap-3 font-mono">
+                  <span className="text-lg font-bold text-red-400">
+                    {regimeBear !== null ? formatPercent(regimeBear, 0) : "—"}
+                  </span>
+                  <span className="text-text-muted">/</span>
+                  <span className="text-lg font-bold text-emerald-400">
+                    {regimeBear !== null ? formatPercent(1 - regimeBear, 0) : "—"}
+                  </span>
+                </div>
+              </div>
+              <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
+                <p className="text-xs uppercase tracking-wider text-text-muted mb-1">
+                  Bullish Anchor
+                </p>
+                <p className="text-[11px] text-text-muted mb-2">
+                  Short / Long when regime score = 1
+                </p>
+                <div className="flex items-baseline gap-3 font-mono">
+                  <span className="text-lg font-bold text-red-400">
+                    {regimeBull !== null ? formatPercent(regimeBull, 0) : "—"}
+                  </span>
+                  <span className="text-text-muted">/</span>
+                  <span className="text-lg font-bold text-emerald-400">
+                    {regimeBull !== null ? formatPercent(1 - regimeBull, 0) : "—"}
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -410,30 +421,6 @@ export default function StrategyTab({
             </div>
           )}
 
-        </div>
-      )}
-
-      {/* Position Sizing & Constraints */}
-      {cards.length > 0 && (
-        <div>
-          <h3 className="text-xl font-semibold mb-4">
-            Position Sizing & Constraints
-          </h3>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {cards.map((c) => (
-              <div key={c.label} className="glass rounded-2xl p-5 text-center">
-                <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
-                  {c.label}
-                </p>
-                <p
-                  className="text-2xl font-bold font-mono"
-                  style={{ color: c.accent }}
-                >
-                  {c.value}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
