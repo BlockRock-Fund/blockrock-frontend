@@ -78,11 +78,6 @@ function SkeletonRow() {
 function StrategyTabSkeleton() {
   return (
     <div className="space-y-10">
-      <div className="glass rounded-2xl p-6 animate-pulse">
-        <div className="h-6 bg-white/10 rounded w-64 mb-4" />
-        <div className="h-3 bg-white/10 rounded w-full mb-2" />
-        <div className="h-3 bg-white/10 rounded w-2/3" />
-      </div>
       <div className="glass-strong rounded-2xl p-6">
         <div className="h-5 bg-white/10 rounded w-48 mb-5 animate-pulse" />
         <div className="space-y-4">
@@ -165,14 +160,6 @@ export default function StrategyTab({
 
   return (
     <div className="space-y-10">
-      {/* Strategy Title */}
-      <div>
-        <h3 className="text-2xl font-bold">{strategyConfig.preset_name}</h3>
-        <p className="text-xs text-text-muted font-mono mt-1">
-          {strategyConfig.preset_file}
-        </p>
-      </div>
-
       {/* Long Score Formula */}
       <div className="glass-strong rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-5">
@@ -236,13 +223,13 @@ export default function StrategyTab({
         <div className="glass-strong rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
             <Activity className="w-5 h-5 text-amber-400" />
-            <h3 className="text-xl font-semibold">Smoothed BTC Regime Filter</h3>
+            <h3 className="text-xl font-semibold">Long/Short Regime</h3>
           </div>
 
           {regime.sources && regime.sources.length > 0 && (
             <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
               <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
-                Regime Sources
+                Sources
               </p>
               <div className="flex flex-wrap gap-3">
                 {regime.sources.map((s) => (
