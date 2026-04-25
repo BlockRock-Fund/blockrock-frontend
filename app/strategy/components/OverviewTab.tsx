@@ -128,10 +128,10 @@ export default function OverviewTab({
 
   return (
     <div className="space-y-10">
-      {/* Donut + Holdings */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Donut + Longs + Shorts */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Donut Chart */}
-        <div className="glass rounded-2xl p-6">
+        <div className="glass rounded-2xl p-6 lg:col-span-2">
           <h3 className="text-xl font-semibold mb-4">Target Allocation</h3>
           <ResponsiveContainer width="100%" height={400}>
             <PieChart>
@@ -202,89 +202,68 @@ export default function OverviewTab({
           </ResponsiveContainer>
         </div>
 
-        {/* Holdings Lists */}
+        {/* Longs */}
         <div className="glass rounded-2xl p-6">
-          <h3 className="text-xl font-semibold mb-4">Holdings</h3>
-          <div className="space-y-6">
-            {/* Longs */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="w-4 h-4 text-green-400" />
-                <span className="text-xs uppercase tracking-wider text-text-secondary font-medium">
-                  Long Positions ({longs.length})
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="w-4 h-4 text-green-400" />
+            <h3 className="text-xl font-semibold">Longs</h3>
+            <span className="text-xs text-text-muted">({longs.length})</span>
+          </div>
+          <div className="space-y-2">
+            {longs.map((w, i) => (
+              <div
+                key={w.asset_id}
+                className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-xs text-text-muted w-4">{i + 1}</span>
+                  <span className="font-medium text-sm truncate">{w.symbol}</span>
+                </div>
+                <span
+                  className="text-sm font-bold min-w-[44px] text-right"
+                  style={{ color: "#DDB110" }}
+                >
+                  {(parseFloat(w.target_weight) * 100).toFixed(1)}%
                 </span>
               </div>
-              <div className="space-y-2">
-                {longs.map((w, i) => (
-                  <div
-                    key={w.asset_id}
-                    className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-text-muted w-5">
-                        {i + 1}
-                      </span>
-                      <span className="font-medium text-sm">{w.symbol}</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span
-                        className="text-xs font-mono"
-                        style={{ color: scoreColor(parseFloat(w.composite_score)) }}
-                      >
-                        {parseFloat(w.composite_score).toFixed(4)}
-                      </span>
-                      <span
-                        className="text-sm font-bold min-w-[52px] text-right"
-                        style={{ color: "#DDB110" }}
-                      >
-                        {(parseFloat(w.target_weight) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
+          </div>
+        </div>
 
-            {/* Shorts */}
-            {shorts.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <TrendingDown className="w-4 h-4 text-red-400" />
-                  <span className="text-xs uppercase tracking-wider text-text-secondary font-medium">
-                    Short Positions ({shorts.length})
+        {/* Shorts */}
+        <div className="glass rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingDown className="w-4 h-4 text-red-400" />
+            <h3 className="text-xl font-semibold">Shorts</h3>
+            <span className="text-xs text-text-muted">({shorts.length})</span>
+          </div>
+          {shorts.length === 0 ? (
+            <div className="text-xs text-text-muted py-2 px-3">
+              No short positions
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {shorts.map((w, i) => (
+                <div
+                  key={w.asset_id}
+                  className="flex items-center justify-between py-2 px-3 rounded-lg bg-red-500/[0.04] hover:bg-red-500/[0.07] transition-colors"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs text-text-muted w-4">{i + 1}</span>
+                    <span className="font-medium text-sm truncate">{w.symbol}</span>
+                    {w.perp_leverage && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 font-mono">
+                        {parseFloat(w.perp_leverage).toFixed(0)}x
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-red-400 min-w-[44px] text-right">
+                    {(parseFloat(w.target_weight) * 100).toFixed(1)}%
                   </span>
                 </div>
-                <div className="space-y-2">
-                  {shorts.map((w, i) => (
-                    <div
-                      key={w.asset_id}
-                      className="flex items-center justify-between py-2 px-3 rounded-lg bg-red-500/[0.04] hover:bg-red-500/[0.07] transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-text-muted w-5">
-                          {i + 1}
-                        </span>
-                        <span className="font-medium text-sm">{w.symbol}</span>
-                        {w.perp_leverage && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 font-mono">
-                            {parseFloat(w.perp_leverage).toFixed(0)}x
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-xs font-mono text-red-400">
-                          {parseFloat(w.composite_score).toFixed(4)}
-                        </span>
-                        <span className="text-sm font-bold text-red-400 min-w-[52px] text-right">
-                          {(parseFloat(w.target_weight) * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
