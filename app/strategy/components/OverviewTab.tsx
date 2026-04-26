@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   PieChart,
   Pie,
@@ -22,7 +23,10 @@ import {
   pct,
   scoreColor,
   type Universe,
+  type StrategyConfigResponse,
+  type ScoreTerm,
 } from "./types";
+import { getFieldMetadata, formatFactorValue } from "./fieldMetadata";
 
 interface OverviewTabProps {
   weights: TargetWeight[];
@@ -33,6 +37,7 @@ interface OverviewTabProps {
   status: VaultStatus | null;
   loading: boolean;
   universe: Universe;
+  strategyConfig: StrategyConfigResponse | null;
   onTabChange: (tab: string) => void;
 }
 
@@ -54,7 +59,7 @@ function renderPieLabel({
   name,
   value,
 }: any) {
-  const radius = outerRadius + 40;
+  const radius = outerRadius + 70;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -65,7 +70,7 @@ function renderPieLabel({
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
       fill="var(--text-secondary)"
-      fontSize={10}
+      fontSize={14}
     >
       {name} {value.toFixed(1)}%
     </text>
@@ -80,8 +85,19 @@ export default function OverviewTab({
   status,
   loading,
   universe,
+  strategyConfig,
   onTabChange,
 }: OverviewTabProps) {
+  // Top 3 factor columns for the Token Rankings table — sorted by absolute
+  // weight in the active strategy's long-side score formula. The list collapses
+  // gracefully when the strategy uses fewer than 3 factors.
+  const topFactors: ScoreTerm[] = useMemo(() => {
+    const terms = strategyConfig?.score_terms ?? [];
+    return [...terms]
+      .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
+      .slice(0, 3);
+  }, [strategyConfig]);
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -191,13 +207,6 @@ export default function OverviewTab({
               >
                 net long
               </text>
-              <RechartsTooltip
-                contentStyle={TOOLTIP_STYLE}
-                formatter={(value) => [
-                  `${Number(value).toFixed(2)}%`,
-                  "Weight",
-                ]}
-              />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -332,12 +341,29 @@ export default function OverviewTab({
                   <th className="text-left py-3 px-3 font-medium">#</th>
                   <th className="text-left py-3 px-3 font-medium">Symbol</th>
                   <th className="text-center py-3 px-3 font-medium">Side</th>
-                  <th className="text-right py-3 px-3 font-medium">
-                    Dist. Yield
-                  </th>
-                  <th className="text-right py-3 px-3 font-medium">
-                    Net Earn. Yield
-                  </th>
+                  {topFactors.length > 0 ? (
+                    topFactors.map((term) => {
+                      const meta = getFieldMetadata(term.field);
+                      return (
+                        <th
+                          key={term.field}
+                          className="text-right py-3 px-3 font-medium"
+                          title={meta.tooltip}
+                        >
+                          {meta.shortLabel ?? meta.label}
+                        </th>
+                      );
+                    })
+                  ) : (
+                    <>
+                      <th className="text-right py-3 px-3 font-medium">
+                        Dist. Yield
+                      </th>
+                      <th className="text-right py-3 px-3 font-medium">
+                        Net Earn. Yield
+                      </th>
+                    </>
+                  )}
                   <th className="text-right py-3 px-3 font-medium">
                     Composite Score
                   </th>
@@ -379,12 +405,28 @@ export default function OverviewTab({
                             : "Spot"}
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-right">
-                        {pct(w.distributions_yield_expected_1y)}
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        {pct(w.net_earnings_yield_expected_1y)}
-                      </td>
+                      {topFactors.length > 0 ? (
+                        topFactors.map((term) => (
+                          <td
+                            key={term.field}
+                            className="py-3 px-3 text-right font-mono"
+                          >
+                            {formatFactorValue(
+                              term.field,
+                              w.factor_values?.[term.field] ?? null
+                            )}
+                          </td>
+                        ))
+                      ) : (
+                        <>
+                          <td className="py-3 px-3 text-right">
+                            {pct(w.distributions_yield_expected_1y)}
+                          </td>
+                          <td className="py-3 px-3 text-right">
+                            {pct(w.net_earnings_yield_expected_1y)}
+                          </td>
+                        </>
+                      )}
                       <td
                         className="py-3 px-3 text-right font-mono"
                         style={{

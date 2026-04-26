@@ -214,6 +214,7 @@ export default function StrategyPage() {
             status={status}
             loading={loading}
             universe={universe}
+            strategyConfig={strategyConfig}
             onTabChange={(tab) => setActiveTab(tab as TabId)}
           />
         )}

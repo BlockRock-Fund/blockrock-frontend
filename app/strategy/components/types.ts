@@ -21,6 +21,9 @@ export type TargetWeight = {
   perp_market: string | null;
   perp_direction: string | null;
   perp_leverage: string | null;
+  // Per-asset values for every field referenced by the active preset's score
+  // formulas, keyed by field name. Used to render dynamic factor columns.
+  factor_values: Record<string, string | null>;
 };
 
 export type TargetWeightsResponse = {
