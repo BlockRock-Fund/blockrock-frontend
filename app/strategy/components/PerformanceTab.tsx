@@ -556,6 +556,60 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
         </ResponsiveContainer>
       </div>
 
+      {/* Risk Metrics */}
+      <div className="glass rounded-2xl p-6">
+        <h3 className="text-xl font-semibold mb-4">Risk Metrics</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-text-muted mb-3">
+              Return Metrics
+            </p>
+            <div className="space-y-3">
+              {([
+                ["Total Return", m.total_return != null ? fmtPct(m.total_return) : "\u2014"],
+                ["EW Benchmark", m.eq_weight_return != null ? fmtPct(m.eq_weight_return) : "\u2014"],
+                ["SOL Return", m.sol_return != null ? fmtPct(m.sol_return) : "\u2014"],
+                ["BTC Return", m.btc_return != null ? fmtPct(m.btc_return) : "N/A"],
+                ["Alpha", m.alpha != null ? fmtPct(m.alpha) : "\u2014"],
+                ["Win Rate", m.win_rate != null ? `${m.win_rate}%` : "\u2014"],
+              ] as const).map(([label, val]) => (
+                <div
+                  key={label}
+                  className="flex justify-between py-1.5 border-b border-white/5"
+                >
+                  <span className="text-sm text-text-secondary">{label}</span>
+                  <span className="text-sm font-mono font-medium">{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-text-muted mb-3">
+              Risk Metrics
+            </p>
+            <div className="space-y-3">
+              {([
+                ["Volatility", m.volatility != null ? `${m.volatility}%` : "\u2014"],
+                ["Beta", m.beta?.toFixed(2) ?? "\u2014"],
+                ["Sharpe Ratio", m.sharpe?.toFixed(2) ?? "\u2014"],
+                ["Sortino Ratio", m.sortino?.toFixed(2) ?? "\u2014"],
+                ["Calmar Ratio", m.calmar?.toFixed(2) ?? "\u2014"],
+                ["Information Ratio", m.information_ratio?.toFixed(2) ?? "\u2014"],
+                ["Max Drawdown", m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"],
+              ] as const).map(([label, val]) => (
+                <div
+                  key={label}
+                  className="flex justify-between py-1.5 border-b border-white/5"
+                >
+                  <span className="text-sm text-text-secondary">{label}</span>
+                  <span className="text-sm font-mono font-medium">{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Monthly Returns Table */}
       <div className="glass rounded-2xl p-6">
         <h3 className="text-xl font-semibold mb-4">Monthly Returns</h3>
@@ -638,60 +692,6 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
               })}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* Risk Metrics */}
-      <div className="glass rounded-2xl p-6">
-        <h3 className="text-xl font-semibold mb-4">Risk Metrics</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-text-muted mb-3">
-              Return Metrics
-            </p>
-            <div className="space-y-3">
-              {([
-                ["Total Return", m.total_return != null ? fmtPct(m.total_return) : "\u2014"],
-                ["EW Benchmark", m.eq_weight_return != null ? fmtPct(m.eq_weight_return) : "\u2014"],
-                ["SOL Return", m.sol_return != null ? fmtPct(m.sol_return) : "\u2014"],
-                ["BTC Return", m.btc_return != null ? fmtPct(m.btc_return) : "N/A"],
-                ["Alpha", m.alpha != null ? fmtPct(m.alpha) : "\u2014"],
-                ["Win Rate", m.win_rate != null ? `${m.win_rate}%` : "\u2014"],
-              ] as const).map(([label, val]) => (
-                <div
-                  key={label}
-                  className="flex justify-between py-1.5 border-b border-white/5"
-                >
-                  <span className="text-sm text-text-secondary">{label}</span>
-                  <span className="text-sm font-mono font-medium">{val}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-wider text-text-muted mb-3">
-              Risk Metrics
-            </p>
-            <div className="space-y-3">
-              {([
-                ["Volatility", m.volatility != null ? `${m.volatility}%` : "\u2014"],
-                ["Beta", m.beta?.toFixed(2) ?? "\u2014"],
-                ["Sharpe Ratio", m.sharpe?.toFixed(2) ?? "\u2014"],
-                ["Sortino Ratio", m.sortino?.toFixed(2) ?? "\u2014"],
-                ["Calmar Ratio", m.calmar?.toFixed(2) ?? "\u2014"],
-                ["Information Ratio", m.information_ratio?.toFixed(2) ?? "\u2014"],
-                ["Max Drawdown", m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"],
-              ] as const).map(([label, val]) => (
-                <div
-                  key={label}
-                  className="flex justify-between py-1.5 border-b border-white/5"
-                >
-                  <span className="text-sm text-text-secondary">{label}</span>
-                  <span className="text-sm font-mono font-medium">{val}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
