@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   RefreshCw,
-  LayoutDashboard,
+  Activity,
   Brain,
   BarChart3,
   FlaskConical,
@@ -26,7 +26,7 @@ import PerformanceTab from "./components/PerformanceTab";
 import FactorResearchTab from "./components/FactorResearchTab";
 
 const TABS = [
-  { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "overview", label: "Live", icon: Activity },
   { id: "strategy", label: "Strategy", icon: Brain },
   { id: "performance", label: "Performance", icon: BarChart3 },
   { id: "factors", label: "Lab", icon: FlaskConical },

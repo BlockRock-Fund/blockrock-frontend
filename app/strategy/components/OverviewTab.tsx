@@ -148,7 +148,7 @@ export default function OverviewTab({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Donut Chart */}
         <div className="glass rounded-2xl p-6 lg:col-span-2">
-          <h3 className="text-xl font-semibold mb-4">Target Allocation</h3>
+          <h3 className="text-xl font-semibold mb-4">Allocation</h3>
           <ResponsiveContainer width="100%" height={400}>
             <PieChart>
               <Pie
@@ -260,7 +260,7 @@ export default function OverviewTab({
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-xs text-text-muted w-4">{i + 1}</span>
                     <span className="font-medium text-sm truncate">{w.symbol}</span>
-                    {w.perp_leverage && (
+                    {w.perp_leverage && parseFloat(w.perp_leverage) !== 1 && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 font-mono">
                         {parseFloat(w.perp_leverage).toFixed(0)}x
                       </span>
@@ -328,7 +328,7 @@ export default function OverviewTab({
 
       {/* Token Rankings Table */}
       <div className="glass rounded-2xl p-6">
-        <h3 className="text-xl font-semibold mb-4">Token Rankings</h3>
+        <h3 className="text-xl font-semibold mb-4">Rankings</h3>
         {weights.length === 0 ? (
           <div className="text-center py-12 text-text-secondary">
             No eligible tokens with mint addresses found.
@@ -340,7 +340,7 @@ export default function OverviewTab({
                 <tr className="border-b border-white/10 text-text-secondary">
                   <th className="text-left py-3 px-3 font-medium">#</th>
                   <th className="text-left py-3 px-3 font-medium">Symbol</th>
-                  <th className="text-center py-3 px-3 font-medium">Side</th>
+                  <th className="text-center py-3 px-3 font-medium">Position</th>
                   {topFactors.length > 0 ? (
                     topFactors.map((term) => {
                       const meta = getFieldMetadata(term.field);
@@ -393,16 +393,10 @@ export default function OverviewTab({
                           className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                             isShort
                               ? "bg-red-500/10 text-red-400"
-                              : "bg-amber-500/10 text-amber-400"
+                              : "bg-emerald-500/10 text-emerald-400"
                           }`}
                         >
-                          {w.perp_direction
-                            ? `${isShort ? "Short" : "Long"}${
-                                w.perp_leverage
-                                  ? ` ${parseFloat(w.perp_leverage).toFixed(0)}X`
-                                  : ""
-                              }`
-                            : "Spot"}
+                          {isShort ? "Short" : "Long"}
                         </span>
                       </td>
                       {topFactors.length > 0 ? (
@@ -450,40 +444,6 @@ export default function OverviewTab({
         )}
       </div>
 
-      {/* Quick Strategy Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          {
-            title: "Dual Scoring",
-            desc: "Independent long (7-factor) and short (5-factor) formulas",
-            icon: "📊",
-          },
-          {
-            title: "Smart Shorts",
-            desc: "Emissions + technical reversal signals, not inverted longs",
-            icon: "⚖️",
-          },
-          {
-            title: "Smoothed Regime",
-            desc: "BTC/SMA ratio drives 20-80% short allocation",
-            icon: "🌡️",
-          },
-          {
-            title: "25% / 25% Caps",
-            desc: "Max position size per side",
-            icon: "🛡️",
-          },
-        ].map((card) => (
-          <div
-            key={card.title}
-            className="glass rounded-2xl p-5 text-center hover:bg-white/[0.04] transition-colors"
-          >
-            <div className="text-2xl mb-2">{card.icon}</div>
-            <p className="text-sm font-semibold mb-1">{card.title}</p>
-            <p className="text-xs text-text-muted">{card.desc}</p>
-          </div>
-        ))}
-      </div>
       <div className="text-center">
         <button
           onClick={() => onTabChange("strategy")}
