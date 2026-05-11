@@ -45,11 +45,13 @@ function MetricCard({
   label,
   value,
   suffix,
+  sublabel,
   positive,
 }: {
   label: string;
   value: string;
   suffix?: string;
+  sublabel?: string;
   positive?: boolean;
 }) {
   return (
@@ -73,6 +75,11 @@ function MetricCard({
           <span className="text-sm font-normal text-text-muted">{suffix}</span>
         )}
       </p>
+      {sublabel && (
+        <p className="text-[10px] uppercase tracking-wider text-text-muted mt-1">
+          {sublabel}
+        </p>
+      )}
     </div>
   );
 }
@@ -340,6 +347,15 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
 
   const m = data.summary;
 
+  const years = (() => {
+    const startStr = m.measurement_start ?? m.backtest_start;
+    if (!startStr || !m.backtest_end) return null;
+    const start = new Date(String(startStr) + "T00:00:00").getTime();
+    const end = new Date(String(m.backtest_end) + "T00:00:00").getTime();
+    if (!isFinite(start) || !isFinite(end) || end <= start) return null;
+    return (end - start) / (1000 * 60 * 60 * 24 * 365.25);
+  })();
+
   return (
     <div className="space-y-10">
       {/* Summary Cards */}
@@ -347,11 +363,13 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
         <MetricCard
           label="Total Return"
           value={m.total_return != null ? fmtPct(m.total_return) : "\u2014"}
+          sublabel={years != null ? `over ${years.toFixed(2)} years` : undefined}
           positive={m.total_return != null ? m.total_return >= 0 : undefined}
         />
         <MetricCard
-          label="Annualized (CAGR)"
+          label="Annualized"
           value={m.cagr != null ? fmtPct(m.cagr) : "\u2014"}
+          sublabel="CAGR"
           positive={m.cagr != null ? m.cagr >= 0 : undefined}
         />
         <MetricCard label="Sharpe" value={m.sharpe?.toFixed(2) ?? "\u2014"} positive={m.sharpe != null ? m.sharpe > 0 : undefined} />
@@ -578,7 +596,7 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             </p>
             <div className="space-y-3">
               {([
-                ["Total Return", fmtTotalWithCagr(m.total_return, m.cagr)],
+                ["Strategy", fmtTotalWithCagr(m.total_return, m.cagr)],
                 ["EW Benchmark", fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr)],
                 ["SOL Return", fmtTotalWithCagr(m.sol_return, m.sol_cagr)],
                 ["BTC Return", m.btc_return == null ? "N/A" : fmtTotalWithCagr(m.btc_return, m.btc_cagr)],
