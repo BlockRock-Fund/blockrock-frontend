@@ -424,7 +424,9 @@ export default function OverviewTab({
                       <td
                         className="py-3 px-3 text-right font-mono"
                         style={{
-                          color: scoreColor(parseFloat(w.composite_score)),
+                          color: isShort
+                            ? "#F87171"
+                            : scoreColor(parseFloat(w.composite_score)),
                         }}
                       >
                         {parseFloat(w.composite_score).toFixed(4)}

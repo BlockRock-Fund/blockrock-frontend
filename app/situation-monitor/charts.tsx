@@ -383,7 +383,7 @@ export function TerminalMarketList({
   if (!events.length) {
     return (
       <div className="px-3 py-6 text-center text-text-muted text-xs font-mono">
-        // no data
+        {"// no data"}
       </div>
     );
   }
@@ -627,6 +627,21 @@ function TerminalPriceChangeCell({
 
 type SortColumn = "change_4h_pct" | "change_1d_pct" | "change_7d_pct" | "funding_rate" | "day_ntl_volume";
 
+function SortIcon({
+  active,
+  ascending,
+}: {
+  active: boolean;
+  ascending: boolean;
+}) {
+  if (!active) return null;
+  return ascending ? (
+    <ChevronUp className="inline w-3 h-3 ml-0.5 -mt-px" />
+  ) : (
+    <ChevronDown className="inline w-3 h-3 ml-0.5 -mt-px" />
+  );
+}
+
 export function TerminalPricesTable({
   assets,
   loading,
@@ -651,15 +666,6 @@ export function TerminalPricesTable({
     const bv = b[sortCol] ?? -Infinity;
     return sortAsc ? av - bv : bv - av;
   });
-
-  const SortIcon = ({ col }: { col: SortColumn }) =>
-    sortCol === col ? (
-      sortAsc ? (
-        <ChevronUp className="inline w-3 h-3 ml-0.5 -mt-px" />
-      ) : (
-        <ChevronDown className="inline w-3 h-3 ml-0.5 -mt-px" />
-      )
-    ) : null;
 
   if (loading) {
     return (
@@ -699,11 +705,21 @@ export function TerminalPricesTable({
         <tr className="text-text-muted uppercase tracking-widest text-[10px] border-b border-accent-cyan/20 sticky top-0 bg-bg-primary z-10">
           <th className="px-3 py-2 text-left font-medium">Asset</th>
           <th className="px-2 py-2 text-right font-medium">Price</th>
-          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_4h_pct")}>4H<SortIcon col="change_4h_pct" /></th>
-          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_1d_pct")}>1D<SortIcon col="change_1d_pct" /></th>
-          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_7d_pct")}>7D<SortIcon col="change_7d_pct" /></th>
-          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("funding_rate")}>Funding<SortIcon col="funding_rate" /></th>
-          <th className="px-3 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("day_ntl_volume")}>Vol<SortIcon col="day_ntl_volume" /></th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_4h_pct")}>
+            4H<SortIcon active={sortCol === "change_4h_pct"} ascending={sortAsc} />
+          </th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_1d_pct")}>
+            1D<SortIcon active={sortCol === "change_1d_pct"} ascending={sortAsc} />
+          </th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("change_7d_pct")}>
+            7D<SortIcon active={sortCol === "change_7d_pct"} ascending={sortAsc} />
+          </th>
+          <th className="px-2 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("funding_rate")}>
+            Funding<SortIcon active={sortCol === "funding_rate"} ascending={sortAsc} />
+          </th>
+          <th className="px-3 py-2 text-right font-medium cursor-pointer hover:text-text-primary select-none" onClick={() => handleSort("day_ntl_volume")}>
+            Vol<SortIcon active={sortCol === "day_ntl_volume"} ascending={sortAsc} />
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -771,7 +787,7 @@ export function TerminalTweetList({
   if (!tweets.length) {
     return (
       <div className="px-3 py-6 text-center text-text-muted text-xs font-mono">
-        // no data
+        {"// no data"}
       </div>
     );
   }
@@ -984,7 +1000,7 @@ export function TerminalNewsList({
   if (!articles.length) {
     return (
       <div className="px-3 py-6 text-center text-text-muted text-xs font-mono">
-        // no data
+        {"// no data"}
       </div>
     );
   }

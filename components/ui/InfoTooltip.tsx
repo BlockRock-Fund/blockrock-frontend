@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Info } from "lucide-react";
 
@@ -15,7 +15,7 @@ export function InfoTooltip({ content, width = 256 }: InfoTooltipProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const calculatePosition = () => {
+  const calculatePosition = useCallback(() => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
     const padding = 8;
@@ -35,7 +35,7 @@ export function InfoTooltip({ content, width = 256 }: InfoTooltipProps) {
     }
 
     setPosition({ top, left });
-  };
+  }, [width]);
 
   useEffect(() => {
     if (!open) return;
@@ -55,7 +55,6 @@ export function InfoTooltip({ content, width = 256 }: InfoTooltipProps) {
 
   useEffect(() => {
     if (!open) return;
-    calculatePosition();
     const update = () => calculatePosition();
     window.addEventListener("scroll", update, true);
     window.addEventListener("resize", update);
@@ -63,7 +62,7 @@ export function InfoTooltip({ content, width = 256 }: InfoTooltipProps) {
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
     };
-  }, [open]);
+  }, [open, calculatePosition]);
 
   const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
