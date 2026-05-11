@@ -134,6 +134,10 @@ export interface BacktestSummary {
   sol_max_drawdown: number | null;
   btc_return: number | null;
   btc_max_drawdown: number | null;
+  cagr: number | null;
+  eq_weight_cagr: number | null;
+  sol_cagr: number | null;
+  btc_cagr: number | null;
   information_ratio: number | null;
   win_rate: number | null;
   volatility: number | null;

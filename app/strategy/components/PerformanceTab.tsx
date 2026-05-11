@@ -23,6 +23,13 @@ function fmtPct(v: number): string {
   return `${v >= 0 ? "+" : ""}${v}%`;
 }
 
+function fmtTotalWithCagr(total: number | null, cagr: number | null): string {
+  if (total == null) return "—";
+  const totalStr = fmtPct(total);
+  if (cagr == null) return totalStr;
+  return `${totalStr} (${fmtPct(cagr)} CAGR)`;
+}
+
 type Timeframe = "30D" | "90D" | "6M" | "1Y" | "2Y" | "4Y";
 const TIMEFRAME_DAYS: Record<Timeframe, number> = {
   "30D": 30,
@@ -336,11 +343,16 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
   return (
     <div className="space-y-10">
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
         <MetricCard
           label="Total Return"
           value={m.total_return != null ? fmtPct(m.total_return) : "\u2014"}
           positive={m.total_return != null ? m.total_return >= 0 : undefined}
+        />
+        <MetricCard
+          label="Annualized (CAGR)"
+          value={m.cagr != null ? fmtPct(m.cagr) : "\u2014"}
+          positive={m.cagr != null ? m.cagr >= 0 : undefined}
         />
         <MetricCard label="Sharpe" value={m.sharpe?.toFixed(2) ?? "\u2014"} positive={m.sharpe != null ? m.sharpe > 0 : undefined} />
         <MetricCard
@@ -566,10 +578,10 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             </p>
             <div className="space-y-3">
               {([
-                ["Total Return", m.total_return != null ? fmtPct(m.total_return) : "\u2014"],
-                ["EW Benchmark", m.eq_weight_return != null ? fmtPct(m.eq_weight_return) : "\u2014"],
-                ["SOL Return", m.sol_return != null ? fmtPct(m.sol_return) : "\u2014"],
-                ["BTC Return", m.btc_return != null ? fmtPct(m.btc_return) : "N/A"],
+                ["Total Return", fmtTotalWithCagr(m.total_return, m.cagr)],
+                ["EW Benchmark", fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr)],
+                ["SOL Return", fmtTotalWithCagr(m.sol_return, m.sol_cagr)],
+                ["BTC Return", m.btc_return == null ? "N/A" : fmtTotalWithCagr(m.btc_return, m.btc_cagr)],
                 ["Alpha", m.alpha != null ? fmtPct(m.alpha) : "\u2014"],
                 ["Win Rate", m.win_rate != null ? `${m.win_rate}%` : "\u2014"],
               ] as const).map(([label, val]) => (
