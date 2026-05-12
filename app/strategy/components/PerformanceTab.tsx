@@ -23,6 +23,12 @@ function fmtPct(v: number): string {
   return `${v >= 0 ? "+" : ""}${v}%`;
 }
 
+function formatYears(years: number): string {
+  const rounded = Math.round(years);
+  if (Math.abs(years - rounded) < 0.1) return String(rounded);
+  return years.toFixed(1);
+}
+
 function fmtTotalWithCagr(total: number | null, cagr: number | null): string {
   if (total == null) return "—";
   const totalStr = fmtPct(total);
@@ -76,7 +82,7 @@ function MetricCard({
         )}
       </p>
       {sublabel && (
-        <p className="text-[10px] uppercase tracking-wider text-text-muted mt-1">
+        <p className="text-xs uppercase tracking-wider text-text-muted mt-1">
           {sublabel}
         </p>
       )}
@@ -363,7 +369,7 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
         <MetricCard
           label="Total Return"
           value={m.total_return != null ? fmtPct(m.total_return) : "\u2014"}
-          sublabel={years != null ? `over ${years.toFixed(2)} years` : undefined}
+          sublabel={years != null ? `over ${formatYears(years)} years` : undefined}
           positive={m.total_return != null ? m.total_return >= 0 : undefined}
         />
         <MetricCard
