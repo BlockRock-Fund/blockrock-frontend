@@ -15,8 +15,6 @@ import {
   TargetWeight,
   VaultStatus,
   AllocationRecord,
-  regimeColor,
-  regimeLabel,
   type Universe,
   type StrategyConfigResponse,
 } from "./components/types";
@@ -42,13 +40,13 @@ export default function StrategyPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [regimeScore, setRegimeScore] = useState<string | null>(null);
+  const [regime, setRegime] = useState<string | null>(null);
   const [shortAllocationPct, setShortAllocationPct] = useState<string | null>(
     null
   );
-  const [confluenceMultiplier, setConfluenceMultiplier] = useState<string | null>(null);
-  const [confluenceStressed, setConfluenceStressed] = useState<number | null>(null);
-  const [confluenceTotal, setConfluenceTotal] = useState<number | null>(null);
-  const [presetName, setPresetName] = useState<string>("default");
+  const [longAllocationPct, setLongAllocationPct] = useState<string | null>(
+    null
+  );
   const [universe, setUniverse] = useState<Universe>("token");
   const [strategyConfig, setStrategyConfig] =
     useState<StrategyConfigResponse | null>(null);
@@ -75,11 +73,9 @@ export default function StrategyPage() {
       const weightsData = await weightsRes.json();
       setWeights(weightsData.weights || []);
       setRegimeScore(weightsData.regime_score ?? null);
+      setRegime(weightsData.regime ?? null);
       setShortAllocationPct(weightsData.short_allocation_pct ?? null);
-      setConfluenceMultiplier(weightsData.confluence_multiplier ?? null);
-      setConfluenceStressed(weightsData.confluence_stressed ?? null);
-      setConfluenceTotal(weightsData.confluence_total ?? null);
-      setPresetName(weightsData.preset_name ?? "default");
+      setLongAllocationPct(weightsData.long_allocation_pct ?? null);
 
       if (statusRes.ok) setStatus(await statusRes.json());
       if (allocsRes.ok) {
@@ -111,11 +107,6 @@ export default function StrategyPage() {
     () => weights.filter((w) => w.side === "short"),
     [weights]
   );
-
-  const rs = regimeScore ? parseFloat(regimeScore) : null;
-  const saPct = shortAllocationPct
-    ? (parseFloat(shortAllocationPct) * 100).toFixed(1)
-    : "0.0";
 
   return (
     <main className="min-h-screen bg-bg-primary text-text-primary">
@@ -210,22 +201,21 @@ export default function StrategyPage() {
             longs={longs}
             shorts={shorts}
             regimeScore={regimeScore}
+            regime={regime}
             shortAllocationPct={shortAllocationPct}
+            longAllocationPct={longAllocationPct}
             status={status}
             loading={loading}
             universe={universe}
             strategyConfig={strategyConfig}
-            onTabChange={(tab) => setActiveTab(tab as TabId)}
           />
         )}
         {activeTab === "strategy" && (
           <StrategyTab
             universe={universe}
             regimeScore={regimeScore}
+            regime={regime}
             shortAllocationPct={shortAllocationPct}
-            confluenceMultiplier={confluenceMultiplier}
-            confluenceStressed={confluenceStressed}
-            confluenceTotal={confluenceTotal}
             strategyConfig={strategyConfig}
           />
         )}

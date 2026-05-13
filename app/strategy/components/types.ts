@@ -31,10 +31,11 @@ export type TargetWeightsResponse = {
   computed_at: string;
   preset_name: string;
   regime_score: string | null;
+  // "bullish" | "neutral" | "bearish" | "unknown" | null. Authoritative label
+  // from the backend; null means the active preset has no regime_config.
+  regime: string | null;
   short_allocation_pct: string | null;
-  confluence_multiplier: string | null;
-  confluence_stressed: number | null;
-  confluence_total: number | null;
+  long_allocation_pct: string | null;
 };
 
 export type VaultHolding = {
@@ -194,14 +195,16 @@ export function scoreColor(score: number): string {
   return "var(--text-secondary)";
 }
 
+// Backend convention (vault_regime.py): score=1.0 is bullish (fewer shorts),
+// score=0.0 is bearish (more shorts), 0.5 is neutral/unknown.
 export function regimeColor(score: number): string {
-  if (score <= 0.3) return "#10B981";
-  if (score <= 0.6) return "#F59E0B";
+  if (score >= 0.7) return "#10B981";
+  if (score >= 0.3) return "#F59E0B";
   return "#EF4444";
 }
 
 export function regimeLabel(score: number): string {
-  if (score <= 0.3) return "Benign";
-  if (score <= 0.6) return "Elevated";
-  return "Stressed";
+  if (score >= 0.7) return "Bullish";
+  if (score >= 0.3) return "Neutral";
+  return "Bearish";
 }

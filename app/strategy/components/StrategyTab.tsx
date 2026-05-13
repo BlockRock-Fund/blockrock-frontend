@@ -18,10 +18,8 @@ import { getFieldMetadata } from "./fieldMetadata";
 interface StrategyTabProps {
   universe: Universe;
   regimeScore: string | null;
+  regime: string | null;
   shortAllocationPct: string | null;
-  confluenceMultiplier?: string | null;
-  confluenceStressed?: number | null;
-  confluenceTotal?: number | null;
   strategyConfig: StrategyConfigResponse | null;
 }
 
@@ -173,6 +171,7 @@ function formatFormula(prefix: string, terms: ScoreTerm[]): string {
 
 export default function StrategyTab({
   regimeScore,
+  regime,
   shortAllocationPct,
   strategyConfig,
 }: StrategyTabProps) {
@@ -182,12 +181,21 @@ export default function StrategyTab({
 
   const rs = regimeScore ? parseFloat(regimeScore) : null;
   const saPct = shortAllocationPct ? parseFloat(shortAllocationPct) * 100 : null;
+  // Prefer the backend's authoritative label when available; only fall back to
+  // the score-derived bucket if the API didn't return one (older backend).
+  const regimeText =
+    regime && regime !== "unknown"
+      ? regime.charAt(0).toUpperCase() + regime.slice(1)
+      : rs !== null
+      ? regimeLabel(rs)
+      : null;
+  const isUnknown = regime === "unknown";
 
-  const regime = strategyConfig.regime_config;
-  const regimeBear = regime?.short_pct_bearish ?? null;
-  const regimeBull = regime?.short_pct_bullish ?? null;
-  const smaWindow = regime?.sma_window_days ?? null;
-  const sourceNames = regime?.sources?.map((s) => s.name) ?? [];
+  const regimeCfg = strategyConfig.regime_config;
+  const regimeBear = regimeCfg?.short_pct_bearish ?? null;
+  const regimeBull = regimeCfg?.short_pct_bullish ?? null;
+  const smaWindow = regimeCfg?.sma_window_days ?? null;
+  const sourceNames = regimeCfg?.sources?.map((s) => s.name) ?? [];
   const hasBtcSma = sourceNames.includes("btc_sma");
   const hasFearGreed = sourceNames.includes("fear_greed");
 
@@ -255,20 +263,20 @@ export default function StrategyTab({
       )}
 
       {/* Smoothed Regime Filter */}
-      {regime && (
+      {regimeCfg && (
         <div className="glass-strong rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
             <Activity className="w-5 h-5 text-amber-400" />
             <h3 className="text-xl font-semibold">Long/Short Regime</h3>
           </div>
 
-          {regime.sources && regime.sources.length > 0 && (
+          {regimeCfg.sources && regimeCfg.sources.length > 0 && (
             <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5">
               <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
                 Sources
               </p>
               <div className="flex flex-wrap gap-3">
-                {regime.sources.map((s) => (
+                {regimeCfg.sources.map((s) => (
                   <span
                     key={s.name}
                     className="text-xs font-mono px-2 py-1 rounded-md bg-white/[0.04] border border-white/5"
@@ -389,7 +397,7 @@ export default function StrategyTab({
             )}
           </div>
 
-          {rs !== null && (
+          {rs !== null && !isUnknown && (
             <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Current Regime Score</span>
@@ -399,15 +407,17 @@ export default function StrategyTab({
                     style={{ backgroundColor: regimeColor(rs) }}
                   />
                   <span className="text-lg font-bold font-mono">{rs.toFixed(2)}</span>
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
-                    style={{
-                      backgroundColor: `${regimeColor(rs)}20`,
-                      color: regimeColor(rs),
-                    }}
-                  >
-                    {regimeLabel(rs)}
-                  </span>
+                  {regimeText && (
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full font-medium"
+                      style={{
+                        backgroundColor: `${regimeColor(rs)}20`,
+                        color: regimeColor(rs),
+                      }}
+                    >
+                      {regimeText}
+                    </span>
+                  )}
                 </div>
               </div>
               {saPct !== null && (
@@ -418,6 +428,14 @@ export default function StrategyTab({
                   </span>
                 </div>
               )}
+            </div>
+          )}
+          {isUnknown && (
+            <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5 mb-5 flex items-center justify-between text-sm">
+              <span className="font-medium">Current Regime Score</span>
+              <span className="text-text-muted">
+                Insufficient data &mdash; using 50/50 default split
+              </span>
             </div>
           )}
 

@@ -14,7 +14,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Activity } from "lucide-react";
 import {
   TargetWeight,
   VaultStatus,
@@ -22,6 +22,8 @@ import {
   SHORT_COLORS,
   pct,
   scoreColor,
+  regimeColor,
+  regimeLabel,
   type Universe,
   type StrategyConfigResponse,
   type ScoreTerm,
@@ -33,12 +35,13 @@ interface OverviewTabProps {
   longs: TargetWeight[];
   shorts: TargetWeight[];
   regimeScore: string | null;
+  regime: string | null;
   shortAllocationPct: string | null;
+  longAllocationPct: string | null;
   status: VaultStatus | null;
   loading: boolean;
   universe: Universe;
   strategyConfig: StrategyConfigResponse | null;
-  onTabChange: (tab: string) => void;
 }
 
 const TOOLTIP_STYLE = {
@@ -81,12 +84,14 @@ export default function OverviewTab({
   weights,
   longs,
   shorts,
+  regimeScore,
+  regime,
   shortAllocationPct,
+  longAllocationPct,
   status,
   loading,
   universe,
   strategyConfig,
-  onTabChange,
 }: OverviewTabProps) {
   // Top 3 factor columns for the Token Rankings table — sorted by absolute
   // weight in the active strategy's long-side score formula. The list collapses
@@ -114,6 +119,28 @@ export default function OverviewTab({
   const longPct = shortAllocationPct
     ? 100 - parseFloat(shortAllocationPct) * 100
     : 100;
+
+  // Regime banner data — populated from the live API response. The backend
+  // returns regime=null when the active preset has no regime_config (so the
+  // banner is hidden); regime="unknown" when configured but data was missing.
+  const rs = regimeScore ? parseFloat(regimeScore) : null;
+  const sPct =
+    shortAllocationPct !== null ? parseFloat(shortAllocationPct) * 100 : null;
+  const lPct =
+    longAllocationPct !== null
+      ? parseFloat(longAllocationPct) * 100
+      : sPct !== null
+      ? 100 - sPct
+      : null;
+  const regimeText =
+    regime && regime !== "unknown"
+      ? regime.charAt(0).toUpperCase() + regime.slice(1)
+      : rs !== null
+      ? regimeLabel(rs)
+      : null;
+  const regimeUnknown = regime === "unknown";
+  const showRegimeBanner = regime !== null;
+  const presetSourceCount = strategyConfig?.regime_config?.sources?.length ?? 0;
 
   const pieData = [
     ...longs.map((w) => ({
@@ -144,6 +171,86 @@ export default function OverviewTab({
 
   return (
     <div className="space-y-10">
+      {/* Regime Banner — hidden when the active preset has no regime_config */}
+      {showRegimeBanner && (
+        <div className="glass rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Activity className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
+              Long / Short Regime
+            </h3>
+            {strategyConfig?.preset_name && (
+              <span className="ml-auto text-[11px] font-mono text-text-muted">
+                {strategyConfig.preset_name}
+              </span>
+            )}
+          </div>
+
+          {regimeUnknown ? (
+            <div className="text-sm text-text-muted">
+              Insufficient signal data &mdash; using a 50/50 long/short split
+              until the configured sources catch up.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
+                  Regime
+                </p>
+                <div className="flex items-center gap-2">
+                  {rs !== null && (
+                    <span
+                      className="w-2.5 h-2.5 rounded-full"
+                      style={{ backgroundColor: regimeColor(rs) }}
+                    />
+                  )}
+                  <span
+                    className="text-lg font-bold"
+                    style={{ color: rs !== null ? regimeColor(rs) : undefined }}
+                  >
+                    {regimeText ?? "—"}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
+                  Score
+                </p>
+                <p className="text-lg font-bold font-mono">
+                  {rs !== null ? rs.toFixed(2) : "—"}
+                  <span className="text-xs text-text-muted ml-1">/ 1.00</span>
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
+                  Long
+                </p>
+                <p className="text-lg font-bold font-mono text-emerald-400">
+                  {lPct !== null ? `${lPct.toFixed(0)}%` : "—"}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
+                  Short
+                </p>
+                <p className="text-lg font-bold font-mono text-red-400">
+                  {sPct !== null ? `${sPct.toFixed(0)}%` : "—"}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {presetSourceCount > 0 && !regimeUnknown && (
+            <p className="text-[11px] text-text-muted mt-3">
+              Blended from {presetSourceCount}{" "}
+              {presetSourceCount === 1 ? "source" : "sources"} &middot; 1.00 ={" "}
+              <span className="text-emerald-400">bullish</span> &middot; 0.00 ={" "}
+              <span className="text-red-400">bearish</span>
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Donut + Longs + Shorts */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Donut Chart */}
@@ -446,15 +553,6 @@ export default function OverviewTab({
         )}
       </div>
 
-      <div className="text-center">
-        <button
-          onClick={() => onTabChange("strategy")}
-          className="text-sm text-accent-cyan hover:underline inline-flex items-center gap-1"
-        >
-          Learn more about the strategy
-          <ArrowRight className="w-3.5 h-3.5" />
-        </button>
-      </div>
     </div>
   );
 }
