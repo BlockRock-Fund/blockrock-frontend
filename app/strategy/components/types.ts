@@ -115,6 +115,41 @@ export const CHART_COLORS = ["#4ADE80"];
 
 export const SHORT_COLORS = ["#F87171"];
 
+// Allocation donut gradient anchors. Longs lerp deep emerald → bright mint
+// from lowest-ranked to highest-ranked weight; shorts lerp deep coral → bright
+// rose. Use colorForRank() to pick a per-slice color.
+export const LONG_DEEP = "#0E8F5A";
+export const LONG_BRIGHT = "#5EE99B";
+export const SHORT_DEEP = "#B83A4A";
+export const SHORT_BRIGHT = "#FF8597";
+
+function lerpHex(a: string, b: string, t: number): string {
+  const ar = parseInt(a.slice(1, 3), 16);
+  const ag = parseInt(a.slice(3, 5), 16);
+  const ab = parseInt(a.slice(5, 7), 16);
+  const br = parseInt(b.slice(1, 3), 16);
+  const bg = parseInt(b.slice(3, 5), 16);
+  const bb = parseInt(b.slice(5, 7), 16);
+  const r = Math.round(ar + (br - ar) * t);
+  const g = Math.round(ag + (bg - ag) * t);
+  const bl = Math.round(ab + (bb - ab) * t);
+  const toHex = (n: number) => n.toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
+}
+
+export function colorForRank(
+  rank: number,
+  total: number,
+  side: "long" | "short"
+): string {
+  const deep = side === "long" ? LONG_DEEP : SHORT_DEEP;
+  const bright = side === "long" ? LONG_BRIGHT : SHORT_BRIGHT;
+  if (total <= 1) return bright;
+  // rank 0 = highest weight → brightest; rank = total-1 → deepest.
+  const t = 1 - rank / (total - 1);
+  return lerpHex(deep, bright, t);
+}
+
 export interface BacktestSummary {
   preset_name: string;
   backtest_start: string;

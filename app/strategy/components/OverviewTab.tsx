@@ -2,8 +2,6 @@
 
 import { useMemo } from "react";
 import {
-  PieChart,
-  Pie,
   Cell,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
@@ -18,8 +16,6 @@ import { TrendingUp, TrendingDown, Gauge } from "lucide-react";
 import {
   TargetWeight,
   VaultStatus,
-  CHART_COLORS,
-  SHORT_COLORS,
   pct,
   scoreColor,
   regimeColor,
@@ -29,6 +25,7 @@ import {
   type ScoreTerm,
 } from "./types";
 import { getFieldMetadata, formatFactorValue } from "./fieldMetadata";
+import AllocationDonut from "./AllocationDonut";
 
 interface OverviewTabProps {
   weights: TargetWeight[];
@@ -51,34 +48,6 @@ const TOOLTIP_STYLE = {
   color: "#f1f5f9",
   fontSize: "12px",
 };
-
-const RADIAN = Math.PI / 180;
-
-function renderPieLabel({
-  cx,
-  cy,
-  midAngle,
-  outerRadius,
-  name,
-  value,
-}: any) {
-  const radius = outerRadius + 70;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  return (
-    <text
-      x={x}
-      y={y}
-      textAnchor={x > cx ? "start" : "end"}
-      dominantBaseline="central"
-      fill="var(--text-secondary)"
-      fontSize={14}
-    >
-      {name} {value.toFixed(1)}%
-    </text>
-  );
-}
 
 export default function OverviewTab({
   weights,
@@ -140,19 +109,6 @@ export default function OverviewTab({
       : null;
   const regimeUnknown = regime === "unknown";
   const showRegimeBanner = regime !== null;
-
-  const pieData = [
-    ...longs.map((w) => ({
-      name: w.symbol,
-      value: parseFloat(w.target_weight) * 100,
-      side: "long" as const,
-    })),
-    ...shorts.map((w) => ({
-      name: `${w.symbol}`,
-      value: parseFloat(w.target_weight) * 100,
-      side: "short" as const,
-    })),
-  ];
 
   const barData = weights.map((w) => {
     const holding = status?.holdings.find(
@@ -244,70 +200,8 @@ export default function OverviewTab({
 
       {/* Donut + Longs + Shorts */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Donut Chart */}
-        <div className="glass rounded-2xl p-6 lg:col-span-2">
-          <h3 className="text-xl font-semibold mb-4">Allocation</h3>
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={2}
-                label={renderPieLabel}
-                labelLine={{ stroke: "rgba(255,255,255,0.15)", strokeWidth: 1 }}
-              >
-                {pieData.map((entry, idx) => {
-                  if (entry.side === "short") {
-                    const shortIdx = pieData
-                      .slice(0, idx)
-                      .filter((e) => e.side === "short").length;
-                    return (
-                      <Cell
-                        key={idx}
-                        fill={SHORT_COLORS[shortIdx % SHORT_COLORS.length]}
-                      />
-                    );
-                  }
-                  const longIdx = pieData
-                    .slice(0, idx)
-                    .filter((e) => e.side !== "short").length;
-                  return (
-                    <Cell
-                      key={idx}
-                      fill={CHART_COLORS[longIdx % CHART_COLORS.length]}
-                    />
-                  );
-                })}
-              </Pie>
-              {/* Center Label */}
-              <text
-                x="50%"
-                y="47%"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="fill-text-primary text-2xl font-bold"
-                style={{ fontSize: "22px", fontWeight: 700 }}
-              >
-                {longPct.toFixed(0)}%
-              </text>
-              <text
-                x="50%"
-                y="57%"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="fill-text-secondary"
-                style={{ fontSize: "11px" }}
-              >
-                net long
-              </text>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        {/* Allocation Donut */}
+        <AllocationDonut longs={longs} shorts={shorts} longPct={longPct} />
 
         {/* Longs */}
         <div className="glass rounded-2xl p-6">
