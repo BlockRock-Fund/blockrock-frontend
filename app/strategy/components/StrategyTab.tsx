@@ -2,7 +2,7 @@
 
 import {
   Shield,
-  Activity,
+  Gauge,
   Target,
 } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
@@ -266,7 +266,7 @@ export default function StrategyTab({
       {regimeCfg && (
         <div className="glass-strong rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
-            <Activity className="w-5 h-5 text-amber-400" />
+            <Gauge className="w-5 h-5 text-amber-400" />
             <h3 className="text-xl font-semibold">Long/Short Regime</h3>
           </div>
 

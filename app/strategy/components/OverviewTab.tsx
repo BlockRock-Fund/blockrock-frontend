@@ -14,7 +14,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { TrendingUp, TrendingDown, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, Gauge } from "lucide-react";
 import {
   TargetWeight,
   VaultStatus,
@@ -140,7 +140,6 @@ export default function OverviewTab({
       : null;
   const regimeUnknown = regime === "unknown";
   const showRegimeBanner = regime !== null;
-  const presetSourceCount = strategyConfig?.regime_config?.sources?.length ?? 0;
 
   const pieData = [
     ...longs.map((w) => ({
@@ -175,7 +174,7 @@ export default function OverviewTab({
       {showRegimeBanner && (
         <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <Activity className="w-4 h-4 text-amber-400" />
+            <Gauge className="w-4 h-4 text-amber-400" />
             <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
               Long / Short Regime
             </h3>
@@ -240,14 +239,6 @@ export default function OverviewTab({
             </div>
           )}
 
-          {presetSourceCount > 0 && !regimeUnknown && (
-            <p className="text-[11px] text-text-muted mt-3">
-              Blended from {presetSourceCount}{" "}
-              {presetSourceCount === 1 ? "source" : "sources"} &middot; 1.00 ={" "}
-              <span className="text-emerald-400">bullish</span> &middot; 0.00 ={" "}
-              <span className="text-red-400">bearish</span>
-            </p>
-          )}
         </div>
       )}
 
