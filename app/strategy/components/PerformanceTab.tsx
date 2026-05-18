@@ -226,12 +226,12 @@ function NavTooltip({ active, payload, label }: {
         </>
       )}
 
-      {/* EW Benchmark Holdings */}
+      {/* Equal Weight Holdings */}
       {eqHoldings && eqHoldings.length > 0 && (
         <>
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginTop: holdings && holdings.length > 0 ? 8 : 0, marginBottom: 8 }} />
           <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5, fontWeight: 600 }}>
-            EW Benchmark
+            Equal Weight
           </p>
 
           {ewLongs.length > 0 && (
@@ -514,7 +514,7 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             <Area
               type="monotone"
               dataKey="eq_weight_nav"
-              name="EW Benchmark"
+              name="Equal Weight"
               stroke="rgba(255,255,255,0.5)"
               strokeWidth={1.5}
               strokeDasharray="5 3"
@@ -596,7 +596,7 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             <Area
               type="monotone"
               dataKey="eq_weight_dd"
-              name="EW Benchmark"
+              name="Equal Weight"
               stroke="#EF4444"
               strokeWidth={1.5}
               strokeDasharray="5 3"
@@ -646,7 +646,7 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             <div className="space-y-3">
               {([
                 { label: "Strategy", val: fmtTotalWithCagr(m.total_return, m.cagr) },
-                { label: "EW Benchmark", val: fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr), tooltip: "Equal-weight portfolio across the same asset universe \u2014 the strategy's benchmark." },
+                { label: "Equal Weight", val: fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr), tooltip: "Equal-weight portfolio across the same asset universe \u2014 the strategy's benchmark." },
                 { label: "SOL Return", val: fmtTotalWithCagr(m.sol_return, m.sol_cagr) },
                 { label: "BTC Return", val: m.btc_return == null ? "N/A" : fmtTotalWithCagr(m.btc_return, m.btc_cagr) },
                 { label: "Alpha", val: m.alpha != null ? fmtPct(m.alpha) : "\u2014", tooltip: "Total-return alpha: Vault total return \u2212 Equal-Weight benchmark total return." },
