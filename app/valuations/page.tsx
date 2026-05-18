@@ -1443,73 +1443,35 @@ export default function AnalysisPage() {
           </div>
         )}
 
-        {/* Per-asset-type definitions: same term means different things across
-            equities, ownership coins, and DeFi tokens. Hidden on mobile. */}
-        <div className="mb-4 hidden sm:block">
-          <div className="mx-auto max-w-3xl">
-            <table className="w-full text-sm text-text-secondary">
-              <thead>
-                <tr className="text-[11px] uppercase tracking-wider text-text-muted">
-                  <th className="text-left py-1 pr-3 font-medium" />
-                  <th className="text-left py-1 px-2 font-medium">Equity</th>
-                  <th className="text-left py-1 px-2 font-medium">
-                    Ownership Coin
-                  </th>
-                  <th className="text-left py-1 px-2 font-medium">
-                    DeFi Token
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {(
-                  [
-                    [
-                      DollarSign,
-                      "Revenue",
-                      "Income-statement revenue",
-                      "Treasury inflows (USD)",
-                      "Protocol fees",
-                    ],
-                    [
-                      Users,
-                      "Earnings",
-                      "Net income",
-                      "Inflows − outflows",
-                      "Holder-revenue share (NULL when no holder claim)",
-                    ],
-                    [
-                      Wallet,
-                      "Distributions",
-                      "Dividends + buybacks",
-                      "—",
-                      "Buybacks + burns + holder payouts",
-                    ],
-                    [
-                      Vault,
-                      "Treasury",
-                      "Cash & equivalents",
-                      "On-chain treasury balance",
-                      "Protocol-controlled assets",
-                    ],
-                  ] as const
-                ).map(([Icon, term, equity, ownership, token]) => (
-                  <tr key={term as string}>
-                    <td className="py-1 pr-3 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5">
-                        <Icon className="w-4 h-4 text-text-muted" />
-                        <span className="font-semibold text-text-primary">
-                          {term}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="py-1 px-2">{equity}</td>
-                    <td className="py-1 px-2">{ownership}</td>
-                    <td className="py-1 px-2">{token}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-4 text-sm text-text-secondary text-center hidden sm:flex flex-col items-center gap-1">
+          <span className="inline-flex items-center gap-1.5">
+            <Wallet className="w-4 h-4 text-text-muted" />
+            <span className="font-semibold text-text-primary">
+              Distributions
+            </span>{" "}
+            = Buybacks + Burns + Dividends
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Users className="w-4 h-4 text-text-muted" />
+            <span className="font-semibold text-text-primary">
+              Earnings
+            </span>{" "}
+            = Revenue owned by holders
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <DollarSign className="w-4 h-4 text-text-muted" />
+            <span className="font-semibold text-text-primary">
+              Revenue
+            </span>{" "}
+            = Value captured by entity
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Vault className="w-4 h-4 text-text-muted" />
+            <span className="font-semibold text-text-primary">
+              Treasury
+            </span>{" "}
+            = Assets owned by holders
+          </span>
         </div>
 
         {/* Column Group Toggles */}
@@ -1538,18 +1500,32 @@ export default function AnalysisPage() {
           <div className="mb-2 sm:mb-4 flex justify-center">
             <div className="flex flex-col items-center gap-1">
               <button
+                type="button"
+                role="switch"
+                aria-checked={showNet}
                 onClick={() => setShowNet(!showNet)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all border cursor-pointer ${
-                  showNet
-                    ? "bg-accent-cyan text-bg-primary border-accent-cyan"
-                    : "bg-transparent text-text-secondary border-white/10 hover:border-accent-cyan/40 hover:text-text-primary"
-                }`}
+                className="inline-flex items-center gap-2 cursor-pointer group"
               >
-                Net (After Emissions + Unlocks)
+                <span
+                  className={`relative inline-block w-9 h-5 rounded-full transition-colors ${
+                    showNet
+                      ? "bg-accent-cyan"
+                      : "bg-white/10 group-hover:bg-white/20"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-bg-primary transition-transform ${
+                      showNet ? "translate-x-4" : "translate-x-0"
+                    }`}
+                  />
+                </span>
+                <span className="text-sm font-medium text-text-secondary group-hover:text-text-primary transition-colors">
+                  Net
+                </span>
               </button>
               <span className="text-sm text-text-secondary italic hidden sm:block">
-                Windowed Net = Gross − Emissions. Expected 1y Net additionally
-                scales the projection by a ±50%-capped emissions-sensitivity multiplier.
+                Net = Gross − Emissions. Also scales forward-looking
+                projections by a ±50%-capped emissions-sensitivity multiplier.
               </span>
             </div>
           </div>
