@@ -123,10 +123,6 @@ function humanizeMetric(raw: string): string {
   m = s.match(/^(.+?)_expected_1y$/);
   if (m) return `${prefix}${humanizeBase(m[1])} (Exp. 1y)`;
 
-  // Pattern: *_Xd_ann (annualized)
-  m = s.match(/^(.+?)_(\d+d)_ann$/);
-  if (m) return `${prefix}${humanizeBase(m[1])} (${m[2]}, Ann.)`;
-
   // Pattern: *_pct (percentage ratio)
   m = s.match(/^(.+?)_(.+?)_pct$/);
   if (m) return `${prefix}${humanizeBase(m[1])}/${humanizeBase(m[2])} %`;

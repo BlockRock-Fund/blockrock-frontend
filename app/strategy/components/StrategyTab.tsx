@@ -166,7 +166,7 @@ function formatFormula(
       .map((t) => {
         const sign = t.weight < 0 ? "- " : "";
         const mag = Math.abs(t.weight).toFixed(2);
-        return `${sign}${mag} × ${resolveLabel(t.field)}`;
+        return `${sign}(${mag} × ${resolveLabel(t.field)})`;
       })
       .join(" + ")
       .replace(/\+ - /g, "- ")

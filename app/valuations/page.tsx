@@ -1506,6 +1506,9 @@ export default function AnalysisPage() {
                 onClick={() => setShowNet(!showNet)}
                 className="inline-flex items-center gap-2 cursor-pointer group"
               >
+                <span className="text-sm font-medium text-text-secondary group-hover:text-text-primary transition-colors">
+                  Net
+                </span>
                 <span
                   className={`relative inline-block w-9 h-5 rounded-full transition-colors ${
                     showNet
@@ -1518,9 +1521,6 @@ export default function AnalysisPage() {
                       showNet ? "translate-x-4" : "translate-x-0"
                     }`}
                   />
-                </span>
-                <span className="text-sm font-medium text-text-secondary group-hover:text-text-primary transition-colors">
-                  Net
                 </span>
               </button>
               <span className="text-sm text-text-secondary italic hidden sm:block">

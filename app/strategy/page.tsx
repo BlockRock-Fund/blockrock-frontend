@@ -165,11 +165,6 @@ export default function StrategyPage() {
             </button>
           ))}
         </div>
-        <p className="text-xs text-text-muted mb-8">
-          Each universe loads a different preset (factor weights, regime config,
-          exclusions) tuned for that asset class.
-        </p>
-
         {error && (
           <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
             {error}
