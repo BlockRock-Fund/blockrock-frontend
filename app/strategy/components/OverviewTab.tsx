@@ -26,6 +26,7 @@ import {
 } from "./types";
 import { getFieldMetadata, formatFactorValue } from "./fieldMetadata";
 import AllocationDonut from "./AllocationDonut";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 interface OverviewTabProps {
   weights: TargetWeight[];
@@ -357,7 +358,12 @@ export default function OverviewTab({
                     </>
                   )}
                   <th className="text-right py-3 px-3 font-medium">
-                    Composite Score
+                    <span className="inline-flex items-center gap-1 justify-end">
+                      Composite Score
+                      <InfoTooltip
+                        content="Weighted sum of the strategy's score terms (see the Strategy tab for the exact formula). Higher = stronger long candidate."
+                      />
+                    </span>
                   </th>
                   <th className="text-right py-3 px-3 font-medium">
                     Target Weight

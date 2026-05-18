@@ -26,7 +26,7 @@ export const FIELD_METADATA: Record<string, FieldMetadata> = {
     label: "Distributions Yield",
     color: "#10B981",
     tooltip:
-      "Expected 1-year distributions yield. The strongest single return predictor in factor research.",
+      "Expected 1-year distributions yield (projected distributions ÷ market cap). See the Lab tab for live IC and t-stat across horizons.",
     format: "pct",
   },
   net_distributions_yield_expected_1y: {
@@ -34,7 +34,7 @@ export const FIELD_METADATA: Record<string, FieldMetadata> = {
     shortLabel: "Net Dist. Yield",
     color: "#10B981",
     tooltip:
-      "Expected 1-year distributions yield after emissions dilution. Captures true holder cash return net of token issuance.",
+      "Expected 1-year distributions yield with net inputs (gross − emissions) and an emissions-sensitivity multiplier applied to the projection.",
     format: "pct",
   },
   net_earnings_yield_expected_1y: {
@@ -42,7 +42,7 @@ export const FIELD_METADATA: Record<string, FieldMetadata> = {
     shortLabel: "Net Earn. Yield",
     color: "#3B82F6",
     tooltip:
-      "Expected 1-year net earnings yield after emissions. Captures real profitability vs. vanity revenue metrics.",
+      "Expected 1-year earnings yield with net inputs (gross − emissions) and an emissions-sensitivity multiplier applied to the projection.",
     format: "pct",
   },
   revenue_yield_expected_1y: {
@@ -196,7 +196,7 @@ export const FIELD_METADATA: Record<string, FieldMetadata> = {
     label: "Emissions Rate",
     color: "#EF4444",
     tooltip:
-      "Expected 1-year token emissions. High emissions dilute holders and create sell pressure — the strongest short signal.",
+      "Expected 1-year token issuance as a percentage of circulating supply. High emissions dilute holders and create sell pressure.",
     format: "pct",
   },
   obv_trend_20d: {

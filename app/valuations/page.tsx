@@ -247,6 +247,20 @@ const COLUMN_GROUPS = [
 
 const NET_TOGGLE_GROUPS = ["valuation", "distributions", "earnings", "revenue"];
 
+// Methodology notes shared across every *_expected_1y tooltip. The projection
+// is implemented in blockrock-backend/jobs/calculations.py (project_expected_1y
+// + adjust_expected_metric_for_emissions_sensitivity).
+const PROJECTION_NOTE =
+  "Projection anchors to the best available trailing annualized window " +
+  "(1y → 180d_ann → 90d_ann → 30d_ann → 7d_ann → 24h_ann), then blends " +
+  "period-over-period growth (weighted 0.45/0.25/0.20/0.07/0.03 across " +
+  "1y/180d/90d/30d/7d) with maturity-scaled dampening.";
+
+const NET_PROJECTION_NOTE =
+  "Net inputs subtract emissions per window. The projection is additionally " +
+  "scaled by an emissions-sensitivity multiplier (capped at ±50%) when " +
+  "expected emissions diverge from trailing.";
+
 type SimpleTableRow = {
   asset_id: number;
   symbol: string;
@@ -499,9 +513,11 @@ export default function AnalysisPage() {
     let width = 50 + 110;
 
     const groupWidths: Record<string, number> = {
-      valuation: 220 + 190 + 195 + 160 + 160,
+      // yields ×3, growth, tvl/mc, holder_share_method
+      valuation: 220 + 190 + 195 + 160 + 140 + 150,
       distributions: 180 + 200 + 200 + 160 * 14 + 150 + 150,
-      earnings: 170 * 3 + 160 * 14 + 150 + 150,
+      // expected_1y + 5 × (ann + change) + 1y + 1y-change + revenue→earnings %
+      earnings: 170 + 160 * 10 + 160 + 160 + 150,
       revenue:
         140 + 170 + 170 + 160 + 150 + 160 + 150 + 160 + 150 + 165 + 150 + 160 + 160 + 160 + 160,
       treasury: 140 + 140 + 140 + 150,
@@ -531,6 +547,7 @@ export default function AnalysisPage() {
         showNet ? "net_revenue_yield_expected_1y" : "revenue_yield_expected_1y",
         "growth_trend",
         "tvl_mc_ratio",
+        "holder_share_method",
       ],
       distributions: [
         "distributions_24h",
@@ -564,7 +581,6 @@ export default function AnalysisPage() {
         "earnings_1y_o_1y",
         "earnings_expected_1y",
         "revenue_earnings_pct",
-        "holder_share_method",
       ],
       revenue: [
         "revenue_24h",
@@ -580,7 +596,6 @@ export default function AnalysisPage() {
         "revenue_1y",
         "revenue_1y_o_1y",
         "revenue_expected_1y",
-        "take_rate_pct",
       ],
       treasury: [
         "treasury_assets", "treasury_debt", "treasury_value", "treasury_coverage",
@@ -668,8 +683,8 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip: showNet
-            ? "Net Distributions Expected 1y / Market Cap\n\nNet = Total - (Emissions + Unlocks)"
-            : "Distributions Expected 1y / Market Cap",
+            ? `Net Distributions Expected 1y ÷ Market Cap.\n\n${PROJECTION_NOTE}\n\n${NET_PROJECTION_NOTE}`
+            : `Distributions Expected 1y ÷ Market Cap.\n\n${PROJECTION_NOTE}`,
         },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) =>
@@ -687,8 +702,8 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip: showNet
-            ? "Net Earnings Expected 1y / Market Cap\n\nNet = Total - (Emissions + Unlocks)"
-            : "Earnings Expected 1y / Market Cap",
+            ? `Net Earnings Expected 1y ÷ Market Cap.\n\n${PROJECTION_NOTE}\n\n${NET_PROJECTION_NOTE}`
+            : `Earnings Expected 1y ÷ Market Cap.\n\n${PROJECTION_NOTE}`,
         },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) =>
@@ -705,8 +720,8 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip: showNet
-            ? "Net Revenue Expected 1y / Market Cap\n\nNet = Total - (Emissions + Unlocks)"
-            : "Revenue Expected 1y / Market Cap",
+            ? `Net Revenue Expected 1y ÷ Market Cap.\n\n${PROJECTION_NOTE}\n\n${NET_PROJECTION_NOTE}`
+            : `Revenue Expected 1y ÷ Market Cap.\n\n${PROJECTION_NOTE}`,
         },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: (a: any, b: any, nodeA: any, nodeB: any, isDesc: boolean) =>
@@ -719,7 +734,12 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip:
-            "Longest available period-over-period revenue change (up to year-over-year)",
+            "Weighted composite of realized revenue momentum:\n" +
+            "  +0.45 × net revenue 90d/90d\n" +
+            "  +0.35 × revenue 30d/30d\n" +
+            "  +0.20 × net revenue 30d/30d\n" +
+            "  −0.15 × revenue 1y/1y  (reversal penalty)\n\n" +
+            "Sum is normalized by Σ|weights| over the inputs actually available.",
         },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
@@ -751,8 +771,8 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip: showNet
-            ? "(Net Distributions Short-Term Annualized + Net Distributions Long-Term Annualized) / 2\n\nNet = Total - (Emissions + Unlocks)"
-            : "(Distributions Short-Term Annualized + Distributions Long-Term Annualized) / 2",
+            ? `Projected next-12-months distributions, net of emissions.\n\n${PROJECTION_NOTE}\n\n${NET_PROJECTION_NOTE}`
+            : `Projected next-12-months distributions.\n\n${PROJECTION_NOTE}`,
         },
         valueFormatter: (params: any) =>
           formatCurrency(
@@ -860,6 +880,11 @@ export default function AnalysisPage() {
       {
         field: "revenue_distributions_pct",
         headerName: "Revenue\nDistributions %",
+        headerComponent: CustomHeader,
+        headerComponentParams: {
+          tooltip:
+            "Distributions ÷ Revenue — share of protocol revenue paid back to holders.",
+        },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
         width: 160,
@@ -867,6 +892,11 @@ export default function AnalysisPage() {
       {
         field: "earnings_distributions_pct",
         headerName: "Earnings\nDistributions %",
+        headerComponent: CustomHeader,
+        headerComponentParams: {
+          tooltip:
+            "Distributions ÷ Earnings — payout ratio. How much of holder-claim cash flow is distributed.",
+        },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
         width: 150,
@@ -881,8 +911,8 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip: showNet
-            ? "(Net Earnings Short-Term Annualized + Net Earnings Long-Term Annualized) / 2\nNet = Total - (Emissions + Unlocks)"
-            : "(Earnings Short-Term Annualized + Earnings Long-Term Annualized) / 2",
+            ? `Projected next-12-months earnings, net of emissions.\n\n${PROJECTION_NOTE}\n\n${NET_PROJECTION_NOTE}`
+            : `Projected next-12-months earnings.\n\n${PROJECTION_NOTE}`,
         },
         valueFormatter: (params: any) =>
           formatCurrency(
@@ -1004,7 +1034,11 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip:
-            "Method used to distribute value to holders (e.g., buyback, staking, fee sharing)",
+            "How holders receive value, and how Revenue / Earnings / Distributions are defined for this asset:\n\n" +
+            "  • equity — legal claim to net profits; Revenue = income-statement revenue, Earnings = net income\n" +
+            "  • ownership — holders own the treasury; Revenue = inflows, Earnings = inflows − outflows\n" +
+            "  • buyback — protocol revenue used to repurchase the token\n" +
+            "  • dividend — protocol revenue paid out to holders",
         },
         width: 150,
       },
@@ -1018,8 +1052,8 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip: showNet
-            ? "(Net Revenue Short-Term Annualized + Net Revenue Long-Term Annualized) / 2\nNet = Total - (Emissions + Unlocks)"
-            : "(Revenue Short-Term Annualized + Revenue Long-Term Annualized) / 2",
+            ? `Projected next-12-months revenue, net of emissions.\n\n${PROJECTION_NOTE}\n\n${NET_PROJECTION_NOTE}`
+            : `Projected next-12-months revenue.\n\n${PROJECTION_NOTE}`,
         },
         valueFormatter: (params: any) =>
           formatCurrency(
@@ -1289,7 +1323,7 @@ export default function AnalysisPage() {
         headerComponent: CustomHeader,
         headerComponentParams: {
           tooltip:
-            "Rate at which new tokens are expected to be issued over the next year",
+            "Expected token issuance over the next year as a percentage of circulating supply.",
         },
         valueFormatter: (params: any) => formatPercent(params.value),
         comparator: numericComparator,
@@ -1409,35 +1443,73 @@ export default function AnalysisPage() {
           </div>
         )}
 
-        <div className="mb-4 text-sm text-text-secondary text-center hidden sm:flex flex-col items-center gap-1">
-          <span className="inline-flex items-center gap-1.5">
-            <Wallet className="w-4 h-4 text-text-muted" />
-            <span className="font-semibold text-text-primary">
-              Distributions
-            </span>{" "}
-            = Buybacks + Burns + Dividends
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-text-muted" />
-            <span className="font-semibold text-text-primary">
-              Earnings
-            </span>{" "}
-            = Revenue owned by holders
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <DollarSign className="w-4 h-4 text-text-muted" />
-            <span className="font-semibold text-text-primary">
-              Revenue
-            </span>{" "}
-            = Value captured by entity
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Vault className="w-4 h-4 text-text-muted" />
-            <span className="font-semibold text-text-primary">
-              Treasury
-            </span>{" "}
-            = Assets owned by holders
-          </span>
+        {/* Per-asset-type definitions: same term means different things across
+            equities, ownership coins, and DeFi tokens. Hidden on mobile. */}
+        <div className="mb-4 hidden sm:block">
+          <div className="mx-auto max-w-3xl">
+            <table className="w-full text-sm text-text-secondary">
+              <thead>
+                <tr className="text-[11px] uppercase tracking-wider text-text-muted">
+                  <th className="text-left py-1 pr-3 font-medium" />
+                  <th className="text-left py-1 px-2 font-medium">Equity</th>
+                  <th className="text-left py-1 px-2 font-medium">
+                    Ownership Coin
+                  </th>
+                  <th className="text-left py-1 px-2 font-medium">
+                    DeFi Token
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {(
+                  [
+                    [
+                      DollarSign,
+                      "Revenue",
+                      "Income-statement revenue",
+                      "Treasury inflows (USD)",
+                      "Protocol fees",
+                    ],
+                    [
+                      Users,
+                      "Earnings",
+                      "Net income",
+                      "Inflows − outflows",
+                      "Holder-revenue share (NULL when no holder claim)",
+                    ],
+                    [
+                      Wallet,
+                      "Distributions",
+                      "Dividends + buybacks",
+                      "—",
+                      "Buybacks + burns + holder payouts",
+                    ],
+                    [
+                      Vault,
+                      "Treasury",
+                      "Cash & equivalents",
+                      "On-chain treasury balance",
+                      "Protocol-controlled assets",
+                    ],
+                  ] as const
+                ).map(([Icon, term, equity, ownership, token]) => (
+                  <tr key={term as string}>
+                    <td className="py-1 pr-3 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Icon className="w-4 h-4 text-text-muted" />
+                        <span className="font-semibold text-text-primary">
+                          {term}
+                        </span>
+                      </span>
+                    </td>
+                    <td className="py-1 px-2">{equity}</td>
+                    <td className="py-1 px-2">{ownership}</td>
+                    <td className="py-1 px-2">{token}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Column Group Toggles */}
@@ -1476,7 +1548,8 @@ export default function AnalysisPage() {
                 Net (After Emissions + Unlocks)
               </button>
               <span className="text-sm text-text-secondary italic hidden sm:block">
-                Also accounts for sensitivity of revenue to emissions
+                Windowed Net = Gross − Emissions. Expected 1y Net additionally
+                scales the projection by a ±50%-capped emissions-sensitivity multiplier.
               </span>
             </div>
           </div>

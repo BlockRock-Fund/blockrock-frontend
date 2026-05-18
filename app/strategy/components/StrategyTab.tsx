@@ -154,7 +154,11 @@ function formatPercent(val: number | null, digits = 0): string {
   return `${(val * 100).toFixed(digits)}%`;
 }
 
-function formatFormula(prefix: string, terms: ScoreTerm[]): string {
+function formatFormula(
+  prefix: string,
+  terms: ScoreTerm[],
+  resolveLabel: (field: string) => string,
+): string {
   return (
     prefix +
     " = " +
@@ -162,7 +166,7 @@ function formatFormula(prefix: string, terms: ScoreTerm[]): string {
       .map((t) => {
         const sign = t.weight < 0 ? "- " : "";
         const mag = Math.abs(t.weight).toFixed(2);
-        return `${sign}${mag} * ${t.field}`;
+        return `${sign}${mag} × ${resolveLabel(t.field)}`;
       })
       .join(" + ")
       .replace(/\+ - /g, "- ")
@@ -227,8 +231,11 @@ export default function StrategyTab({
           })}
         </div>
         <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
-          <p className="text-xs font-mono text-text-secondary break-all">
-            {formatFormula("score", longTerms)}
+          <p
+            className="text-xs font-mono text-text-secondary break-all"
+            title={formatFormula("score", longTerms, (f) => f)}
+          >
+            {formatFormula("score", longTerms, (f) => getFieldMetadata(f).label)}
           </p>
         </div>
       </div>
@@ -255,8 +262,11 @@ export default function StrategyTab({
             })}
           </div>
           <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
-            <p className="text-xs font-mono text-text-secondary break-all">
-              {formatFormula("short_score", shortTerms)}
+            <p
+              className="text-xs font-mono text-text-secondary break-all"
+              title={formatFormula("short_score", shortTerms, (f) => f)}
+            >
+              {formatFormula("short_score", shortTerms, (f) => getFieldMetadata(f).label)}
             </p>
           </div>
         </div>
@@ -329,6 +339,13 @@ export default function StrategyTab({
                 </div>
               </div>
             </div>
+          )}
+
+          {(regimeBear !== null || regimeBull !== null) && (
+            <p className="text-[11px] text-text-muted -mt-3 mb-5 text-center">
+              Short allocation interpolates linearly between these anchors as
+              the regime score moves from 0 to 1.
+            </p>
           )}
 
           {/* Per-source visualizations */}

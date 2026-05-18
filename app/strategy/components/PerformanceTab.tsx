@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { API_BASE_URL, type BacktestData, type BacktestDaily } from "./types";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 const TOOLTIP_STYLE = {
   backgroundColor: "var(--bg-secondary)",
@@ -53,17 +54,20 @@ function MetricCard({
   suffix,
   sublabel,
   positive,
+  tooltip,
 }: {
   label: string;
   value: string;
   suffix?: string;
   sublabel?: string;
   positive?: boolean;
+  tooltip?: string;
 }) {
   return (
     <div className="glass rounded-2xl p-5 text-center">
-      <p className="text-xs uppercase tracking-wider text-text-muted mb-2">
-        {label}
+      <p className="text-xs uppercase tracking-wider text-text-muted mb-2 inline-flex items-center justify-center gap-1 w-full">
+        <span>{label}</span>
+        {tooltip && <InfoTooltip content={tooltip} />}
       </p>
       <p
         className="text-2xl font-bold font-mono"
@@ -328,6 +332,26 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
     return data.daily.some((d) => d.btc_nav !== null);
   }, [data]);
 
+  // Worst drawdown actually visible in the filtered + rebased chart. Each
+  // *_dd field is a negative percentage (computed in filteredDaily above),
+  // so Math.min() picks the deepest trough in the current window.
+  const visibleMaxDd = useMemo(() => {
+    if (filteredDaily.length === 0) {
+      return { vault: null, ew: null, sol: null, btc: null } as {
+        vault: number | null; ew: number | null; sol: number | null; btc: number | null;
+      };
+    }
+    const btcDds = filteredDaily
+      .map((d) => d.btc_dd)
+      .filter((v): v is number => v != null);
+    return {
+      vault: Math.min(...filteredDaily.map((d) => d.vault_dd)),
+      ew: Math.min(...filteredDaily.map((d) => d.eq_weight_dd)),
+      sol: Math.min(...filteredDaily.map((d) => d.sol_dd)),
+      btc: btcDds.length > 0 ? Math.min(...btcDds) : null,
+    };
+  }, [filteredDaily]);
+
   if (loading) {
     return (
       <div className="space-y-10">
@@ -371,33 +395,44 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
           value={m.total_return != null ? fmtPct(m.total_return) : "\u2014"}
           sublabel={years != null ? `over ${formatYears(years)} years` : undefined}
           positive={m.total_return != null ? m.total_return >= 0 : undefined}
+          tooltip="Cumulative percentage return over the measurement period (warm-up excluded \u2014 see footer)."
         />
         <MetricCard
           label="Annualized"
           value={m.cagr != null ? fmtPct(m.cagr) : "\u2014"}
           sublabel="CAGR"
           positive={m.cagr != null ? m.cagr >= 0 : undefined}
+          tooltip="Compound annual growth rate over the measurement period."
         />
-        <MetricCard label="Sharpe" value={m.sharpe?.toFixed(2) ?? "\u2014"} positive={m.sharpe != null ? m.sharpe > 0 : undefined} />
+        <MetricCard
+          label="Sharpe"
+          value={m.sharpe?.toFixed(2) ?? "\u2014"}
+          positive={m.sharpe != null ? m.sharpe > 0 : undefined}
+          tooltip="Annualized excess return \u00f7 annualized return volatility. Higher is better; >1 is generally considered strong."
+        />
         <MetricCard
           label="Max Drawdown"
           value={m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"}
           positive={m.max_drawdown != null ? false : undefined}
+          tooltip="Largest peak-to-trough NAV decline over the full measurement period."
         />
         <MetricCard
           label="Win Rate"
           value={m.win_rate != null ? `${m.win_rate}%` : "\u2014"}
           positive={m.win_rate != null ? m.win_rate >= 50 : undefined}
+          tooltip="Share of months with a positive return."
         />
         <MetricCard
           label="Alpha"
           value={m.alpha != null ? fmtPct(m.alpha) : "\u2014"}
           positive={m.alpha != null ? m.alpha >= 0 : undefined}
+          tooltip="Total-return alpha: Vault total return \u2212 Equal-Weight benchmark total return over the full measurement period."
         />
         <MetricCard
           label="Sortino"
           value={m.sortino?.toFixed(2) ?? "\u2014"}
           positive={m.sortino != null ? m.sortino > 0 : undefined}
+          tooltip="Like Sharpe, but the denominator uses only downside volatility \u2014 penalizes losses, not upside swings."
         />
       </div>
 
@@ -512,10 +547,18 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
 
       {/* Drawdown Chart */}
       <div className="glass rounded-2xl p-6">
-        <h3 className="text-xl font-semibold mb-1">Drawdown from Peak</h3>
+        <div className="flex items-baseline justify-between mb-1 gap-2 flex-wrap">
+          <h3 className="text-xl font-semibold">Drawdown from Peak</h3>
+          <span className="text-[11px] uppercase tracking-wider text-text-muted">
+            window: {timeframe}
+          </span>
+        </div>
         <p className="text-xs text-text-muted mb-4">
-          Vault max drawdown {m.max_drawdown ?? "\u2014"}% vs EW {m.eq_weight_max_drawdown ?? "\u2014"}% vs SOL {m.sol_max_drawdown ?? "\u2014"}%
-          {m.btc_max_drawdown != null ? ` vs BTC ${m.btc_max_drawdown}%` : ""}
+          Vault max drawdown{" "}
+          {visibleMaxDd.vault != null ? `${visibleMaxDd.vault.toFixed(1)}%` : "\u2014"} vs EW{" "}
+          {visibleMaxDd.ew != null ? `${visibleMaxDd.ew.toFixed(1)}%` : "\u2014"} vs SOL{" "}
+          {visibleMaxDd.sol != null ? `${visibleMaxDd.sol.toFixed(1)}%` : "\u2014"}
+          {visibleMaxDd.btc != null ? ` vs BTC ${visibleMaxDd.btc.toFixed(1)}%` : ""}
         </p>
         <ResponsiveContainer width="100%" height={250}>
           <AreaChart data={filteredDaily}>
@@ -602,18 +645,21 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             </p>
             <div className="space-y-3">
               {([
-                ["Strategy", fmtTotalWithCagr(m.total_return, m.cagr)],
-                ["EW Benchmark", fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr)],
-                ["SOL Return", fmtTotalWithCagr(m.sol_return, m.sol_cagr)],
-                ["BTC Return", m.btc_return == null ? "N/A" : fmtTotalWithCagr(m.btc_return, m.btc_cagr)],
-                ["Alpha", m.alpha != null ? fmtPct(m.alpha) : "\u2014"],
-                ["Win Rate", m.win_rate != null ? `${m.win_rate}%` : "\u2014"],
-              ] as const).map(([label, val]) => (
+                { label: "Strategy", val: fmtTotalWithCagr(m.total_return, m.cagr) },
+                { label: "EW Benchmark", val: fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr), tooltip: "Equal-weight portfolio across the same asset universe \u2014 the strategy's benchmark." },
+                { label: "SOL Return", val: fmtTotalWithCagr(m.sol_return, m.sol_cagr) },
+                { label: "BTC Return", val: m.btc_return == null ? "N/A" : fmtTotalWithCagr(m.btc_return, m.btc_cagr) },
+                { label: "Alpha", val: m.alpha != null ? fmtPct(m.alpha) : "\u2014", tooltip: "Total-return alpha: Vault total return \u2212 Equal-Weight benchmark total return." },
+                { label: "Win Rate", val: m.win_rate != null ? `${m.win_rate}%` : "\u2014", tooltip: "Share of months with a positive return." },
+              ]).map(({ label, val, tooltip }) => (
                 <div
                   key={label}
                   className="flex justify-between py-1.5 border-b border-white/5"
                 >
-                  <span className="text-sm text-text-secondary">{label}</span>
+                  <span className="text-sm text-text-secondary inline-flex items-center gap-1">
+                    {label}
+                    {tooltip && <InfoTooltip content={tooltip} />}
+                  </span>
                   <span className="text-sm font-mono font-medium">{val}</span>
                 </div>
               ))}
@@ -625,19 +671,22 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             </p>
             <div className="space-y-3">
               {([
-                ["Volatility", m.volatility != null ? `${m.volatility}%` : "\u2014"],
-                ["Beta", m.beta?.toFixed(2) ?? "\u2014"],
-                ["Sharpe Ratio", m.sharpe?.toFixed(2) ?? "\u2014"],
-                ["Sortino Ratio", m.sortino?.toFixed(2) ?? "\u2014"],
-                ["Calmar Ratio", m.calmar?.toFixed(2) ?? "\u2014"],
-                ["Information Ratio", m.information_ratio?.toFixed(2) ?? "\u2014"],
-                ["Max Drawdown", m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"],
-              ] as const).map(([label, val]) => (
+                { label: "Volatility", val: m.volatility != null ? `${m.volatility}%` : "\u2014", tooltip: "Annualized standard deviation of daily returns." },
+                { label: "Beta", val: m.beta?.toFixed(2) ?? "\u2014", tooltip: "Sensitivity of vault returns to the EW benchmark. 1.0 = lockstep, >1 = amplified, <1 = damped." },
+                { label: "Sharpe Ratio", val: m.sharpe?.toFixed(2) ?? "\u2014", tooltip: "Annualized excess return \u00f7 annualized return volatility." },
+                { label: "Sortino Ratio", val: m.sortino?.toFixed(2) ?? "\u2014", tooltip: "Like Sharpe but the denominator uses only downside volatility." },
+                { label: "Calmar Ratio", val: m.calmar?.toFixed(2) ?? "\u2014", tooltip: "CAGR \u00f7 |Max Drawdown|. Return per unit of worst-case loss." },
+                { label: "Information Ratio", val: m.information_ratio?.toFixed(2) ?? "\u2014", tooltip: "(Vault \u2212 EW) excess return \u00f7 tracking error. Risk-adjusted alpha." },
+                { label: "Max Drawdown", val: m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014", tooltip: "Largest peak-to-trough NAV decline over the full measurement period." },
+              ]).map(({ label, val, tooltip }) => (
                 <div
                   key={label}
                   className="flex justify-between py-1.5 border-b border-white/5"
                 >
-                  <span className="text-sm text-text-secondary">{label}</span>
+                  <span className="text-sm text-text-secondary inline-flex items-center gap-1">
+                    {label}
+                    {tooltip && <InfoTooltip content={tooltip} />}
+                  </span>
                   <span className="text-sm font-mono font-medium">{val}</span>
                 </div>
               ))}

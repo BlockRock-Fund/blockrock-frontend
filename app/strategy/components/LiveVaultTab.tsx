@@ -15,6 +15,7 @@ import {
   pct,
   usd,
   regimeColor,
+  type StrategyConfigResponse,
 } from "./types";
 
 interface LiveVaultTabProps {
@@ -23,6 +24,7 @@ interface LiveVaultTabProps {
   longs: TargetWeight[];
   shorts: TargetWeight[];
   loading: boolean;
+  strategyConfig: StrategyConfigResponse | null;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -183,6 +185,7 @@ export default function LiveVaultTab({
   longs,
   shorts,
   loading,
+  strategyConfig,
 }: LiveVaultTabProps) {
   if (loading) {
     return (
@@ -234,8 +237,16 @@ export default function LiveVaultTab({
                 Status
               </p>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                <span className="text-sm font-medium">Dry Run</span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    status.dry_run
+                      ? "bg-blue-400 animate-pulse"
+                      : "bg-emerald-400"
+                  }`}
+                />
+                <span className="text-sm font-medium">
+                  {status.dry_run ? "Dry Run" : "Live"}
+                </span>
               </div>
             </div>
             <div>
@@ -371,30 +382,64 @@ export default function LiveVaultTab({
         </div>
       )}
 
-      {/* Rebalance Config */}
-      <div className="glass rounded-2xl p-6">
-        <h3 className="text-xl font-semibold mb-4">Rebalance Configuration</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { label: "Cadence", value: "24h" },
-            { label: "Mode", value: "Dry Run" },
-            { label: "Threshold", value: "5%" },
-            { label: "Max Longs", value: "10 / 25%" },
-            { label: "Max Shorts", value: "5 / 25%" },
-            { label: "Max Short Total", value: "50%" },
-          ].map((c) => (
-            <div
-              key={c.label}
-              className="bg-white/[0.03] rounded-xl p-3 border border-white/5 text-center"
-            >
-              <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
-                {c.label}
-              </p>
-              <p className="text-sm font-bold font-mono">{c.value}</p>
+      {/* Rebalance Config — driven entirely by /vault/status + /vault/strategy-config */}
+      {(() => {
+        const cfg = strategyConfig?.constraints;
+        const fmtCap = (v: number | null | undefined) =>
+          v != null ? `${(v * 100).toFixed(0)}%` : null;
+        const items: { label: string; value: string }[] = [];
+        if (status?.rebalance_cadence_hours != null) {
+          items.push({
+            label: "Cadence",
+            value: `${status.rebalance_cadence_hours}h`,
+          });
+        }
+        if (status?.dry_run !== undefined) {
+          items.push({
+            label: "Mode",
+            value: status.dry_run ? "Dry Run" : "Live",
+          });
+        }
+        const threshold = fmtCap(cfg?.rebalance_threshold);
+        if (threshold) {
+          items.push({ label: "Drift Threshold", value: threshold });
+        }
+        const maxWeight = fmtCap(cfg?.max_weight);
+        if (cfg?.max_holdings != null && maxWeight) {
+          items.push({
+            label: "Max Longs",
+            value: `${cfg.max_holdings} / ${maxWeight}`,
+          });
+        }
+        const maxShortWeight = fmtCap(cfg?.max_short_weight);
+        if (cfg?.max_short_positions != null && maxShortWeight) {
+          items.push({
+            label: "Max Shorts",
+            value: `${cfg.max_short_positions} / ${maxShortWeight}`,
+          });
+        }
+        if (items.length === 0) return null;
+        return (
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold mb-4">
+              Rebalance Configuration
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              {items.map((c) => (
+                <div
+                  key={c.label}
+                  className="bg-white/[0.03] rounded-xl p-3 border border-white/5 text-center"
+                >
+                  <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
+                    {c.label}
+                  </p>
+                  <p className="text-sm font-bold font-mono">{c.value}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

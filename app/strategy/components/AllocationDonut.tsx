@@ -91,19 +91,29 @@ function useCountUp(target: number, durationMs = 800): number {
   return value;
 }
 
+// Matches recharts' PieSectorDataItem subset we actually read. Fields are
+// optional in recharts' upstream types, so we accept undefined and supply
+// defaults where the renderer can't tolerate them.
 type ActiveShapeProps = {
-  cx: number;
-  cy: number;
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-  fill: string;
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  fill?: string;
 };
 
 function renderActiveShape(props: ActiveShapeProps) {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } =
-    props;
+  const {
+    cx = 0,
+    cy = 0,
+    innerRadius = 0,
+    outerRadius = 0,
+    startAngle = 0,
+    endAngle = 0,
+    fill = "#000",
+  } = props;
   return (
     <g>
       <Sector
@@ -163,18 +173,28 @@ export default function AllocationDonut({
   const shortPct = Math.max(0, 100 - longPct);
   const total = longs.length + shorts.length;
 
+  // recharts' PieLabelRenderProps types these as optional; default at the
+  // destructure so the render function can stay total-numeric.
   type ChipLabelProps = {
-    cx: number;
-    cy: number;
-    midAngle: number;
-    outerRadius: number;
-    index: number;
-    name: string;
-    value: number;
+    cx?: number;
+    cy?: number;
+    midAngle?: number;
+    outerRadius?: number;
+    index?: number;
+    name?: string;
+    value?: number;
   };
 
   const renderChip = (props: ChipLabelProps) => {
-    const { cx, cy, midAngle, outerRadius, index, name, value } = props;
+    const {
+      cx = 0,
+      cy = 0,
+      midAngle = 0,
+      outerRadius = 0,
+      index = 0,
+      name = "",
+      value = 0,
+    } = props;
     const entry = pieData[index];
     if (!entry) return null;
     const color = entry.color;
@@ -290,6 +310,8 @@ export default function AllocationDonut({
               isAnimationActive={!reducedMotion}
               animationDuration={700}
               animationEasing="ease-out"
+              // @ts-expect-error - activeIndex/activeShape are valid recharts
+              // runtime props but missing from the current type declarations.
               activeIndex={activeIndex === -1 ? undefined : activeIndex}
               activeShape={renderActiveShape}
               onMouseEnter={(_, idx) => setActiveIndex(idx)}

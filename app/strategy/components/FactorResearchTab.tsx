@@ -376,6 +376,41 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
         />
       </div>
 
+      {/* Legend (positioned above the table so readers see it before scrolling) */}
+      <div className="glass rounded-xl p-4 text-xs text-text-muted space-y-1">
+        <p>
+          <strong className="text-text-secondary">Cell color</strong> ={" "}
+          <span style={{ color: "#6ee7b7" }}>Green</span> = direct correlation
+          (higher metric predicts higher return),{" "}
+          <span style={{ color: "#fca5a5" }}>Red</span> = inverse. Brighter =
+          stronger. Gray = noise. Hover metric name for raw field name.
+        </p>
+        <p>
+          <strong className="text-text-secondary">Signal</strong> = aggregated
+          magnitude: mean |IC| &times; max |t| &times; sign-consistency, scaled
+          &times;100. Higher = stronger predictive signal across horizons. Arrow
+          shows direction (&uarr; direct, &darr; inverse). Tiers:{" "}
+          <span style={{ color: "#10B981" }}>&ge; 10 strong</span>,{" "}
+          <span style={{ color: "#34D399" }}>&ge; 5 moderate</span>,{" "}
+          <span style={{ color: "#F59E0B" }}>&ge; 2 weak</span>,{" "}
+          <span style={{ color: "var(--text-muted)" }}>&lt; 2 noise</span>.
+          Sign-inconsistent signals are penalized 25%.
+        </p>
+        <p>
+          <strong className="text-text-secondary">IC</strong> = Information
+          Coefficient (Spearman rank correlation). &uarr; means higher metric
+          &rarr; higher return.
+        </p>
+        <p>
+          <strong className="text-text-secondary">t-stat</strong> = Statistical
+          significance. |t| &ge; 2.0 is strong, |t| &ge; 1.5 is moderate.
+        </p>
+        <p>
+          <strong className="text-text-secondary">L/S Spread</strong> = Mean
+          return of top tercile minus bottom tercile.
+        </p>
+      </div>
+
       {/* Cross-Horizon Table */}
       {view === "cross_horizon" && (
         <div className="glass rounded-xl overflow-hidden">
@@ -601,40 +636,6 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
         </div>
       )}
 
-      {/* Legend */}
-      <div className="glass rounded-xl p-4 text-xs text-text-muted space-y-1">
-        <p>
-          <strong className="text-text-secondary">Cell color</strong> ={" "}
-          <span style={{ color: "#6ee7b7" }}>Green</span> = direct correlation
-          (higher metric predicts higher return),{" "}
-          <span style={{ color: "#fca5a5" }}>Red</span> = inverse. Brighter =
-          stronger. Gray = noise. Hover metric name for raw field name.
-        </p>
-        <p>
-          <strong className="text-text-secondary">Signal</strong> = aggregated
-          magnitude: mean |IC| &times; max |t| &times; sign-consistency, scaled
-          &times;100. Higher = stronger predictive signal across horizons. Arrow
-          shows direction (&uarr; direct, &darr; inverse). Tiers:{" "}
-          <span style={{ color: "#10B981" }}>&ge; 10 strong</span>,{" "}
-          <span style={{ color: "#34D399" }}>&ge; 5 moderate</span>,{" "}
-          <span style={{ color: "#F59E0B" }}>&ge; 2 weak</span>,{" "}
-          <span style={{ color: "var(--text-muted)" }}>&lt; 2 noise</span>.
-          Sign-inconsistent signals are penalized 25%.
-        </p>
-        <p>
-          <strong className="text-text-secondary">IC</strong> = Information
-          Coefficient (Spearman rank correlation). &uarr; means higher metric
-          &rarr; higher return.
-        </p>
-        <p>
-          <strong className="text-text-secondary">t-stat</strong> = Statistical
-          significance. |t| &ge; 2.0 is strong, |t| &ge; 1.5 is moderate.
-        </p>
-        <p>
-          <strong className="text-text-secondary">L/S Spread</strong> = Mean
-          return of top tercile minus bottom tercile.
-        </p>
-      </div>
     </div>
   );
 }

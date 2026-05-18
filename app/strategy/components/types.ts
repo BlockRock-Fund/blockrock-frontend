@@ -53,6 +53,8 @@ export type VaultStatus = {
   num_holdings: number;
   holdings: VaultHolding[];
   last_rebalance_at: string | null;
+  dry_run: boolean;
+  rebalance_cadence_hours: number;
 };
 
 export type AllocationRecord = {
