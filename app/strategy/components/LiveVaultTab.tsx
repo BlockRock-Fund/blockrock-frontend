@@ -331,7 +331,7 @@ export default function LiveVaultTab({
                               undefined,
                               { maximumFractionDigits: 4 }
                             )
-                          : "\u2014"}
+                          : "—"}
                       </td>
                       <td className="py-3 px-3 text-right">
                         {usd(h.value_usd)}
@@ -343,7 +343,7 @@ export default function LiveVaultTab({
                         className="py-3 px-3 text-right font-mono"
                         style={{ color: isShort ? "#F87171" : "#DDB110" }}
                       >
-                        {tw ? pct(tw.target_weight) : "\u2014"}
+                        {tw ? pct(tw.target_weight) : "—"}
                       </td>
                       <td className="py-3 px-3 text-right">
                         <span

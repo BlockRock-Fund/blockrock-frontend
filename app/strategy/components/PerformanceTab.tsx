@@ -392,47 +392,47 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
         <MetricCard
           label="Total Return"
-          value={m.total_return != null ? fmtPct(m.total_return) : "\u2014"}
+          value={m.total_return != null ? fmtPct(m.total_return) : "—"}
           sublabel={years != null ? `over ${formatYears(years)} years` : undefined}
           positive={m.total_return != null ? m.total_return >= 0 : undefined}
-          tooltip="Cumulative percentage return over the measurement period (warm-up excluded \u2014 see footer)."
+          tooltip="Cumulative percentage return over the measurement period (warm-up excluded — see footer)."
         />
         <MetricCard
           label="Annualized"
-          value={m.cagr != null ? fmtPct(m.cagr) : "\u2014"}
+          value={m.cagr != null ? fmtPct(m.cagr) : "—"}
           sublabel="CAGR"
           positive={m.cagr != null ? m.cagr >= 0 : undefined}
           tooltip="Compound annual growth rate over the measurement period."
         />
         <MetricCard
           label="Sharpe"
-          value={m.sharpe?.toFixed(2) ?? "\u2014"}
+          value={m.sharpe?.toFixed(2) ?? "—"}
           positive={m.sharpe != null ? m.sharpe > 0 : undefined}
-          tooltip="Annualized excess return \u00f7 annualized return volatility. Higher is better; >1 is generally considered strong."
+          tooltip="Annualized excess return ÷ annualized return volatility. Higher is better; >1 is generally considered strong."
         />
         <MetricCard
           label="Max Drawdown"
-          value={m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014"}
+          value={m.max_drawdown != null ? `${m.max_drawdown}%` : "—"}
           positive={m.max_drawdown != null ? false : undefined}
           tooltip="Largest peak-to-trough NAV decline over the full measurement period."
         />
         <MetricCard
           label="Win Rate"
-          value={m.win_rate != null ? `${m.win_rate}%` : "\u2014"}
+          value={m.win_rate != null ? `${m.win_rate}%` : "—"}
           positive={m.win_rate != null ? m.win_rate >= 50 : undefined}
           tooltip="Share of months with a positive return."
         />
         <MetricCard
           label="Alpha"
-          value={m.alpha != null ? fmtPct(m.alpha) : "\u2014"}
+          value={m.alpha != null ? fmtPct(m.alpha) : "—"}
           positive={m.alpha != null ? m.alpha >= 0 : undefined}
-          tooltip="Total-return alpha: Vault total return \u2212 Equal-Weight benchmark total return over the full measurement period."
+          tooltip="Total-return alpha: Vault total return − Equal-Weight benchmark total return over the full measurement period."
         />
         <MetricCard
           label="Sortino"
-          value={m.sortino?.toFixed(2) ?? "\u2014"}
+          value={m.sortino?.toFixed(2) ?? "—"}
           positive={m.sortino != null ? m.sortino > 0 : undefined}
-          tooltip="Like Sharpe, but the denominator uses only downside volatility \u2014 penalizes losses, not upside swings."
+          tooltip="Like Sharpe, but the denominator uses only downside volatility — penalizes losses, not upside swings."
         />
       </div>
 
@@ -555,9 +555,9 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
         </div>
         <p className="text-xs text-text-muted mb-4">
           Vault max drawdown{" "}
-          {visibleMaxDd.vault != null ? `${visibleMaxDd.vault.toFixed(1)}%` : "\u2014"} vs EW{" "}
-          {visibleMaxDd.ew != null ? `${visibleMaxDd.ew.toFixed(1)}%` : "\u2014"} vs SOL{" "}
-          {visibleMaxDd.sol != null ? `${visibleMaxDd.sol.toFixed(1)}%` : "\u2014"}
+          {visibleMaxDd.vault != null ? `${visibleMaxDd.vault.toFixed(1)}%` : "—"} vs EW{" "}
+          {visibleMaxDd.ew != null ? `${visibleMaxDd.ew.toFixed(1)}%` : "—"} vs SOL{" "}
+          {visibleMaxDd.sol != null ? `${visibleMaxDd.sol.toFixed(1)}%` : "—"}
           {visibleMaxDd.btc != null ? ` vs BTC ${visibleMaxDd.btc.toFixed(1)}%` : ""}
         </p>
         <ResponsiveContainer width="100%" height={250}>
@@ -646,11 +646,11 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             <div className="space-y-3">
               {([
                 { label: "Strategy", val: fmtTotalWithCagr(m.total_return, m.cagr) },
-                { label: "Equal Weight", val: fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr), tooltip: "Equal-weight portfolio across the same asset universe \u2014 the strategy's benchmark." },
+                { label: "Equal Weight", val: fmtTotalWithCagr(m.eq_weight_return, m.eq_weight_cagr), tooltip: "Equal-weight portfolio across the same asset universe — the strategy's benchmark." },
                 { label: "SOL Return", val: fmtTotalWithCagr(m.sol_return, m.sol_cagr) },
                 { label: "BTC Return", val: m.btc_return == null ? "N/A" : fmtTotalWithCagr(m.btc_return, m.btc_cagr) },
-                { label: "Alpha", val: m.alpha != null ? fmtPct(m.alpha) : "\u2014", tooltip: "Total-return alpha: Vault total return \u2212 Equal-Weight benchmark total return." },
-                { label: "Win Rate", val: m.win_rate != null ? `${m.win_rate}%` : "\u2014", tooltip: "Share of months with a positive return." },
+                { label: "Alpha", val: m.alpha != null ? fmtPct(m.alpha) : "—", tooltip: "Total-return alpha: Vault total return − Equal-Weight benchmark total return." },
+                { label: "Win Rate", val: m.win_rate != null ? `${m.win_rate}%` : "—", tooltip: "Share of months with a positive return." },
               ]).map(({ label, val, tooltip }) => (
                 <div
                   key={label}
@@ -671,13 +671,13 @@ export default function PerformanceTab({ presetName = "default" }: { presetName?
             </p>
             <div className="space-y-3">
               {([
-                { label: "Volatility", val: m.volatility != null ? `${m.volatility}%` : "\u2014", tooltip: "Annualized standard deviation of daily returns." },
-                { label: "Beta", val: m.beta?.toFixed(2) ?? "\u2014", tooltip: "Sensitivity of vault returns to the EW benchmark. 1.0 = lockstep, >1 = amplified, <1 = damped." },
-                { label: "Sharpe Ratio", val: m.sharpe?.toFixed(2) ?? "\u2014", tooltip: "Annualized excess return \u00f7 annualized return volatility." },
-                { label: "Sortino Ratio", val: m.sortino?.toFixed(2) ?? "\u2014", tooltip: "Like Sharpe but the denominator uses only downside volatility." },
-                { label: "Calmar Ratio", val: m.calmar?.toFixed(2) ?? "\u2014", tooltip: "CAGR \u00f7 |Max Drawdown|. Return per unit of worst-case loss." },
-                { label: "Information Ratio", val: m.information_ratio?.toFixed(2) ?? "\u2014", tooltip: "(Vault \u2212 EW) excess return \u00f7 tracking error. Risk-adjusted alpha." },
-                { label: "Max Drawdown", val: m.max_drawdown != null ? `${m.max_drawdown}%` : "\u2014", tooltip: "Largest peak-to-trough NAV decline over the full measurement period." },
+                { label: "Volatility", val: m.volatility != null ? `${m.volatility}%` : "—", tooltip: "Annualized standard deviation of daily returns." },
+                { label: "Beta", val: m.beta?.toFixed(2) ?? "—", tooltip: "Sensitivity of vault returns to the EW benchmark. 1.0 = lockstep, >1 = amplified, <1 = damped." },
+                { label: "Sharpe Ratio", val: m.sharpe?.toFixed(2) ?? "—", tooltip: "Annualized excess return ÷ annualized return volatility." },
+                { label: "Sortino Ratio", val: m.sortino?.toFixed(2) ?? "—", tooltip: "Like Sharpe but the denominator uses only downside volatility." },
+                { label: "Calmar Ratio", val: m.calmar?.toFixed(2) ?? "—", tooltip: "CAGR ÷ |Max Drawdown|. Return per unit of worst-case loss." },
+                { label: "Information Ratio", val: m.information_ratio?.toFixed(2) ?? "—", tooltip: "(Vault − EW) excess return ÷ tracking error. Risk-adjusted alpha." },
+                { label: "Max Drawdown", val: m.max_drawdown != null ? `${m.max_drawdown}%` : "—", tooltip: "Largest peak-to-trough NAV decline over the full measurement period." },
               ]).map(({ label, val, tooltip }) => (
                 <div
                   key={label}

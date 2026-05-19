@@ -105,7 +105,7 @@ function humanizeMetric(raw: string): string {
 
   // Pattern: *_yield_chg_Xd or *_yield_chg_365d
   let m = s.match(/^(.+?)_yield_chg_(\d+d|\d+)$/);
-  if (m) return `${prefix}${humanizeBase(m[1])} Yield \u0394 (${m[2]})`;
+  if (m) return `${prefix}${humanizeBase(m[1])} Yield Δ (${m[2]})`;
 
   // Pattern: *_yield_expected_1y
   m = s.match(/^(.+?)_yield_expected_1y$/);
@@ -185,13 +185,13 @@ function signalScore(r: CrossHorizonRow): {
   const isPos = ics.length > 0 ? posCount > ics.length / 2 : true;
   const consistencyMult = r.sign_consistent ? 1.0 : 0.75;
 
-  // Aggregate magnitude: |IC| \u00d7 |t| \u00d7 consistency, scaled \u00d7100.
-  // Reference: |IC|=0.05 & |t|=2.0 (consistent) \u2192 10.0 (formerly "Strong").
-  // |IC|=0.035 & |t|=1.5 \u2192 ~5.3 (formerly "Mod."). |IC|=0.02 & |t|=1.0 \u2192 ~2.0 (formerly "Weak").
+  // Aggregate magnitude: |IC| × |t| × consistency, scaled ×100.
+  // Reference: |IC|=0.05 & |t|=2.0 (consistent) → 10.0 (formerly "Strong").
+  // |IC|=0.035 & |t|=1.5 → ~5.3 (formerly "Mod."). |IC|=0.02 & |t|=1.0 → ~2.0 (formerly "Weak").
   const raw = absIc * maxT * consistencyMult * 100;
   const score = Number.isFinite(raw) ? raw : 0;
 
-  const arrow = ics.length === 0 ? "" : isPos ? " \u2191" : " \u2193";
+  const arrow = ics.length === 0 ? "" : isPos ? " ↑" : " ↓";
   const display = score < 0.1 ? "0.0" : `${score.toFixed(1)}${arrow}`;
 
   // Color/intensity by score tier and direction.
@@ -227,22 +227,22 @@ function tStatBadge(t: number | null): string {
 }
 
 function fmtIc(v: number | null): string {
-  if (v === null) return "\u2014";
+  if (v === null) return "—";
   return (v >= 0 ? "+" : "") + v.toFixed(4);
 }
 
 function fmtT(v: number | null): string {
-  if (v === null) return "\u2014";
+  if (v === null) return "—";
   return (v >= 0 ? "+" : "") + v.toFixed(2);
 }
 
 function fmtPct(v: number | null): string {
-  if (v === null) return "\u2014";
+  if (v === null) return "—";
   return `${(v * 100).toFixed(0)}%`;
 }
 
 function fmtRet(v: number | null): string {
-  if (v === null) return "\u2014";
+  if (v === null) return "—";
   return `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
 }
 
@@ -617,7 +617,7 @@ export default function FactorResearchTab({ universe = "all" }: { universe?: Uni
                       {fmtRet(r.ls_spread)}
                     </td>
                     <td className="px-3 py-2.5 text-right font-mono text-xs text-text-muted">
-                      {r.n_dates ?? "\u2014"}
+                      {r.n_dates ?? "—"}
                     </td>
                   </tr>
                 ))}

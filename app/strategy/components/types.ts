@@ -208,16 +208,16 @@ export interface BacktestData {
 }
 
 export function pct(val: string | null | undefined): string {
-  if (!val) return "\u2014";
+  if (!val) return "—";
   const n = parseFloat(val);
-  if (isNaN(n)) return "\u2014";
+  if (isNaN(n)) return "—";
   return `${(n * 100).toFixed(2)}%`;
 }
 
 export function usd(val: string | null | undefined): string {
-  if (!val) return "\u2014";
+  if (!val) return "—";
   const n = parseFloat(val);
-  if (isNaN(n)) return "\u2014";
+  if (isNaN(n)) return "—";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
