@@ -10,13 +10,6 @@ export type TargetWeight = {
   mint_address: string;
   composite_score: string;
   target_weight: string;
-  // Current scoring fields
-  distributions_yield_expected_1y: string | null;
-  net_earnings_yield_expected_1y: string | null;
-  // Legacy fields
-  net_distributions_yield_expected_1y: string | null;
-  net_revenue_yield_expected_1y: string | null;
-  growth_trend: string | null;
   side: "long" | "short";
   perp_market: string | null;
   perp_direction: string | null;
@@ -53,8 +46,10 @@ export type VaultStatus = {
   num_holdings: number;
   holdings: VaultHolding[];
   last_rebalance_at: string | null;
+  last_rebalance_evaluation_at: string | null;
+  next_rebalance_due_at: string | null;
   dry_run: boolean;
-  rebalance_cadence_hours: number;
+  rebalance_interval_hours: number;
 };
 
 export type AllocationRecord = {
@@ -73,6 +68,9 @@ export type AllocationRecord = {
   status: string;
   regime_score: string | null;
   short_allocation_pct: string | null;
+  execution_reason: string | null;
+  cadence_due: boolean | null;
+  cadence_consumed: boolean | null;
 };
 
 export type ScoreTerm = {
@@ -105,6 +103,7 @@ export type StrategyConfigResponse = {
   preset_name: string;
   preset_file: string;
   description: string | null;
+  rebalance_interval_hours: number;
   score_terms: ScoreTerm[];
   short_score_terms: ScoreTerm[] | null;
   default_short_leverage: number;

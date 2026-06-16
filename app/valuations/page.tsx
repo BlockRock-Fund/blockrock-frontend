@@ -442,6 +442,7 @@ type SimpleTableRow = {
 };
 
 const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
   "https://blockrock-backend-production.up.railway.app";
 
 function toNumber(value: string | number | null | undefined): number | null {

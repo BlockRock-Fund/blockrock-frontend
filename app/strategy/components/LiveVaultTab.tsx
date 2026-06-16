@@ -388,10 +388,10 @@ export default function LiveVaultTab({
         const fmtCap = (v: number | null | undefined) =>
           v != null ? `${(v * 100).toFixed(0)}%` : null;
         const items: { label: string; value: string }[] = [];
-        if (status?.rebalance_cadence_hours != null) {
+        if (status?.rebalance_interval_hours != null) {
           items.push({
             label: "Cadence",
-            value: `${status.rebalance_cadence_hours}h`,
+            value: `${status.rebalance_interval_hours}h`,
           });
         }
         if (status?.dry_run !== undefined) {

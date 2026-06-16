@@ -334,29 +334,18 @@ export default function OverviewTab({
                   <th className="text-left py-3 px-3 font-medium">#</th>
                   <th className="text-left py-3 px-3 font-medium">Symbol</th>
                   <th className="text-center py-3 px-3 font-medium">Position</th>
-                  {topFactors.length > 0 ? (
-                    topFactors.map((term) => {
-                      const meta = getFieldMetadata(term.field);
-                      return (
-                        <th
-                          key={term.field}
-                          className="text-right py-3 px-3 font-medium"
-                          title={meta.tooltip}
-                        >
-                          {meta.shortLabel ?? meta.label}
-                        </th>
-                      );
-                    })
-                  ) : (
-                    <>
-                      <th className="text-right py-3 px-3 font-medium">
-                        Dist. Yield
+                  {topFactors.map((term) => {
+                    const meta = getFieldMetadata(term.field);
+                    return (
+                      <th
+                        key={term.field}
+                        className="text-right py-3 px-3 font-medium"
+                        title={meta.tooltip}
+                      >
+                        {meta.shortLabel ?? meta.label}
                       </th>
-                      <th className="text-right py-3 px-3 font-medium">
-                        Net Earn. Yield
-                      </th>
-                    </>
-                  )}
+                    );
+                  })}
                   <th className="text-right py-3 px-3 font-medium">
                     <span className="inline-flex items-center gap-1 justify-end">
                       Composite Score
@@ -397,28 +386,17 @@ export default function OverviewTab({
                           {isShort ? "Short" : "Long"}
                         </span>
                       </td>
-                      {topFactors.length > 0 ? (
-                        topFactors.map((term) => (
-                          <td
-                            key={term.field}
-                            className="py-3 px-3 text-right font-mono"
-                          >
-                            {formatFactorValue(
-                              term.field,
-                              w.factor_values?.[term.field] ?? null
-                            )}
-                          </td>
-                        ))
-                      ) : (
-                        <>
-                          <td className="py-3 px-3 text-right">
-                            {pct(w.distributions_yield_expected_1y)}
-                          </td>
-                          <td className="py-3 px-3 text-right">
-                            {pct(w.net_earnings_yield_expected_1y)}
-                          </td>
-                        </>
-                      )}
+                      {topFactors.map((term) => (
+                        <td
+                          key={term.field}
+                          className="py-3 px-3 text-right font-mono"
+                        >
+                          {formatFactorValue(
+                            term.field,
+                            w.factor_values?.[term.field] ?? null
+                          )}
+                        </td>
+                      ))}
                       <td
                         className="py-3 px-3 text-right font-mono"
                         style={{
