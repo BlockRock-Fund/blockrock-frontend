@@ -5,7 +5,9 @@ import Link from "next/link";
 import Logo from "../ui/Logo";
 import NavLink from "../ui/NavLink";
 
-const navItems: { label: string; href: string }[] = [];
+const navItems: { label: string; href: string }[] = [
+  { label: "Proposals", href: "/proposals" },
+];
 
 export default function MainNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
